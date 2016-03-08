@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Port Forwarder</string>
+    <string name="action_settings">Settings</string>
+    <string name="pref_enable_ads">Enable Advertisements</string>
+    <string name="pref_enable_ads_summary">Enabling this option helps support the development of this app.</string>
+    <string name="pref_clear_rules_text">Clear Rules</string>
+    <string name="action_save_rule">Save</string>
+    <string name="action_delete_rule">Delete</string>
+    <string name="action_start_forwarding">Start</string>
+    <string name="rule_title_hint">Rule Title</string>
+    <string name="select_rule_protocol">Select Protocol</string>
+    <string name="new_rule_from">From</string>
+    <string name="new_rule_target">Target</string>
+    <string name="new_rule_port">Port</string>
+    <string name="new_rule_target_ip_address">Target IP Address</string>
+
+    <string-array name="rule_protocol_array">
+        <item>TCP</item>
+        <item>UDP</item>
+        <item>BOTH</item>
+    </string-array>
+
+    <string-array name="sample_from_interfaces">
+        <item>Rmte0</item>
+        <item>Rmte1</item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,305 @@
+package com.elixsr.portforwarder.forwarding;
+
+import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.PowerManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import com.elixsr.portforwarder.MainActivity;
+import com.elixsr.portforwarder.R;
+import com.elixsr.portforwarder.dao.RuleDao;
+import com.elixsr.portforwarder.db.RuleDbHelper;
+import com.elixsr.portforwarder.exceptions.ObjectNotFoundException;
+import com.elixsr.portforwarder.models.RuleModel;
+
+/**
+ * Created by Niall McShane on 06/03/2016.
+ */
+public class ForwardingService extends IntentService {
+
+    private static final String TAG = "ForwardingService";
+    private final int NOTIFICATION_ID = 1;
+
+    // Defines a custom Intent action
+    public static final String BROADCAST_ACTION =
+            "org.elixsr.portforwarder.forwarding.ForwardingService.BROADCAST";
+
+    // Defines the key for the status "extra" in an Intent
+    public static final String EXTENDED_DATA_STATUS =
+            "org.elixsr.portforwarder.forwarding.ForwardingService.STATUS";
+
+    public static final String PORT_FORWARD_SERVICE_STATE =
+            "org.elixsr.portforwarder.forwarding.ForwardingService.PORT_FORWARD_STATE";
+
+    public static final String PORT_FORWARD_SERVICE_ERROR_MESSAGE =
+            "org.elixsr.portforwarder.forwarding.ForwardingService.PORT_FORWARD_ERROR_MESSAGE";
+
+    private static final String PORT_FORWARD_SERVICE_WAKE_LOCK_TAG = "PortForwardServiceWakeLockTag";
+
+    private String status = "Test";
+
+    private boolean runService = false;
+
+    //change the magic number
+    private final ExecutorService executorService;
+
+    //wake lock
+    private PowerManager.WakeLock wakeLock;
+
+    public ForwardingService() {
+        super(TAG);
+        executorService = Executors.newFixedThreadPool(30);
+    }
+
+    public ForwardingService(ExecutorService executorService) {
+        super(TAG);
+        this.executorService = executorService;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        /*
+        Sourced from: https://developer.android.com/intl/ja/training/scheduling/wakelock.html
+         */
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                PORT_FORWARD_SERVICE_WAKE_LOCK_TAG);
+        wakeLock.acquire();
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+
+        // Gets data from the incoming Intent
+//        String dataString = intent.getDataString();
+
+        Log.i(TAG, "Ran the service");
+
+        ForwardingManager.getInstance().enableForwarding();
+
+        runService = true;
+
+        /*
+         * Creates a new Intent containing a Uri object
+         * BROADCAST_ACTION is a custom Intent action
+         */
+        Intent localIntent =
+                new Intent(BROADCAST_ACTION)
+                        // Puts the status into the Intent
+                        .putExtra(PORT_FORWARD_SERVICE_STATE, ForwardingManager.getInstance().isEnabled());
+        // Broadcasts the Intent to receivers in this app.
+        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+
+        showForwardingEnabledNotification();
+
+        //load the rules from the datastore
+        //TODO: inject the rules as extras
+        RuleDao ruleDao = new RuleDao(new RuleDbHelper(this));
+        List<RuleModel> ruleModels = ruleDao.getAllRuleModels();
+
+        InetSocketAddress from;
+
+        Forwarder forwarder = null;
+
+        /*
+         Sourced from: http://stackoverflow.com/questions/19348248/waiting-on-a-list-of-future
+         */
+        CompletionService<Void> completionService =
+                new ExecutorCompletionService<>(executorService);
+
+        // how many futures there are to check
+        int remainingFutures = 0;
+
+        for (RuleModel ruleModel : ruleModels){
+
+            try {
+                from = generateFromIpUsingInterface(ruleModel.getFromInterfaceName(), ruleModel.getFromPort());
+
+                if (ruleModel.isTcp()) {
+                    completionService.submit(new TcpForwarder(from, ruleModel.getTarget(), ruleModel.getName()));
+                    remainingFutures++;
+                }
+
+                if (ruleModel.isUdp()) {
+                    completionService.submit(new UdpForwarder(from, ruleModel.getTarget(), ruleModel.getName()));
+                    remainingFutures++;
+                }
+
+            }catch(SocketException | ObjectNotFoundException  e){
+                Log.e(TAG, "Error generating IP Address for FROM interface with rule '" + ruleModel.getName() + "'", e);
+
+                //TODO: add graceful UI Exception handling - broadcast this to ui
+                localIntent =
+                        new Intent(BROADCAST_ACTION)
+                                // Puts the status into the Intent
+                                .putExtra(PORT_FORWARD_SERVICE_ERROR_MESSAGE, "Error while trying to start rule '" + ruleModel.getName() + "'");
+                // Broadcasts the Intent to receivers in this app.
+                LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+            }
+        }
+
+        Future<?> completedFuture;
+
+        while (remainingFutures > 0) {
+            // block until a callable completes
+            try {
+                completedFuture = completionService.take();
+                remainingFutures--;
+
+                completedFuture.get();
+            } catch (ExecutionException e) {
+                Throwable cause = e.getCause();
+
+                Log.e(TAG, "Error when forwarding port.", e);
+                localIntent =
+                        new Intent(BROADCAST_ACTION)
+                                // Puts the status into the Intent
+                                .putExtra(PORT_FORWARD_SERVICE_ERROR_MESSAGE, e.getCause().getMessage());
+                // Broadcasts the Intent to receivers in this app.
+                LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+
+                break;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+//        while(runService){
+////            Log.i(TAG, "Running the service");
+//            try {
+//                Thread.sleep(1000L);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+    }
+
+    private InetSocketAddress generateFromIpUsingInterface(String interfaceName, int port) throws SocketException, ObjectNotFoundException {
+
+        String address= null;
+        InetSocketAddress inetSocketAddress;
+
+        for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+            NetworkInterface intf = en.nextElement();
+
+            Log.d(TAG, intf.getDisplayName() + " vs " + interfaceName);
+            if(intf.getDisplayName().equals(interfaceName)){
+
+                Log.i(TAG, "Found the relevant Interface. Will attempt to fetch IP Address");
+
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+
+                    address = new String(inetAddress.getHostAddress().toString());
+
+                    if(address != null & address.length() > 0 && inetAddress instanceof Inet4Address){
+
+                        inetSocketAddress = new InetSocketAddress(address, port);
+                        return inetSocketAddress;
+                    }
+                }
+            }
+        }
+
+        //Failed to find the relevent thing
+        //TODO: complete
+        throw new ObjectNotFoundException("Could not find IP Address for Interface " + interfaceName);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        runService = false;
+
+        executorService.shutdownNow();
+
+        ForwardingManager.getInstance().disableForwarding();
+
+        hideForwardingEnabledNotification();
+
+        //update the main activity
+        Intent localIntent =
+                new Intent(BROADCAST_ACTION)
+                        // Puts the status into the Intent
+                        .putExtra(PORT_FORWARD_SERVICE_STATE, ForwardingManager.getInstance().isEnabled());
+        // Broadcasts the Intent to receivers in this app.
+        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+
+        wakeLock.release();
+        Log.i(TAG, "Ended the ForwardingService. Cleanup finished.");
+    }
+
+    private void hideForwardingEnabledNotification() {
+
+
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        mNotificationManager.cancel(NOTIFICATION_ID);
+    }
+
+    /**
+     * Construct a notification
+     */
+    private void showForwardingEnabledNotification() {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_close_24dp)
+                        .setContentTitle("Fwd: The Port Forwarding Companion")
+                        .setContentText("Port Forwarding currently active");
+
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, MainActivity.class);
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Notification notification = mBuilder.build();
+        notification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT | Notification.DEFAULT_LIGHTS;
+
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(NOTIFICATION_ID, notification);
+    }
+}
