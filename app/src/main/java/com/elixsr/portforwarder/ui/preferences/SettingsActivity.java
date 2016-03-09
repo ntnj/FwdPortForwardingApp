@@ -1,10 +1,11 @@
-package com.elixsr.portforwarder.ui;
+package com.elixsr.portforwarder.ui.preferences;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.elixsr.portforwarder.R;
+import com.elixsr.portforwarder.ui.BaseActivity;
 
 /**
  * Created by Niall McShane on 29/02/2016.

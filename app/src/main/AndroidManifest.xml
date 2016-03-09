@@ -9,7 +9,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/AppTheme.NoActionBar"
+        android:persistent="true">
 
         <activity
             android:name=".MainActivity"
@@ -21,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.SettingsActivity"
+            android:name=".ui.preferences.SettingsActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -40,6 +41,18 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity"/>
+        </activity>
+        <activity android:name=".ui.preferences.HelpActivity"
+            android:parentActivityName=".ui.preferences.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.preferences.SettingsActivity"/>
+        </activity>
+        <activity android:name=".ui.preferences.AboutElixsrActivity"
+            android:parentActivityName=".ui.preferences.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.preferences.SettingsActivity"/>
         </activity>
 
         <!--

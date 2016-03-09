@@ -43,17 +43,17 @@ public class ForwardingService extends IntentService {
 
     // Defines a custom Intent action
     public static final String BROADCAST_ACTION =
-            "org.elixsr.portforwarder.forwarding.ForwardingService.BROADCAST";
+            "com.elixsr.portforwarder.forwarding.ForwardingService.BROADCAST";
 
     // Defines the key for the status "extra" in an Intent
     public static final String EXTENDED_DATA_STATUS =
-            "org.elixsr.portforwarder.forwarding.ForwardingService.STATUS";
+            "com.elixsr.portforwarder.forwarding.ForwardingService.STATUS";
 
     public static final String PORT_FORWARD_SERVICE_STATE =
-            "org.elixsr.portforwarder.forwarding.ForwardingService.PORT_FORWARD_STATE";
+            "com.elixsr.portforwarder.forwarding.ForwardingService.PORT_FORWARD_STATE";
 
     public static final String PORT_FORWARD_SERVICE_ERROR_MESSAGE =
-            "org.elixsr.portforwarder.forwarding.ForwardingService.PORT_FORWARD_ERROR_MESSAGE";
+            "com.elixsr.portforwarder.forwarding.ForwardingService.PORT_FORWARD_ERROR_MESSAGE";
 
     private static final String PORT_FORWARD_SERVICE_WAKE_LOCK_TAG = "PortForwardServiceWakeLockTag";
 

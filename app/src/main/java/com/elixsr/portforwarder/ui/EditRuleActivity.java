@@ -22,6 +22,7 @@ import java.util.List;
 
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.db.RuleContract;
+import com.elixsr.portforwarder.forwarding.ForwardingService;
 import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.db.RuleDbHelper;
 import com.elixsr.portforwarder.util.RuleHelper;
@@ -33,6 +34,9 @@ public class EditRuleActivity extends BaseRuleActivity {
 
     private static final String TAG = "EditRuleActivity";
 
+    private static final String NO_RULE_ID_FOUND_LOG_MESSAGE = "No ID was supplied to EditRuleActivity";
+    private static final String NO_RULE_ID_FOUND_TOAST_MESSAGE = "Could not locate rule";
+
     private RuleModel ruleModel;
 
     private long ruleModelId;
@@ -43,9 +47,19 @@ public class EditRuleActivity extends BaseRuleActivity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
+        //if we can't locate the id, then we can't continue
         if(!getIntent().getExtras().containsKey(RuleHelper.RULE_MODEL_ID)){
-            //TODO: add a more relevant exception
-//            throw new ItemNot("Could not find the relevenat Id");
+
+            /// show toast containing message to the user
+            Toast.makeText(this, NO_RULE_ID_FOUND_TOAST_MESSAGE,
+                    Toast.LENGTH_SHORT).show();
+
+            Log.e(TAG, NO_RULE_ID_FOUND_LOG_MESSAGE);
+
+            onBackPressed();
+
+            //return from the method - ensure we don't continue
+            return;
         }
         ruleModelId = getIntent().getExtras().getLong(RuleHelper.RULE_MODEL_ID);
 
@@ -64,43 +78,9 @@ public class EditRuleActivity extends BaseRuleActivity {
             }
         });
 
-        //set up protocol spinner/dropdown
-        Spinner protocolSpinner = (Spinner) findViewById(R.id.protocol_spinner);
 
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> protocolAdapter = ArrayAdapter.createFromResource(this,
-                R.array.rule_protocol_array, android.R.layout.simple_spinner_item);
-
-        // Specify the layout to use when the list of choices appears
-        protocolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // Apply the adapter to the spinner
-        protocolSpinner.setAdapter(protocolAdapter);
-
-
-        //generate interfaces
-        List<String> interfaces = null;
-        try {
-            interfaces = generateInterfaceList();
-        } catch (SocketException e) {
-            Log.i(TAG, "Error generating Interface list", e);
-
-            //TODO: add better exception handling
-        }
-
-        //set up protocol spinner/dropdown
-        Spinner fromInterfaceSpinner = (Spinner) findViewById(R.id.from_interface_spinner);
-
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> fromSpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, interfaces);
-
-        // Specify the layout to use when the list of choices appears
-        fromSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // Apply the adapter to the spinner
-        fromInterfaceSpinner.setAdapter(fromSpinnerAdapter);
-
-
+        //use the base class to construct the common UI
+        constructDetailUi();
 
         //TODO: move this
         this.db = new RuleDbHelper(this).getReadableDatabase();
@@ -118,6 +98,10 @@ public class EditRuleActivity extends BaseRuleActivity {
         cursor.moveToFirst();
 
         this.ruleModel = RuleHelper.cursorToRuleModel(cursor);
+
+        //close the DB
+        cursor.close();
+        db.close();
 
         /*
         Set the text fields content
@@ -138,6 +122,8 @@ public class EditRuleActivity extends BaseRuleActivity {
         Set the spinners content
          */
         //from interface spinner
+        Log.i(TAG, "FROM SPINNER : " + fromInterfaceSpinner.toString());
+        Log.i(TAG, "FROM INTERFACE : " + this.ruleModel.getFromInterfaceName());
         fromInterfaceSpinner.setSelection(fromSpinnerAdapter.getPosition(this.ruleModel.getFromInterfaceName()));
 
         //protocol spinner
@@ -185,11 +171,16 @@ public class EditRuleActivity extends BaseRuleActivity {
             String selection = RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + "=?";
             String[] selectionArgs = {String.valueOf(this.ruleModelId)};
 
+            this.db = new RuleDbHelper(this).getReadableDatabase();
+
             int count = db.update(
                     RuleContract.RuleEntry.TABLE_NAME,
                     values,
                     selection,
                     selectionArgs);
+
+            //close db
+            db.close();
 
 
             // move to main activity
@@ -212,9 +203,10 @@ public class EditRuleActivity extends BaseRuleActivity {
 
                         //TODO: add db delete
 //                        MainActivity.RULE_MODELS.remove(ruleModelLocation);
-//                        MainActivity.RULE_LIST_ADAPTER.notifyItemRemoved(ruleModelLocation);
+//                        MainActivity.ruleListAdapter.notifyItemRemoved(ruleModelLocation);
 
-
+                        //construct the db
+                        db = new RuleDbHelper(getBaseContext()).getReadableDatabase();
 
                         // Define 'where' part of query.
                         String selection = RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + "=?";
@@ -222,6 +214,9 @@ public class EditRuleActivity extends BaseRuleActivity {
                         String[] selectionArgs = { String.valueOf(ruleModelId) };
                         // Issue SQL statement.
                         db.delete(RuleContract.RuleEntry.TABLE_NAME, selection, selectionArgs);
+
+                        //close the db
+                        db.close();
 
                         // move to main activity
                         Intent mainActivityIntent = new Intent(getBaseContext(), com.elixsr.portforwarder.MainActivity.class);

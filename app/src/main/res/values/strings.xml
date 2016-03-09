@@ -1,9 +1,24 @@
 <resources>
     <string name="app_name">Port Forwarder</string>
     <string name="action_settings">Settings</string>
+
     <string name="pref_enable_ads">Enable Advertisements</string>
     <string name="pref_enable_ads_summary">Enabling this option helps support the development of this app.</string>
+
+    <!-- General Preferences -->
+    <string name="pref_general_category_title">General</string>
     <string name="pref_clear_rules_text">Clear Rules</string>
+    <string name="pref_clear_rules">pref_clear_rules</string>
+
+    <!-- About Preferences -->
+
+    <string name="pref_about_category_title">About</string>
+    <string name="pref_help_link">pre_help_link</string>
+    <string name="pref_about_link">pref_about_link</string>
+    <string name="pref_version">pref_version</string>
+    <string name="pref_help_link_text">Help</string>
+    <string name="pref_about_link_text">About Elixsr</string>
+
     <string name="action_save_rule">Save</string>
     <string name="action_delete_rule">Delete</string>
     <string name="action_start_forwarding">Start</string>

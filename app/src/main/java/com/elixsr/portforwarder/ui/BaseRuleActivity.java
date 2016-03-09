@@ -3,6 +3,7 @@ package com.elixsr.portforwarder.ui;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import java.net.Inet4Address;
@@ -27,6 +28,49 @@ public abstract class BaseRuleActivity extends BaseActivity {
 
     private static final String TAG = "BaseRuleActivity";
     private static final String NO_PORT_INCLUDED_ERROR_MESSAGE = "Please enter a value greater than " + RuleHelper.MIN_PORT_VALUE;
+    protected Spinner protocolSpinner;
+    protected Spinner fromInterfaceSpinner;
+    protected ArrayAdapter<String> fromSpinnerAdapter;
+    protected ArrayAdapter<CharSequence> protocolAdapter;
+
+    public void constructDetailUi(){
+
+        //set up protocol spinner/dropdown
+        protocolSpinner = (Spinner) findViewById(R.id.protocol_spinner);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        protocolAdapter = ArrayAdapter.createFromResource(this,
+                R.array.rule_protocol_array, android.R.layout.simple_spinner_item);
+
+        // Specify the layout to use when the list of choices appears
+        protocolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the protocolAdapter to the spinner
+        protocolSpinner.setAdapter(protocolAdapter);
+
+        //generate interfaces
+        List<String> interfaces = null;
+        try {
+            interfaces = generateInterfaceList();
+        } catch (SocketException e) {
+            Log.i(TAG, "Error generating Interface list", e);
+
+            //TODO: add better exception handling
+        }
+
+        //set up protocol spinner/dropdown
+        fromInterfaceSpinner = (Spinner) findViewById(R.id.from_interface_spinner);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        fromSpinnerAdapter = new ArrayAdapter<String>(this, R.layout.my_spinner, interfaces);
+
+        // Specify the layout to use when the list of choices appears
+        fromSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the protocolAdapter to the spinner
+        fromInterfaceSpinner.setAdapter(fromSpinnerAdapter);
+
+    }
 
     public List<String> generateInterfaceList() throws SocketException {
 

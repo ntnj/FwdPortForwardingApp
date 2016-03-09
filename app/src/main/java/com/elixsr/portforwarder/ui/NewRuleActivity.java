@@ -45,42 +45,7 @@ public class NewRuleActivity extends BaseRuleActivity {
             }
         });
 
-        //set up protocol spinner/dropdown
-        Spinner protocolSpinner = (Spinner) findViewById(R.id.protocol_spinner);
-
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.rule_protocol_array, android.R.layout.simple_spinner_item);
-
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // Apply the adapter to the spinner
-        protocolSpinner.setAdapter(adapter);
-
-
-
-        //generate interfaces
-        List<String> interfaces = null;
-        try {
-            interfaces = generateInterfaceList();
-        } catch (SocketException e) {
-            Log.i(TAG, "Error generating Interface list", e);
-
-            //TODO: add better exception handling
-        }
-
-        //set up protocol spinner/dropdown
-        Spinner fromInterfaceSpinner = (Spinner) findViewById(R.id.from_interface_spinner);
-
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> fromSpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, interfaces);
-
-        // Specify the layout to use when the list of choices appears
-        fromSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // Apply the adapter to the spinner
-        fromInterfaceSpinner.setAdapter(fromSpinnerAdapter);
+        constructDetailUi();
     }
 
     @Override

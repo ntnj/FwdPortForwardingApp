@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -27,7 +28,7 @@ import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.ui.BaseActivity;
 import com.elixsr.portforwarder.ui.NewRuleActivity;
 import com.elixsr.portforwarder.adapters.RuleListAdapter;
-import com.elixsr.portforwarder.ui.SettingsActivity;
+import com.elixsr.portforwarder.ui.preferences.SettingsActivity;
 
 
 public class MainActivity extends BaseActivity {
@@ -37,7 +38,7 @@ public class MainActivity extends BaseActivity {
 
     //TODO: remove when no longer developing/prototyping
     public List<RuleModel> ruleModels;
-    public static RuleListAdapter RULE_LIST_ADAPTER;
+    public static RuleListAdapter ruleListAdapter;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -49,6 +50,8 @@ public class MainActivity extends BaseActivity {
     private FloatingActionButton fab;
 
     private Intent forwardingServiceIntent;
+    private RuleDao ruleDao;
+    private TextView mRuleListEmptyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,11 +84,12 @@ public class MainActivity extends BaseActivity {
         }
 
         //get all models from the data store
-        RuleDao ruleDao = new RuleDao(new RuleDbHelper(this));
+        ruleDao = new RuleDao(new RuleDbHelper(this));
         ruleModels = ruleDao.getAllRuleModels();
 
-        //set up rule list
+        //set up rule list and empty view
         mRecyclerView = (RecyclerView) findViewById(R.id.rule_recycler_view);
+        mRuleListEmptyView = (TextView) findViewById(R.id.rule_list_empty_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -96,8 +100,8 @@ public class MainActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        RULE_LIST_ADAPTER = new RuleListAdapter(ruleModels, forwardingManager);
-        mRecyclerView.setAdapter(RULE_LIST_ADAPTER);
+        ruleListAdapter = new RuleListAdapter(ruleModels, forwardingManager);
+        mRecyclerView.setAdapter(ruleListAdapter);
 
         //store the coordinator layout for snackbar
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator_layout);
@@ -127,6 +131,24 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+        this.ruleModels.clear();
+        this.ruleModels.addAll(ruleDao.getAllRuleModels());
+        this.ruleListAdapter.notifyDataSetChanged();
+        invalidateOptionsMenu();
+
+        //decide whether to show the rule list or the empty view
+        if(this.ruleModels.isEmpty()){
+            mRecyclerView.setVisibility(View.GONE);
+            mRuleListEmptyView.setVisibility(View.VISIBLE);
+        }else{
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mRuleListEmptyView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -245,5 +267,11 @@ public class MainActivity extends BaseActivity {
                         Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

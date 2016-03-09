@@ -30,6 +30,14 @@
             android:scrollbars="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/rule_list_empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="No rules to show :/" />
     </android.support.v7.widget.ContentFrameLayout>
 
 

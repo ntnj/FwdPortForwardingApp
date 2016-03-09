@@ -20,8 +20,18 @@
         <item name="android:textColorPrimaryInverse">#fff</item>
         <!-- Used to color the text of the action menu icons -->
         <item name="android:textColorSecondary">#fff</item>
+
+        <!-- Menu item Colour -->
+        <item name="android:actionMenuTextColor">@color/textColorPrimary</item>
+        <item name="actionMenuTextColor">@color/textColorPrimary</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="spinnerItemStyle">
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">50sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
 
 </resources>
