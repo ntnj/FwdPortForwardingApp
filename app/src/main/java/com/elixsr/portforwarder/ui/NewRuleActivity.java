@@ -83,7 +83,7 @@ public class NewRuleActivity extends BaseRuleActivity {
             RuleDao ruleDao = new RuleDao(new RuleDbHelper(this));
             long newRowId = ruleDao.insertRule(ruleModel);
 
-            Log.i(TAG, "Rule #" + newRowId + " " + ruleModel.getName() + " has been saved.");
+            Log.i(TAG, "Rule #" + newRowId + " '" + ruleModel.getName() + "' has been saved.");
 
             // move to main activity
             Intent mainActivityIntent = new Intent(this, com.elixsr.portforwarder.MainActivity.class);
