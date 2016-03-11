@@ -272,7 +272,7 @@ public class ForwardingService extends IntentService {
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_fwd_24dp)
                         .setContentTitle("Port Forwarding Active")
-                        .setContentText(this.getApplicationInfo().loadLabel(this.getPackageManager()));
+                        .setContentText("Touch to disable");
 
         mBuilder.setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
 

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.percent.PercentRelativeLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,7 +55,7 @@ public class MainActivity extends BaseActivity {
 
     private Intent forwardingServiceIntent;
     private RuleDao ruleDao;
-    private TextView mRuleListEmptyView;
+    private PercentRelativeLayout mRuleListEmptyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,10 @@ public class MainActivity extends BaseActivity {
 
         setContentView(R.layout.activity_main);
         setSupportActionBar(getActionBarToolbar());
-        getActionBarToolbar().setTitle(R.string.app_tag);
+//        getActionBarToolbar().setTitle(R.string.app_tag);
+        getActionBarToolbar().setTitle("");
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ic_nav_logo);
 
         final Intent newRuleIntent = new Intent(this, NewRuleActivity.class);
 
@@ -92,7 +97,7 @@ public class MainActivity extends BaseActivity {
 
         //set up rule list and empty view
         mRecyclerView = (RecyclerView) findViewById(R.id.rule_recycler_view);
-        mRuleListEmptyView = (TextView) findViewById(R.id.rule_list_empty_view);
+        mRuleListEmptyView = (PercentRelativeLayout)findViewById(R.id.rule_list_empty_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView

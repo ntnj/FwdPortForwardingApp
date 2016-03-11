@@ -33,7 +33,7 @@ android {
 
         defaultConfig {
             applicationId "com.elixsr.portforwarder"
-            minSdkVersion 15
+            minSdkVersion 8
             targetSdkVersion 23
             versionCode version_Code
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"

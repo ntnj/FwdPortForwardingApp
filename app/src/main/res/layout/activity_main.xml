@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/main_coordinator_layout"
-    tools:context="elixsr.com.portforwarder.MainActivity"
+    tools:context="com.elixsr.portforwarder.MainActivity"
     >
 
     <android.support.design.widget.AppBarLayout
@@ -31,13 +31,29 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <TextView
-            android:id="@+id/rule_list_empty_view"
+        <android.support.percent.PercentRelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
             android:visibility="gone"
-            android:text="No rules to show :/" />
+            android:id="@+id/rule_list_empty_view">
+
+
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/sleepstate2" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                app:layout_marginTopPercent="30%"
+                android:text="No rules to show" />
+
+        </android.support.percent.PercentRelativeLayout>
+
     </android.support.v7.widget.ContentFrameLayout>
 
 
