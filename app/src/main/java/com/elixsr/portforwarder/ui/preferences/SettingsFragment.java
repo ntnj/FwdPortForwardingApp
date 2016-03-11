@@ -75,16 +75,16 @@ public class SettingsFragment extends PreferenceFragment {
         versionNamePreference = (Preference)findPreference(getString(R.string.pref_version));
 
         // set up click of help button - show webview
-        Preference helpButton = (Preference) findPreference(getString(R.string.pref_help_link));
-        helpButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                //code for what you want it to do
-                Intent helpActivityIntent = new Intent(getActivity(), HelpActivity.class);
-                startActivity(helpActivityIntent);
-                return true;
-            }
-        });
+//        Preference helpButton = (Preference) findPreference(getString(R.string.pref_help_link));
+//        helpButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+//            @Override
+//            public boolean onPreferenceClick(Preference preference) {
+//                //code for what you want it to do
+//                Intent helpActivityIntent = new Intent(getActivity(), HelpActivity.class);
+//                startActivity(helpActivityIntent);
+//                return true;
+//            }
+//        });
 
         // set up click of about elixsr button - show webview
         Preference aboutElixsrButton = (Preference) findPreference(getString(R.string.pref_about_link));

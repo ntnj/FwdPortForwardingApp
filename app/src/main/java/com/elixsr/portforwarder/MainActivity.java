@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,7 @@ import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.ui.BaseActivity;
 import com.elixsr.portforwarder.ui.NewRuleActivity;
 import com.elixsr.portforwarder.adapters.RuleListAdapter;
+import com.elixsr.portforwarder.ui.preferences.HelpActivity;
 import com.elixsr.portforwarder.ui.preferences.SettingsActivity;
 
 
@@ -62,6 +64,7 @@ public class MainActivity extends BaseActivity {
 
         setContentView(R.layout.activity_main);
         setSupportActionBar(getActionBarToolbar());
+        getActionBarToolbar().setTitle(R.string.app_tag);
 
         final Intent newRuleIntent = new Intent(this, NewRuleActivity.class);
 
@@ -184,8 +187,11 @@ public class MainActivity extends BaseActivity {
                 startActivity(prefIntent);
                 break;
             case R.id.action_toggle_forwarding:
-
                 handleForwardingButton(item);
+                break;
+            case R.id.action_help:
+                Intent helpActivityIntent = new Intent(this, HelpActivity.class);
+                startActivity(helpActivityIntent);
                 break;
         }
 

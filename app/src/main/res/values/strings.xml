@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Port Forwarder</string>
+    <string name="app_name">Fwd: Port Forwarder</string>
+    <string name="app_tag">Fwd</string>
     <string name="action_settings">Settings</string>
 
     <string name="pref_enable_ads">Enable Advertisements</string>
@@ -28,6 +29,7 @@
     <string name="new_rule_target">Target</string>
     <string name="new_rule_port">Port</string>
     <string name="new_rule_target_ip_address">Target IP Address</string>
+    <string name="action_help">Help</string>
 
     <string-array name="rule_protocol_array">
         <item>TCP</item>

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -269,9 +270,11 @@ public class ForwardingService extends IntentService {
     private void showForwardingEnabledNotification() {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_close_24dp)
-                        .setContentTitle("Fwd: The Port Forwarding Companion")
-                        .setContentText("Port Forwarding currently active");
+                        .setSmallIcon(R.drawable.ic_fwd_24dp)
+                        .setContentTitle("Port Forwarding Active")
+                        .setContentText(this.getApplicationInfo().loadLabel(this.getPackageManager()));
+
+        mBuilder.setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
 
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);
