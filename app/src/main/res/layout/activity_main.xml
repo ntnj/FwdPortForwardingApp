@@ -43,14 +43,14 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:src="@drawable/sleepstate2" />
+                app:srcCompat="@drawable/sleepstate2" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_horizontal"
                 app:layout_marginTopPercent="30%"
-                android:text="No rules to show" />
+                android:text="@string/empty_state_text" />
 
         </android.support.percent.PercentRelativeLayout>
 

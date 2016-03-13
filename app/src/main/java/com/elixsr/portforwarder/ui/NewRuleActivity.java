@@ -64,7 +64,11 @@ public class NewRuleActivity extends BaseRuleActivity {
 
         if(id == R.id.action_save_rule){
             Log.i(TAG, "Save Menu Button Clicked");
+
+            //set the item to disabled while saving
+            item.setEnabled(false);
             saveNewRule();
+            item.setEnabled(true);
             return true;
         }
 
@@ -88,6 +92,7 @@ public class NewRuleActivity extends BaseRuleActivity {
             // move to main activity
             Intent mainActivityIntent = new Intent(this, com.elixsr.portforwarder.MainActivity.class);
             startActivity(mainActivityIntent);
+
         }else{
             Toast.makeText(this, "Rule is not valid. Please check your input.",
                     Toast.LENGTH_LONG).show();

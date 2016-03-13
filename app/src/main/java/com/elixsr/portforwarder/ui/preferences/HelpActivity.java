@@ -15,7 +15,7 @@ import com.elixsr.portforwarder.ui.BaseWebActivity;
  */
 public class HelpActivity extends BaseWebActivity {
 
-    private static final String URL = "http://fwd.elixsr.com/help";
+    private static final String URL = "http://support.elix.sr/#!/products/fwd";
     private static final String TITLE = "Help";
 
     public HelpActivity() {

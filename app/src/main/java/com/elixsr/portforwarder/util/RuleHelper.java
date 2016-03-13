@@ -16,6 +16,7 @@ public class RuleHelper {
     public static final String RULE_MODEL_ID = "RuleModelId";
 
     public static final int MIN_PORT_VALUE = 1024;
+    public static final int TARGET_MIN_PORT = 1;
 
     public static ContentValues ruleModelToContentValues(RuleModel ruleModel){
 

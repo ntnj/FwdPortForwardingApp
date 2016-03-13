@@ -26,11 +26,13 @@ public class TcpForwarder extends Forwarder implements Callable<Void> {
     private static final int BUFFER_SIZE = 100000;
 
     public TcpForwarder(InetSocketAddress form, InetSocketAddress to, String ruleName) {
-        super(form, to, ruleName);
+        super("TCP", form, to, ruleName);
     }
 
     public Void call() throws IOException, BindException {
-        Log.i("TcpForwarder", "Actually Started :O");
+
+        Log.d(TAG, String.format(super.START_MESSAGE, protocol, from.getPort(), to.getPort()));
+
         try {
             Selector selector = Selector.open();
 
@@ -42,11 +44,11 @@ public class TcpForwarder extends Forwarder implements Callable<Void> {
             try {
                 listening.socket().bind(this.from, 0);
             }catch(java.net.BindException e){
-                Log.e(TAG, "Could not bind port " + from.getPort() + " for TCP Rule " + ruleName + "'", e);
-                throw new BindException("Could not bind port " + from.getPort() + " for rule '" + ruleName + "'", e);
+                Log.e(TAG, String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
+                throw new BindException(String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
             }catch(java.net.SocketException e){
-                Log.e(TAG, "Port " + from.getPort() + " already in use for rule '" + ruleName + "'", e);
-                throw new BindException("Port " + from.getPort() + " already in use for rule '" + ruleName + "'", e);
+                Log.e(TAG, String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
+                throw new BindException(String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
             }
 
             listening.register(selector, SelectionKey.OP_ACCEPT, listening);
@@ -54,7 +56,7 @@ public class TcpForwarder extends Forwarder implements Callable<Void> {
             while (true) {
 
                 if (Thread.currentThread().isInterrupted()){
-                    Log.i(TAG, "TCP Thread interrupted, will perform cleanup");
+                    Log.i(TAG, String.format(super.THREAD_INTERRUPT_CLEANUP_MESSAGE, protocol));
                     listening.close();
                     break;
                 }
@@ -86,7 +88,7 @@ public class TcpForwarder extends Forwarder implements Callable<Void> {
                 }
             }
         }catch(IOException e) {
-            Log.e("TcpForwarder", "Problem opening Selector", e);
+            Log.e(TAG, "Problem opening Selector", e);
             throw e;
         }
 
@@ -110,7 +112,6 @@ public class TcpForwarder extends Forwarder implements Callable<Void> {
 
     private static void processWritable(
             SelectionKey key) throws IOException {
-        Log.i("UdpForwarder", "Actually writing something :/");
 
         RoutingPair pair = (RoutingPair) key.attachment();
 
@@ -129,7 +130,6 @@ public class TcpForwarder extends Forwarder implements Callable<Void> {
             SelectionKey key,
             ByteBuffer readBuffer) throws IOException {
 
-        Log.i("UdpForwarder", "Actually Reading something :/");
         readBuffer.clear();
         RoutingPair pair = (RoutingPair) key.attachment();
 

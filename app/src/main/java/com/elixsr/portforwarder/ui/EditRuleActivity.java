@@ -147,7 +147,12 @@ public class EditRuleActivity extends BaseRuleActivity {
         switch(id) {
             case R.id.action_save_rule:
                 Log.i(TAG, "Save Menu Button Clicked");
+
+
+                //set the item to disabled while saving
+                item.setEnabled(false);
                 saveEditedRule();
+                item.setEnabled(true);
                 break;
             case R.id.action_delete_rule:
                 deleteRule();

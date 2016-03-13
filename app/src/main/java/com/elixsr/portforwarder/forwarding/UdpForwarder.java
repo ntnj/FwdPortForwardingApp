@@ -2,9 +2,12 @@ package com.elixsr.portforwarder.forwarding;
 
 import android.util.Log;
 
+import com.elixsr.portforwarder.exceptions.BindException;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
@@ -25,17 +28,25 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
     private static final int TIMEOUT = 3000; // Wait timeout (milliseconds)
 
     public UdpForwarder(InetSocketAddress form, InetSocketAddress to, String ruleName) {
-        super(form, to, ruleName);
+        super("UDP", form, to, ruleName);
     }
 
-    public Void call() throws IOException {
+    public Void call() throws IOException, BindException {
+
+        Log.d(TAG, String.format(super.START_MESSAGE, protocol, from.getPort(), to.getPort()));
 
         try {
             ByteBuffer readBuffer = ByteBuffer.allocate(BUFFER_SIZE);
 
             DatagramChannel inChannel = DatagramChannel.open();
             inChannel.configureBlocking(false);
-            inChannel.socket().bind(this.from);
+
+            try {
+                inChannel.socket().bind(this.from);
+            }catch(SocketException e){
+                Log.e(TAG, String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
+                throw new BindException(String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
+            }
 
             Selector selector = Selector.open();
             inChannel.register(selector, SelectionKey.OP_READ, new ClientRecord(to));
@@ -43,7 +54,7 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
             while (true) { // Run forever, receiving and echoing datagrams
 
                 if (Thread.currentThread().isInterrupted()){
-                    Log.i(TAG, "UDP Thread interrupted, will perform cleanup");
+                    Log.i(TAG, String.format(super.THREAD_INTERRUPT_CLEANUP_MESSAGE, protocol));
                     inChannel.socket().close();
                     break;
                 }
@@ -59,14 +70,14 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
 
                         // Client socket channel has pending data?
                         if (key.isReadable()) {
-                            Log.i("UdpForwarder", "Have Something to READ");
+//                            Log.i(TAG, "Have Something to READ");
                             handleRead(key, readBuffer);
                         }
 
                         // Client socket channel is available for writing and
                         // key is valid (i.e., channel not closed).
                         if (key.isValid() && key.isWritable()) {
-                            Log.i("UdpForwarder", "Have Something to WRITE");
+//                            Log.i(TAG, "Have Something to WRITE");
                             handleWrite(key);
                         }
 
@@ -76,7 +87,7 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
             }
         }
         catch(IOException e){
-            //TODO: replace with meaningful message
+            Log.e(TAG, "Problem opening Selector", e);
             throw e;
         }
 
@@ -85,7 +96,7 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
 
     public static void handleRead(SelectionKey key, ByteBuffer readBuffer) throws IOException {
 
-        Log.i("UdpForwarder", "Handling Read");
+//        Log.i("UdpForwarder", "Handling Read");
         DatagramChannel channel = (DatagramChannel) key.channel();
         ClientRecord clientRecord = (ClientRecord) key.attachment();
 

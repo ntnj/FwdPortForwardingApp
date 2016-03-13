@@ -199,9 +199,9 @@ public abstract class BaseRuleActivity extends BaseActivity {
         if(targetPortText.getText() == null || targetPortText.getText().toString().length() <= 0){
             targetPortText.setError(NO_PORT_INCLUDED_ERROR_MESSAGE);
             Log.e(TAG, "No target port was included");
-        }else if(Integer.valueOf(targetPortText.getText().toString()) < RuleHelper.MIN_PORT_VALUE){
-            targetPortText.setError("Please ensure your port is above or equal to " + RuleHelper.MIN_PORT_VALUE);
-            Log.e(TAG, "Target port was below or equal to " + RuleHelper.MIN_PORT_VALUE);
+        }else if(Integer.valueOf(targetPortText.getText().toString()) < RuleHelper.TARGET_MIN_PORT){
+            targetPortText.setError("Please ensure your port is above or equal to " + RuleHelper.TARGET_MIN_PORT);
+            Log.e(TAG, "Target port was below or equal to " + RuleHelper.TARGET_MIN_PORT);
         }else{
             //if everything is correct, set the name
             targetPort = Integer.valueOf(targetPortText.getText().toString());

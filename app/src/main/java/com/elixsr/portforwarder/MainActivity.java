@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -31,6 +33,7 @@ import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.ui.BaseActivity;
 import com.elixsr.portforwarder.ui.NewRuleActivity;
 import com.elixsr.portforwarder.adapters.RuleListAdapter;
+import com.elixsr.portforwarder.ui.intro.MainIntro;
 import com.elixsr.portforwarder.ui.preferences.HelpActivity;
 import com.elixsr.portforwarder.ui.preferences.SettingsActivity;
 
@@ -70,6 +73,9 @@ public class MainActivity extends BaseActivity {
         getActionBarToolbar().setTitle("");
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_nav_logo);
+
+        //determine if this is first start - and whether to show app intro
+        onFirstStart();
 
         final Intent newRuleIntent = new Intent(this, NewRuleActivity.class);
 
@@ -284,5 +290,40 @@ public class MainActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    private void onFirstStart(){
+        //  Declare a new thread to do a preference check
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //  Initialize SharedPreferences
+                SharedPreferences getPrefs = PreferenceManager
+                        .getDefaultSharedPreferences(getBaseContext());
+
+                //  Create a new boolean and preference and set it to true
+                boolean isFirstStart = getPrefs.getBoolean("firstStart", true);
+
+                //  If the activity has never started before...
+                if (isFirstStart) {
+
+                    //  Launch app intro
+                    Intent i = new Intent(MainActivity.this, MainIntro.class);
+                    startActivity(i);
+
+                    //  Make a new preferences editor
+                    SharedPreferences.Editor e = getPrefs.edit();
+
+                    //  Edit preference to make it false because we don't want this to run again
+                    e.putBoolean("firstStart", false);
+
+                    //  Apply changes
+                    e.apply();
+                }
+            }
+        });
+
+        // Start the thread
+        t.start();
     }
 }

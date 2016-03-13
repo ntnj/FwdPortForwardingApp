@@ -33,7 +33,7 @@ android {
 
         defaultConfig {
             applicationId "com.elixsr.portforwarder"
-            minSdkVersion 8
+            minSdkVersion 11
             targetSdkVersion 23
             versionCode version_Code
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
@@ -57,4 +57,5 @@ dependencies {
     compile 'com.android.support:design:23.+'
     compile 'com.android.support:percent:23.+'
     compile 'com.android.support:recyclerview-v7:+'
+    compile 'com.github.paolorotolo:appintro:3.4.0'
 }
