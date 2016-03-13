@@ -9,16 +9,37 @@ import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.db.RuleContract;
 
 /**
- * Created by Niall McShane on 07/03/2016.
+ * The {@link RuleModel} class provides static objects and methods related to rules.
+ *
+ * The class provides functions to convert {@link RuleModel} object to and from other common object
+ * types.
  */
 public class RuleHelper {
 
     public static final String RULE_MODEL_ID = "RuleModelId";
 
+    /**
+     * The minimum from port value.
+     *
+     * This is a result of not having root permissions.
+     */
     public static final int MIN_PORT_VALUE = 1024;
+
+    /**
+     * The minimum target port value.
+     */
     public static final int TARGET_MIN_PORT = 1;
+
+    /**
+     * The maximum from and target port value.
+     */
     public static final int MAX_PORT_VALUE = 65535;
 
+    /**
+     * Convert a {@link RuleModel} object to a {@link ContentValues} object.
+     * @param ruleModel The {@link RuleModel} object to be converted.
+     * @return a {@link ContentValues} object based off the input {@link RuleModel} object.
+     */
     public static ContentValues ruleModelToContentValues(RuleModel ruleModel){
 
         // Create a new map of values, where column names are the keys
@@ -34,6 +55,11 @@ public class RuleHelper {
         return contentValues;
     }
 
+    /**
+     * Convert a {@link Cursor} object to a {@link RuleModel} object.
+     * @param cursor The {@link Cursor} object to be converted.
+     * @return a {@link RuleModel} based off the input {@link Cursor}
+     */
     public static RuleModel cursorToRuleModel(Cursor cursor){
 
         RuleModel ruleModel = new RuleModel();
@@ -50,6 +76,11 @@ public class RuleHelper {
         return ruleModel;
     }
 
+    /**
+     * Function to find the relevant Protocol based of a {@link RuleModel} object.
+     * @param ruleModel The source {@link RuleModel} object.
+     * @return A String describing the protocol. Can be; "TCP", "UDP" or "BOTH".
+     */
     public static String getRuleProtocolFromModel(RuleModel ruleModel){
 
         String result = "";

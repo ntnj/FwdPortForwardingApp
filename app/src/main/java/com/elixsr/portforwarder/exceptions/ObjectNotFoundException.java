@@ -1,21 +1,33 @@
 package com.elixsr.portforwarder.exceptions;
 
 /**
- * Created by Niall McShane on 07/03/2016.
+ * Thrown when a required object is not found.
  */
 public class ObjectNotFoundException extends Exception {
 
+    /**
+     * {@inheritDoc}
+     */
     public ObjectNotFoundException() {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ObjectNotFoundException(String detailMessage) {
         super(detailMessage);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ObjectNotFoundException(String detailMessage, Throwable throwable) {
         super(detailMessage, throwable);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ObjectNotFoundException(Throwable throwable) {
         super(throwable);
     }

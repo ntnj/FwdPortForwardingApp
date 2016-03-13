@@ -35,12 +35,15 @@ import com.elixsr.portforwarder.exceptions.ObjectNotFoundException;
 import com.elixsr.portforwarder.models.RuleModel;
 
 /**
- * Created by Niall McShane on 06/03/2016.
+ * The {@link ForwardingService} class acts as a controller of all all forwarding.
+ *
+ * The class is responsible for starting forwarding for all rules found within the SQLite database.
+ *
+ * The class creates a new thread for each Forwarding rule.
  */
 public class ForwardingService extends IntentService {
 
-    private static final String TAG = "ForwardingService";
-    private final int NOTIFICATION_ID = 1;
+
 
     // Defines a custom Intent action
     public static final String BROADCAST_ACTION =
@@ -58,6 +61,10 @@ public class ForwardingService extends IntentService {
 
     private static final String PORT_FORWARD_SERVICE_WAKE_LOCK_TAG = "PortForwardServiceWakeLockTag";
 
+    private static final String TAG = "ForwardingService";
+
+    private static final int NOTIFICATION_ID = 1;
+
     private String status = "Test";
 
     private boolean runService = false;
@@ -68,6 +75,12 @@ public class ForwardingService extends IntentService {
     //wake lock
     private PowerManager.WakeLock wakeLock;
 
+    /**
+     * Default constructor for {@link ForwardingService}.#
+     *
+     * Creates a new instance of ForwardingService and initialises an {@link ExecutorService}
+     * with a fixed thread pool of 30 threads.
+     */
     public ForwardingService() {
         super(TAG);
         executorService = Executors.newFixedThreadPool(30);
@@ -91,6 +104,18 @@ public class ForwardingService extends IntentService {
         wakeLock.acquire();
     }
 
+    /**
+     * Starts forwarding based on rules found in database.
+     *
+     * Acquires an instance of the Forwarding Manager to turn forwarding flag on.
+     *
+     * Creates a list off callbacks for each forward thread, and handle exceptions as they come.
+     *
+     * If an exception is thrown, the service immediately stops, and the #onDestroy method is
+     * called.
+     *
+     * @param intent
+     */
     @Override
     protected void onHandleIntent(Intent intent) {
 
@@ -164,6 +189,7 @@ public class ForwardingService extends IntentService {
 
         Future<?> completedFuture;
 
+        // loop through each callback, and handle an exception
         while (remainingFutures > 0) {
             // block until a callable completes
             try {
@@ -187,15 +213,6 @@ public class ForwardingService extends IntentService {
                 e.printStackTrace();
             }
         }
-
-//        while(runService){
-////            Log.i(TAG, "Running the service");
-//            try {
-//                Thread.sleep(1000L);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
     }
 
     private InetSocketAddress generateFromIpUsingInterface(String interfaceName, int port) throws SocketException, ObjectNotFoundException {

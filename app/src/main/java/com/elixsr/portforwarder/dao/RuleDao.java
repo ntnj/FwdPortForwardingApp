@@ -13,9 +13,12 @@ import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.util.RuleHelper;
 
 /**
- * Created by Niall McShane on 07/03/2016.
+ * The {@link RuleDao} class provides common functionality for Rule database access.
  *
- * http://developer.android.com/training/basics/data-storage/databases.html#ReadDbRow
+ * This class provides common database access functions.
+ *
+ * @author Niall McShane
+ * @see <a href="http://developer.android.com/training/basics/data-storage/databases.html#ReadDbRow"></a>
  */
 public class RuleDao {
 
@@ -31,6 +34,11 @@ public class RuleDao {
         this.ruleDbHelper = ruleDbHelper;
     }
 
+    /**
+     * Inserts a valid rule into the SQLite database.
+     * @param ruleModel The source {@link RuleModel}.
+     * @return the id of the inserted rule.
+     */
     public long insertRule(RuleModel ruleModel){
         // Gets the data repository in write mode
         this.db = ruleDbHelper.getWritableDatabase();
@@ -45,6 +53,10 @@ public class RuleDao {
         return newRowId;
     }
 
+    /**
+     * Finds and returns a list of all rules.
+     * @return a list of all {@link RuleModel} objects.
+     */
     public List<RuleModel> getAllRuleModels(){
 
         List<RuleModel> ruleModels = new LinkedList<RuleModel>();

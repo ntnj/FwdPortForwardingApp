@@ -26,21 +26,37 @@ import com.elixsr.portforwarder.util.NetworkHelper;
 import com.elixsr.portforwarder.util.RuleHelper;
 
 /**
- * Created by Niall McShane on 02/03/2016.
+ * The BaseRuleActivity class  provides logic for subclasses which utilise the shared Rule detail
+ * layout.
+ *
+ * This class provides functionality to set up the core GUI components, and provides shared logic
+ * for the validation of user input.
+ *
+ * This class also provides a function to generate a {@link String} {@link List} of Network
+ * Interfaces available on the device.
+ *
+ * @author Niall McShane
  */
 public abstract class BaseRuleActivity extends BaseActivity {
 
-    private static final String TAG = "BaseRuleActivity";
-    private static final String INVALID_PORT_ERROR_MESSAGE = "Please enter a value greater than or equal to %s and less than or equal to %s";
     protected static final String ACTION_SAVE = "Save";
     protected static final String CATEGORY_RULES = "Rules";
+
+    private static final String TAG = "BaseRuleActivity";
+    private static final String INVALID_PORT_ERROR_MESSAGE = "Please enter a value greater than or equal to %s and less than or equal to %s";
 
     protected Spinner protocolSpinner;
     protected Spinner fromInterfaceSpinner;
     protected ArrayAdapter<String> fromSpinnerAdapter;
     protected ArrayAdapter<CharSequence> protocolAdapter;
 
-    public void constructDetailUi(){
+    /**
+     * Generate a user interface for all shared activities that use the {@link com.elixsr
+     * .portforwarder.R.layout.rule_detail_view} layout.
+     *
+     * This will pre-populate the {@link Spinner} Objects.
+     */
+    protected void constructDetailUi() {
 
         //set up protocol spinner/dropdown
         protocolSpinner = (Spinner) findViewById(R.id.protocol_spinner);
@@ -83,21 +99,29 @@ public abstract class BaseRuleActivity extends BaseActivity {
 
     }
 
+    /**
+     * Returns a list of all Network interfaces located on the device.
+     * @return a String list containing the name of the network interfaces on the device.
+     * @throws SocketException
+     */
     public List<String> generateInterfaceList() throws SocketException {
 
+        //create an empty list
         List<String> interfaces = new LinkedList<String>();
 
-        String address= null;
-        for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+        String address = null;
+        for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
             NetworkInterface intf = en.nextElement();
 
-            for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+            //while we have more elements
+            for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
 
+                //get the next address in from the iterator
                 InetAddress inetAddress = enumIpAddr.nextElement();
 
                 address = new String(inetAddress.getHostAddress().toString());
 
-                if(address != null & address.length() > 0 && inetAddress instanceof Inet4Address){
+                if (address != null & address.length() > 0 && inetAddress instanceof Inet4Address) {
 
                     Log.i(TAG, intf.getDisplayName() + " " + address);
                     interfaces.add(intf.getDisplayName());
@@ -107,10 +131,15 @@ public abstract class BaseRuleActivity extends BaseActivity {
         return interfaces;
     }
 
-    public RuleModel generateNewRule(){
+    /**
+     * Constructs a {@link RuleModel} object based on the data held inside the shared layout.
+     *
+     * This method will also check to ensure that all inputs are valid, and will show the user an
+     * error message if the user has not entered valid data.
+     * @return a {@link RuleModel} object as a result of the users input.
+     */
+    public RuleModel generateNewRule() {
 
-        //TODO: create a service, and split this up - too many responsibilities
-        
         //create the blank rule object
         RuleModel ruleModel = new RuleModel();
 
@@ -122,7 +151,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
         String selectedProtocol = protocolSpinner.getSelectedItem().toString();
 
         // determine the protocol
-        switch(selectedProtocol){
+        switch (selectedProtocol) {
             case NetworkHelper.TCP:
                 ruleModel.setIsTcp(true);
                 break;
@@ -145,11 +174,11 @@ public abstract class BaseRuleActivity extends BaseActivity {
         TextInputLayout ruleNameTextInputLayout = (TextInputLayout) findViewById(R.id.new_rule_name_input_layout);
 
         // validate the input, and show error message if wrong
-        if(ruleNameText.getText() == null || ruleNameText.getText().toString().length() <= 0){
+        if (ruleNameText.getText() == null || ruleNameText.getText().toString().length() <= 0) {
             ruleNameTextInputLayout.setErrorEnabled(true);
             ruleNameTextInputLayout.setError("You must enter a name");
             Log.w(TAG, "No rule name was included");
-        }else{
+        } else {
             //if everything is correct, set the name
             ruleModel.setName(ruleNameText.getText().toString());
             ruleNameTextInputLayout.setErrorEnabled(false);
@@ -161,17 +190,16 @@ public abstract class BaseRuleActivity extends BaseActivity {
         TextInputEditText fromPortText = (TextInputEditText) findViewById(R.id.new_rule_from_port);
 
         // validate the input, and show error message if wrong
-        if(fromPortText.getText() == null || fromPortText.getText().toString().length() <= 0){
+        if (fromPortText.getText() == null || fromPortText.getText().toString().length() <= 0) {
             fromPortText.setError(String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.MIN_PORT_VALUE, RuleHelper.MAX_PORT_VALUE));
             Log.w(TAG, "No from port was included");
-        }else if(Integer.valueOf(fromPortText.getText().toString()) < RuleHelper.MIN_PORT_VALUE || Integer.valueOf(fromPortText.getText().toString()) > RuleHelper.MAX_PORT_VALUE){
+        } else if (Integer.valueOf(fromPortText.getText().toString()) < RuleHelper.MIN_PORT_VALUE || Integer.valueOf(fromPortText.getText().toString()) > RuleHelper.MAX_PORT_VALUE) {
             fromPortText.setError(String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.MIN_PORT_VALUE, RuleHelper.MAX_PORT_VALUE));
             Log.w(TAG, "From port was below or equal to " + RuleHelper.MIN_PORT_VALUE);
-        }else{
+        } else {
             //if everything is correct, set the name
             ruleModel.setFromPort(Integer.valueOf(fromPortText.getText().toString()));
         }
-
 
         /*
             Target
@@ -186,14 +214,14 @@ public abstract class BaseRuleActivity extends BaseActivity {
 
 
         // validate the input, and show error message if wrong
-        if(targetIpAddressText.getText() == null || targetIpAddressText.getText().toString().length() <= 0){
+        if (targetIpAddressText.getText() == null || targetIpAddressText.getText().toString().length() <= 0) {
             targetIpAddressText.setError("You must enter a target IP Address");
             Log.w(TAG, "No target IP address was included");
-        }else if(!new IpAddressValidator().validate(targetIpAddressText.getText().toString())){
+        } else if (!new IpAddressValidator().validate(targetIpAddressText.getText().toString())) {
             //if the ip address is not valid
             targetIpAddressText.setError("Please enter a valid IP Address");
             Log.w(TAG, "Target IP address was not valid");
-        }else{
+        } else {
             //if everything is correct, set the name
             targetIpAddress = targetIpAddressText.getText().toString();
         }
@@ -204,22 +232,22 @@ public abstract class BaseRuleActivity extends BaseActivity {
         TextInputEditText targetPortText = (TextInputEditText) findViewById(R.id.new_rule_target_port);
 
         // validate the input, and show error message if wrong
-        if(targetPortText.getText() == null || targetPortText.getText().toString().length() <= 0){
+        if (targetPortText.getText() == null || targetPortText.getText().toString().length() <= 0) {
             targetPortText.setError(String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.TARGET_MIN_PORT, RuleHelper.MAX_PORT_VALUE));
             Log.e(TAG, "No target port was included");
-        }else if(Integer.valueOf(targetPortText.getText().toString()) < RuleHelper.TARGET_MIN_PORT || Integer.valueOf(targetPortText.getText().toString()) > RuleHelper.MAX_PORT_VALUE) {
+        } else if (Integer.valueOf(targetPortText.getText().toString()) < RuleHelper.TARGET_MIN_PORT || Integer.valueOf(targetPortText.getText().toString()) > RuleHelper.MAX_PORT_VALUE) {
             targetPortText.setError(String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.TARGET_MIN_PORT, RuleHelper.MAX_PORT_VALUE));
             Log.w(TAG, String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.TARGET_MIN_PORT, RuleHelper.MAX_PORT_VALUE));
-        }else{
+        } else {
             //if everything is correct, set the name
             targetPort = Integer.valueOf(targetPortText.getText().toString());
         }
 
-        if(targetIpAddress != null && targetIpAddress.length() > 0 && targetPort >= 0){
+        if (targetIpAddress != null && targetIpAddress.length() > 0 && targetPort >= 0) {
             //create a InetSocketAddress object using data
             InetSocketAddress target = new InetSocketAddress(targetIpAddress, targetPort);
             ruleModel.setTarget(target);
-        }else{
+        } else {
             Log.w(TAG, "Could not create Target InetSocketAddress Object");
         }
 

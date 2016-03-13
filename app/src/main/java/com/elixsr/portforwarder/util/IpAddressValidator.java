@@ -5,9 +5,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by Niall McShane on 07/03/2016.
+ * The IpAddressValidator provides functionality to validate an IPv4 Address.
  *
- * Credit: http://www.mkyong.com/regular-expressions/how-to-validate-ip-address-with-regular-expression/
+ * @see <a href="http://www.mkyong.com/regular-expressions/how-to-validate-ip-address-with
+ * -regular-expression/">source</a>
  */
 public class IpAddressValidator {
 

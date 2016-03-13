@@ -12,7 +12,8 @@ import com.github.paolorotolo.appintro.AppIntroFragment;
 /**
  * Created by Niall McShane on 12/03/2016.
  * <p/>
- * Uses: https://github.com/PaoloRotolo/AppIntro
+ *
+ * @see <a href="https://github.com/PaoloRotolo/AppIntro">AppIntro - Github</a>
  */
 public class MainIntro extends AppIntro2 {
 
@@ -30,12 +31,6 @@ public class MainIntro extends AppIntro2 {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
-
-//    @Override
-//    public void onSkipPressed() {
-//        // Do something when users tap on Skip button.
-//        loadMainActivity();
-//    }
 
     @Override
     public void onDonePressed() {
