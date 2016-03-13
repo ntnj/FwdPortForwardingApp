@@ -12,7 +12,7 @@ import java.util.List;
 import com.elixsr.portforwarder.forwarding.ForwardingManager;
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.models.RuleModel;
-import com.elixsr.portforwarder.ui.EditRuleActivity;
+import com.elixsr.portforwarder.ui.rules.EditRuleActivity;
 
 /**
  * Created by Niall McShane on 01/03/2016.

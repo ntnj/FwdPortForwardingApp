@@ -15,7 +15,7 @@ android {
         versionProps.load(new FileInputStream(versionPropsFile))
         def value = 0
         def runTasks = gradle.startParameter.taskNames
-        if ('assemble' in runTasks || 'assembleRelease' in runTasks || 'aR' in runTasks) {
+        if ('assemble' in runTasks || 'assembleRelease' in runTasks || 'aR' in runTasks || 'generateReleaseBuildConfig' in runTasks) {
             value = 1;
         }
 
@@ -58,4 +58,7 @@ dependencies {
     compile 'com.android.support:percent:23.+'
     compile 'com.android.support:recyclerview-v7:+'
     compile 'com.github.paolorotolo:appintro:3.4.0'
+    compile 'com.google.android.gms:play-services-analytics:8.4.0'
 }
+
+apply plugin: 'com.google.gms.google-services'

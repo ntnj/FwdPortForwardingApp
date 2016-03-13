@@ -17,6 +17,7 @@ public class RuleHelper {
 
     public static final int MIN_PORT_VALUE = 1024;
     public static final int TARGET_MIN_PORT = 1;
+    public static final int MAX_PORT_VALUE = 65535;
 
     public static ContentValues ruleModelToContentValues(RuleModel ruleModel){
 

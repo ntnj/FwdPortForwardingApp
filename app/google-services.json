@@ -1,0 +1,81 @@
+{
+  "project_info": {
+    "project_id": "fwd-port-forwarder",
+    "project_number": "177686881545",
+    "name": "Fwd port forwarder"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:177686881545:android:d25479679e9e1ab2",
+        "client_id": "android:com.elixsr.portforwader",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.elixsr.portforwader",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-75043752-1"
+          }
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:177686881545:android:cc9b799a818c5fec",
+        "client_id": "android:com.elixsr.portforwarder",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.elixsr.portforwarder",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-75043752-1"
+          }
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

@@ -1,4 +1,4 @@
-package com.elixsr.portforwarder;
+package com.elixsr.portforwarder.ui;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,7 +11,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.percent.PercentRelativeLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,23 +18,23 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
 
+import com.elixsr.portforwarder.FwdApplication;
+import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.dao.RuleDao;
 import com.elixsr.portforwarder.db.RuleDbHelper;
 import com.elixsr.portforwarder.forwarding.ForwardingManager;
 import com.elixsr.portforwarder.forwarding.ForwardingService;
 import com.elixsr.portforwarder.models.RuleModel;
-import com.elixsr.portforwarder.ui.BaseActivity;
-import com.elixsr.portforwarder.ui.NewRuleActivity;
 import com.elixsr.portforwarder.adapters.RuleListAdapter;
 import com.elixsr.portforwarder.ui.intro.MainIntro;
 import com.elixsr.portforwarder.ui.preferences.HelpActivity;
 import com.elixsr.portforwarder.ui.preferences.SettingsActivity;
+import com.elixsr.portforwarder.ui.rules.NewRuleActivity;
+import com.google.android.gms.analytics.Tracker;
 
 
 public class MainActivity extends BaseActivity {
@@ -58,6 +57,7 @@ public class MainActivity extends BaseActivity {
     private Intent forwardingServiceIntent;
     private RuleDao ruleDao;
     private PercentRelativeLayout mRuleListEmptyView;
+    private Tracker tracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +137,9 @@ public class MainActivity extends BaseActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 forwardingServiceResponseReceiver,
                 mStatusIntentFilter);
+
+        // Get tracker.
+        tracker = ((FwdApplication) this.getApplication()).getDefaultTracker();
 
         Log.i(TAG, "Finished onCreate");
     }

@@ -1,4 +1,4 @@
-package com.elixsr.portforwarder.ui;
+package com.elixsr.portforwarder.ui.rules;
 
 import android.content.Intent;
 import android.support.design.widget.TextInputEditText;
@@ -19,6 +19,8 @@ import java.util.List;
 
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.models.RuleModel;
+import com.elixsr.portforwarder.ui.BaseActivity;
+import com.elixsr.portforwarder.ui.MainActivity;
 import com.elixsr.portforwarder.util.IpAddressValidator;
 import com.elixsr.portforwarder.util.NetworkHelper;
 import com.elixsr.portforwarder.util.RuleHelper;
@@ -29,7 +31,10 @@ import com.elixsr.portforwarder.util.RuleHelper;
 public abstract class BaseRuleActivity extends BaseActivity {
 
     private static final String TAG = "BaseRuleActivity";
-    private static final String NO_PORT_INCLUDED_ERROR_MESSAGE = "Please enter a value greater than " + RuleHelper.MIN_PORT_VALUE;
+    private static final String INVALID_PORT_ERROR_MESSAGE = "Please enter a value greater than or equal to %s and less than or equal to %s";
+    protected static final String ACTION_SAVE = "Save";
+    protected static final String CATEGORY_RULES = "Rules";
+
     protected Spinner protocolSpinner;
     protected Spinner fromInterfaceSpinner;
     protected ArrayAdapter<String> fromSpinnerAdapter;
@@ -60,7 +65,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
             //show toast and move to main screen
             Toast.makeText(this, "Could not find any network interfaces.",
                     Toast.LENGTH_LONG).show();
-            Intent mainActivityIntent = new Intent(this, com.elixsr.portforwarder.MainActivity.class);
+            Intent mainActivityIntent = new Intent(this, MainActivity.class);
             startActivity(mainActivityIntent);
         }
 
@@ -143,7 +148,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
         if(ruleNameText.getText() == null || ruleNameText.getText().toString().length() <= 0){
             ruleNameTextInputLayout.setErrorEnabled(true);
             ruleNameTextInputLayout.setError("You must enter a name");
-            Log.e(TAG, "No rule name was included");
+            Log.w(TAG, "No rule name was included");
         }else{
             //if everything is correct, set the name
             ruleModel.setName(ruleNameText.getText().toString());
@@ -157,11 +162,11 @@ public abstract class BaseRuleActivity extends BaseActivity {
 
         // validate the input, and show error message if wrong
         if(fromPortText.getText() == null || fromPortText.getText().toString().length() <= 0){
-            fromPortText.setError(NO_PORT_INCLUDED_ERROR_MESSAGE);
-            Log.e(TAG, "No from port was included");
-        }else if(Integer.valueOf(fromPortText.getText().toString()) < RuleHelper.MIN_PORT_VALUE){
-            fromPortText.setError("Please ensure your port is above or equal to " + RuleHelper.MIN_PORT_VALUE);
-            Log.e(TAG, "From port was below or equal to " + RuleHelper.MIN_PORT_VALUE);
+            fromPortText.setError(String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.MIN_PORT_VALUE, RuleHelper.MAX_PORT_VALUE));
+            Log.w(TAG, "No from port was included");
+        }else if(Integer.valueOf(fromPortText.getText().toString()) < RuleHelper.MIN_PORT_VALUE || Integer.valueOf(fromPortText.getText().toString()) > RuleHelper.MAX_PORT_VALUE){
+            fromPortText.setError(String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.MIN_PORT_VALUE, RuleHelper.MAX_PORT_VALUE));
+            Log.w(TAG, "From port was below or equal to " + RuleHelper.MIN_PORT_VALUE);
         }else{
             //if everything is correct, set the name
             ruleModel.setFromPort(Integer.valueOf(fromPortText.getText().toString()));
@@ -183,11 +188,11 @@ public abstract class BaseRuleActivity extends BaseActivity {
         // validate the input, and show error message if wrong
         if(targetIpAddressText.getText() == null || targetIpAddressText.getText().toString().length() <= 0){
             targetIpAddressText.setError("You must enter a target IP Address");
-            Log.e(TAG, "No target IP address was included");
+            Log.w(TAG, "No target IP address was included");
         }else if(!new IpAddressValidator().validate(targetIpAddressText.getText().toString())){
             //if the ip address is not valid
             targetIpAddressText.setError("Please enter a valid IP Address");
-            Log.e(TAG, "Target IP address was not valid");
+            Log.w(TAG, "Target IP address was not valid");
         }else{
             //if everything is correct, set the name
             targetIpAddress = targetIpAddressText.getText().toString();
@@ -200,11 +205,11 @@ public abstract class BaseRuleActivity extends BaseActivity {
 
         // validate the input, and show error message if wrong
         if(targetPortText.getText() == null || targetPortText.getText().toString().length() <= 0){
-            targetPortText.setError(NO_PORT_INCLUDED_ERROR_MESSAGE);
+            targetPortText.setError(String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.TARGET_MIN_PORT, RuleHelper.MAX_PORT_VALUE));
             Log.e(TAG, "No target port was included");
-        }else if(Integer.valueOf(targetPortText.getText().toString()) < RuleHelper.TARGET_MIN_PORT){
-            targetPortText.setError("Please ensure your port is above or equal to " + RuleHelper.TARGET_MIN_PORT);
-            Log.e(TAG, "Target port was below or equal to " + RuleHelper.TARGET_MIN_PORT);
+        }else if(Integer.valueOf(targetPortText.getText().toString()) < RuleHelper.TARGET_MIN_PORT || Integer.valueOf(targetPortText.getText().toString()) > RuleHelper.MAX_PORT_VALUE) {
+            targetPortText.setError(String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.TARGET_MIN_PORT, RuleHelper.MAX_PORT_VALUE));
+            Log.w(TAG, String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.TARGET_MIN_PORT, RuleHelper.MAX_PORT_VALUE));
         }else{
             //if everything is correct, set the name
             targetPort = Integer.valueOf(targetPortText.getText().toString());
@@ -215,7 +220,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
             InetSocketAddress target = new InetSocketAddress(targetIpAddress, targetPort);
             ruleModel.setTarget(target);
         }else{
-            Log.e(TAG, "Could not create Target InetSocketAddress Object");
+            Log.w(TAG, "Could not create Target InetSocketAddress Object");
         }
 
         Spinner fromInterfaceSpinner = (Spinner) findViewById(R.id.from_interface_spinner);

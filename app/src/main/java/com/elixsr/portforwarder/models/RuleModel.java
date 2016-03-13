@@ -131,12 +131,13 @@ public class RuleModel implements Serializable {
             return false;
         }
 
-        if(fromPort < RuleHelper.MIN_PORT_VALUE){
+        if(fromPort < RuleHelper.MIN_PORT_VALUE || fromPort > RuleHelper.MAX_PORT_VALUE){
             return false;
         }
 
         try{
-            if(getTargetPort() != 0 && getTargetPort() < RuleHelper.MIN_PORT_VALUE){
+            //ensure that the value is greater than the minimum, and smaller than max
+            if(getTargetPort() <= 0 || getTargetPort() < RuleHelper.TARGET_MIN_PORT || getTargetPort() > RuleHelper.MAX_PORT_VALUE){
                 return false;
             }
         }catch(NullPointerException e){

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/main_coordinator_layout"
-    tools:context="com.elixsr.portforwarder.MainActivity"
+    tools:context=".ui.MainActivity"
     >
 
     <android.support.design.widget.AppBarLayout

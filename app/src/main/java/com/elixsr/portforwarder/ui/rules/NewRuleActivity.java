@@ -1,4 +1,4 @@
-package com.elixsr.portforwarder.ui;
+package com.elixsr.portforwarder.ui.rules;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,17 +7,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.net.SocketException;
-import java.util.List;
-
+import com.elixsr.portforwarder.FwdApplication;
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.dao.RuleDao;
 import com.elixsr.portforwarder.db.RuleDbHelper;
 import com.elixsr.portforwarder.models.RuleModel;
+import com.elixsr.portforwarder.ui.MainActivity;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 /**
  * Created by Niall McShane on 29/02/2016.
@@ -25,6 +24,8 @@ import com.elixsr.portforwarder.models.RuleModel;
 public class NewRuleActivity extends BaseRuleActivity {
 
     private static final String TAG = "NewRuleActivity";
+    private static final String LABEL_SAVE_RULE = "Rule Saved";
+    private Tracker tracker;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -46,6 +47,9 @@ public class NewRuleActivity extends BaseRuleActivity {
         });
 
         constructDetailUi();
+
+        // Get tracker.
+        tracker = ((FwdApplication) this.getApplication()).getDefaultTracker();
     }
 
     @Override
@@ -81,7 +85,7 @@ public class NewRuleActivity extends BaseRuleActivity {
         RuleModel ruleModel = generateNewRule();
 
         if(ruleModel.isValid()){
-            Log.i(TAG, "Rule " + ruleModel.getName() + " is valid, time to save.");
+            Log.i(TAG, "Rule '" + ruleModel.getName() + "' is valid, time to save.");
 
             //create a DAO and save the object
             RuleDao ruleDao = new RuleDao(new RuleDbHelper(this));
@@ -89,8 +93,16 @@ public class NewRuleActivity extends BaseRuleActivity {
 
             Log.i(TAG, "Rule #" + newRowId + " '" + ruleModel.getName() + "' has been saved.");
 
+
+            // Build and send an Event.
+            tracker.send(new HitBuilders.EventBuilder()
+                    .setCategory(CATEGORY_RULES)
+                    .setAction(ACTION_SAVE)
+                    .setLabel(LABEL_SAVE_RULE)
+                    .build());
+
             // move to main activity
-            Intent mainActivityIntent = new Intent(this, com.elixsr.portforwarder.MainActivity.class);
+            Intent mainActivityIntent = new Intent(this, MainActivity.class);
             startActivity(mainActivityIntent);
 
         }else{

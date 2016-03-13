@@ -11,10 +11,13 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.elixsr.portforwarder.FwdApplication;
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.db.RuleContract;
 import com.elixsr.portforwarder.db.RuleDbHelper;
 import com.elixsr.portforwarder.forwarding.ForwardingManager;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 /**
  * Created by Niall McShane on 29/02/2016.
@@ -24,9 +27,15 @@ public class SettingsFragment extends PreferenceFragment {
     private static final String TAG = "SettingsFragment";
 
     private static final String CLEAR_RULES_COMPLETE_MESSAGE = "All rules have been removed";
+
+    private static final String CATEGORY_RULES = "Rules";
+    private static final String ACTION_DELETE = "Clear";
+    private static final String LABEL_DELETE_RULE = "Delete All Rules";
+
     private ForwardingManager forwardingManager;
     private Preference clearRulesButton;
     private Preference versionNamePreference;
+    private Tracker tracker;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,6 +43,9 @@ public class SettingsFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences);
 
         forwardingManager = ForwardingManager.getInstance();
+
+        // Get tracker.
+        tracker = ((FwdApplication) getActivity().getApplication()).getDefaultTracker();
 
         clearRulesButton = (Preference)findPreference(getString(R.string.pref_clear_rules));
 
@@ -57,6 +69,13 @@ public class SettingsFragment extends PreferenceFragment {
                                 db.close();
 
                                 clearRulesButton.setEnabled(false);
+
+                                // Build and send an Event.
+                                tracker.send(new HitBuilders.EventBuilder()
+                                        .setCategory(CATEGORY_RULES)
+                                        .setAction(ACTION_DELETE)
+                                        .setLabel(LABEL_DELETE_RULE)
+                                        .build());
 
                                 Toast.makeText(getActivity(), CLEAR_RULES_COMPLETE_MESSAGE,
                                         Toast.LENGTH_SHORT).show();

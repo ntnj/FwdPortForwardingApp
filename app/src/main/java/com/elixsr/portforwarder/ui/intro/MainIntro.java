@@ -1,13 +1,11 @@
 package com.elixsr.portforwarder.ui.intro;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 
-import com.elixsr.portforwarder.MainActivity;
+import com.elixsr.portforwarder.ui.MainActivity;
 import com.elixsr.portforwarder.R;
-import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntro2;
 import com.github.paolorotolo.appintro.AppIntroFragment;
 

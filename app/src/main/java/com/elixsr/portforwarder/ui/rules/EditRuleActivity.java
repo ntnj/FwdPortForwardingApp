@@ -1,4 +1,4 @@
-package com.elixsr.portforwarder.ui;
+package com.elixsr.portforwarder.ui.rules;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -13,19 +13,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.net.SocketException;
-import java.util.List;
-
+import com.elixsr.portforwarder.FwdApplication;
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.db.RuleContract;
-import com.elixsr.portforwarder.forwarding.ForwardingService;
 import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.db.RuleDbHelper;
+import com.elixsr.portforwarder.ui.MainActivity;
 import com.elixsr.portforwarder.util.RuleHelper;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 /**
  * Created by Niall McShane on 02/03/2016.
@@ -37,11 +35,17 @@ public class EditRuleActivity extends BaseRuleActivity {
     private static final String NO_RULE_ID_FOUND_LOG_MESSAGE = "No ID was supplied to EditRuleActivity";
     private static final String NO_RULE_ID_FOUND_TOAST_MESSAGE = "Could not locate rule";
 
+    private static final String ACTION_DELETE = "Delete";
+    private static final String LABEL_DELETE_RULE = "Delete Rule";
+    private static final String LABEL_UPDATE_RULE = "Rule Updated";
+
+
     private RuleModel ruleModel;
 
     private long ruleModelId;
 
     private SQLiteDatabase db;
+    private Tracker tracker;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -128,6 +132,11 @@ public class EditRuleActivity extends BaseRuleActivity {
 
         //protocol spinner
         protocolSpinner.setSelection(protocolAdapter.getPosition(RuleHelper.getRuleProtocolFromModel(this.ruleModel)));
+        
+        
+        //set up tracking
+        // Get tracker.
+        tracker = ((FwdApplication) this.getApplication()).getDefaultTracker();
     }
 
     @Override
@@ -187,9 +196,16 @@ public class EditRuleActivity extends BaseRuleActivity {
             //close db
             db.close();
 
+            // Build and send an Event.
+            tracker.send(new HitBuilders.EventBuilder()
+                    .setCategory(CATEGORY_RULES)
+                    .setAction(ACTION_SAVE)
+                    .setLabel(LABEL_UPDATE_RULE)
+                    .build());
+
 
             // move to main activity
-            Intent mainActivityIntent = new Intent(this, com.elixsr.portforwarder.MainActivity.class);
+            Intent mainActivityIntent = new Intent(this, MainActivity.class);
             startActivity(mainActivityIntent);
         }else{
             Toast.makeText(this, "Rule is not valid. Please check your input.",
@@ -206,6 +222,7 @@ public class EditRuleActivity extends BaseRuleActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
 
+                        //TODO: add exception handling
                         //TODO: add db delete
 //                        MainActivity.RULE_MODELS.remove(ruleModelLocation);
 //                        MainActivity.ruleListAdapter.notifyItemRemoved(ruleModelLocation);
@@ -223,8 +240,15 @@ public class EditRuleActivity extends BaseRuleActivity {
                         //close the db
                         db.close();
 
+                        // Build and send an Event.
+                        tracker.send(new HitBuilders.EventBuilder()
+                                .setCategory(CATEGORY_RULES)
+                                .setAction(ACTION_DELETE)
+                                .setLabel(LABEL_DELETE_RULE)
+                                .build());
+
                         // move to main activity
-                        Intent mainActivityIntent = new Intent(getBaseContext(), com.elixsr.portforwarder.MainActivity.class);
+                        Intent mainActivityIntent = new Intent(getBaseContext(), MainActivity.class);
                         startActivity(mainActivityIntent);
                     }
                 })
