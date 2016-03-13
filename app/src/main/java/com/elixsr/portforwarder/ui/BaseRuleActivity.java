@@ -1,10 +1,12 @@
 package com.elixsr.portforwarder.ui;
 
+import android.content.Intent;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -55,7 +57,11 @@ public abstract class BaseRuleActivity extends BaseActivity {
         } catch (SocketException e) {
             Log.i(TAG, "Error generating Interface list", e);
 
-            //TODO: add better exception handling
+            //show toast and move to main screen
+            Toast.makeText(this, "Could not find any network interfaces.",
+                    Toast.LENGTH_LONG).show();
+            Intent mainActivityIntent = new Intent(this, com.elixsr.portforwarder.MainActivity.class);
+            startActivity(mainActivityIntent);
         }
 
         //set up protocol spinner/dropdown
@@ -99,8 +105,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
     public RuleModel generateNewRule(){
 
         //TODO: create a service, and split this up - too many responsibilities
-        //TODO: add validation checks - for input
-
+        
         //create the blank rule object
         RuleModel ruleModel = new RuleModel();
 
@@ -180,8 +185,6 @@ public abstract class BaseRuleActivity extends BaseActivity {
             targetIpAddressText.setError("You must enter a target IP Address");
             Log.e(TAG, "No target IP address was included");
         }else if(!new IpAddressValidator().validate(targetIpAddressText.getText().toString())){
-            //TODO: cleanup - disgusting
-
             //if the ip address is not valid
             targetIpAddressText.setError("Please enter a valid IP Address");
             Log.e(TAG, "Target IP address was not valid");

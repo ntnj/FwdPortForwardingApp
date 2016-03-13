@@ -12,6 +12,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -152,7 +153,7 @@ public class ForwardingService extends IntentService {
             }catch(SocketException | ObjectNotFoundException  e){
                 Log.e(TAG, "Error generating IP Address for FROM interface with rule '" + ruleModel.getName() + "'", e);
 
-                //TODO: add graceful UI Exception handling - broadcast this to ui
+                // graceful UI Exception handling - broadcast this to ui - it will deal with display something to the user e.g. a Toast
                 localIntent =
                         new Intent(BROADCAST_ACTION)
                                 // Puts the status into the Intent
@@ -226,8 +227,10 @@ public class ForwardingService extends IntentService {
             }
         }
 
-        //Failed to find the relevent thing
+        //Failed to find the relevant interface
         //TODO: complete
+//        Toast.makeText(this, "Could not find relevant network interface.",
+//                Toast.LENGTH_LONG).show();
         throw new ObjectNotFoundException("Could not find IP Address for Interface " + interfaceName);
     }
 

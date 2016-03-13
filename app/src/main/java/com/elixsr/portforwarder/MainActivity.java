@@ -43,9 +43,8 @@ public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
     private static final String FORWARDING_SERVICE_TAG = "ForwardingManager";
 
-    //TODO: remove when no longer developing/prototyping
-    public List<RuleModel> ruleModels;
-    public static RuleListAdapter ruleListAdapter;
+    private List<RuleModel> ruleModels;
+    private static RuleListAdapter ruleListAdapter;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
