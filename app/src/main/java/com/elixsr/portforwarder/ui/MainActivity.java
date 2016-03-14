@@ -1,3 +1,21 @@
+/*
+ * Fwd: the port forwarding app
+ * Copyright (C) 2016  Elixsr Ltd
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.elixsr.portforwarder.ui;
 
 import android.content.BroadcastReceiver;
@@ -102,7 +120,7 @@ public class MainActivity extends BaseActivity {
 
         //set up rule list and empty view
         mRecyclerView = (RecyclerView) findViewById(R.id.rule_recycler_view);
-        mRuleListEmptyView = (PercentRelativeLayout)findViewById(R.id.rule_list_empty_view);
+        mRuleListEmptyView = (PercentRelativeLayout) findViewById(R.id.rule_list_empty_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -153,10 +171,10 @@ public class MainActivity extends BaseActivity {
         invalidateOptionsMenu();
 
         //decide whether to show the rule list or the empty view
-        if(this.ruleModels.isEmpty()){
+        if (this.ruleModels.isEmpty()) {
             mRecyclerView.setVisibility(View.GONE);
             mRuleListEmptyView.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             mRecyclerView.setVisibility(View.VISIBLE);
             mRuleListEmptyView.setVisibility(View.GONE);
         }
@@ -178,9 +196,9 @@ public class MainActivity extends BaseActivity {
         MenuItem toggleForwarding = menu.findItem(R.id.action_toggle_forwarding);
 
         //it should not be able to start if there are no rules
-        if(ruleModels.size() <= 0){
+        if (ruleModels.size() <= 0) {
             toggleForwarding.setVisible(false);
-        }else{
+        } else {
             toggleForwarding.setVisible(true);
         }
 
@@ -237,7 +255,6 @@ public class MainActivity extends BaseActivity {
     }
 
 
-
     private static String generateForwardingActionMenuText(boolean forwardingFlag) {
         if (forwardingFlag) {
             return "Stop";
@@ -262,11 +279,11 @@ public class MainActivity extends BaseActivity {
     }
 
     // Broadcast receiver for receiving status updates from the IntentService
-    private class ForwardingServiceResponseReceiver extends BroadcastReceiver
-    {
+    private class ForwardingServiceResponseReceiver extends BroadcastReceiver {
         // Prevents instantiation
         private ForwardingServiceResponseReceiver() {
         }
+
         // Called when the BroadcastReceiver gets an Intent it's registered to receive
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -274,13 +291,13 @@ public class MainActivity extends BaseActivity {
              * Handle Intents here.
              */
 
-            if(intent.getExtras().containsKey(ForwardingService.PORT_FORWARD_SERVICE_STATE)){
+            if (intent.getExtras().containsKey(ForwardingService.PORT_FORWARD_SERVICE_STATE)) {
                 Log.i(TAG, "Response from ForwardingService, Forwarding status has changed.");
                 Log.i(TAG, "Forwarding status has changed to " + String.valueOf(intent.getExtras().getBoolean(ForwardingService.PORT_FORWARD_SERVICE_STATE)));
                 invalidateOptionsMenu();
             }
 
-            if(intent.getExtras().containsKey(ForwardingService.PORT_FORWARD_SERVICE_ERROR_MESSAGE)){
+            if (intent.getExtras().containsKey(ForwardingService.PORT_FORWARD_SERVICE_ERROR_MESSAGE)) {
 
                 Toast.makeText(context, intent.getExtras().getString(ForwardingService.PORT_FORWARD_SERVICE_ERROR_MESSAGE),
                         Toast.LENGTH_SHORT).show();
@@ -294,7 +311,7 @@ public class MainActivity extends BaseActivity {
         finish();
     }
 
-    private void onFirstStart(){
+    private void onFirstStart() {
         //  Declare a new thread to do a preference check
         Thread t = new Thread(new Runnable() {
             @Override
