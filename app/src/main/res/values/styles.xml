@@ -34,4 +34,6 @@
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
+    <style name="tempSpinnerOverride"/>
+
 </resources>

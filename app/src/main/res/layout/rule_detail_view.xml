@@ -71,7 +71,7 @@
         android:drawSelectorOnTop="true"
         android:layout_marginTop="5dip"
         android:prompt="@string/select_rule_protocol"
-        style="@style/Widget.AppCompat.Spinner.Underlined"
+        style="@style/tempSpinnerOverride"
         android:id="@+id/protocol_spinner">
     </android.support.v7.widget.AppCompatSpinner>
 
@@ -94,7 +94,7 @@
             android:drawSelectorOnTop="true"
             android:prompt="@string/select_rule_protocol"
             android:id="@+id/from_interface_spinner"
-            style="@style/Widget.AppCompat.Spinner.Underlined"
+            style="@style/tempSpinnerOverride"
             app:layout_widthPercent="70%">
         </android.support.v7.widget.AppCompatSpinner>
 
