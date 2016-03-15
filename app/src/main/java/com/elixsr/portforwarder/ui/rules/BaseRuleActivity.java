@@ -93,15 +93,30 @@ public abstract class BaseRuleActivity extends BaseActivity {
         List<String> interfaces = null;
         try {
             interfaces = generateInterfaceList();
+
+
         } catch (SocketException e) {
             Log.i(TAG, "Error generating Interface list", e);
 
             //show toast and move to main screen
-            Toast.makeText(this, "Could not find any network interfaces.",
+            Toast.makeText(this, "Problem locating network interfaces. Please refer to 'help' to " +
+                            "assist with troubleshooting.",
                     Toast.LENGTH_LONG).show();
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
             startActivity(mainActivityIntent);
+            return;
         }
+
+        //check to ensure we have some interface to show!
+        if(interfaces == null || interfaces.isEmpty()){
+            Toast.makeText(this, "Could not locate any network interfaces. Please refer to 'help'" +
+                            " to assist with troubleshooting.",
+                    Toast.LENGTH_LONG).show();
+            Intent mainActivityIntent = new Intent(this, MainActivity.class);
+            startActivity(mainActivityIntent);
+            return;
+        }
+
 
         //set up protocol spinner/dropdown
         fromInterfaceSpinner = (Spinner) findViewById(R.id.from_interface_spinner);
