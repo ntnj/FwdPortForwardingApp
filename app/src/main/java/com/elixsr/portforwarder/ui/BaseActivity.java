@@ -34,34 +34,24 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private static final String TAG = "BaseActivity" ;
 
-    private boolean isDark = false;
-
     @Override
     protected void onCreate(Bundle ofJoy) {
         // Check preferences to determine which theme is requested
-//        if (PreferenceManager.getDefaultSharedPreferences(this)
-//                .getBoolean("pref_dark_theme", false)) {
-//            Log.i(TAG, "onCreate: Entered dark theme");
-//            setTheme(R.style.DarkTheme_NoActionBar);
-//            isDark = true;
-//        }else{
-//            isDark = false;
-//        }
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("pref_dark_theme", false)) {
+            setTheme(R.style.DarkTheme_NoActionBar);
+        }
         super.onCreate(ofJoy);
     }
 
     @Override
     protected void onResume() {
+        // Check preferences to determine which theme is requested
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("pref_dark_theme", false)) {
+            setTheme(R.style.DarkTheme_NoActionBar);
+        }
         super.onResume();
-
-        Log.i(TAG, "RESUMED " + isDark);
-//        if (PreferenceManager.getDefaultSharedPreferences(this)
-//                .getBoolean("pref_dark_theme", false)) {
-//            Log.i(TAG, "THEME IS -->" + isDark);
-//            if(!isDark){
-//                recreate();
-//            }
-//        }
     }
 
 

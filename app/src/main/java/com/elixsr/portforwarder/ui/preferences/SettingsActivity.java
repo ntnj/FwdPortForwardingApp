@@ -19,8 +19,11 @@
 package com.elixsr.portforwarder.ui.preferences;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import com.elixsr.portforwarder.R;
@@ -31,6 +34,9 @@ import com.elixsr.portforwarder.ui.MainActivity;
  * Created by Niall McShane on 29/02/2016.
  */
 public class SettingsActivity extends BaseActivity {
+
+
+    private final String TAG = "SettingsActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,13 +50,12 @@ public class SettingsActivity extends BaseActivity {
 
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                onBackPressed();
-                Intent mainActivity = new Intent(SettingsActivity.this, MainActivity.class);
-                startActivity(mainActivity);
+                onBackPressed();
             }
         });
 
@@ -60,5 +65,4 @@ public class SettingsActivity extends BaseActivity {
 
 
     }
-
 }
