@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -13,17 +13,17 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
-        <!-- Used to for the title of the Toolbar -->
-        <item name="android:textColorPrimary">@color/textColorPrimary</item>
-        <!-- Used to for the title of the Toolbar when parent is Theme.AppCompat.Light -->
-        <item name="android:textColorPrimaryInverse">#fff</item>
-        <!-- Used to color the text of the action menu icons -->
-        <item name="android:textColorSecondary">#fff</item>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <!--&lt;!&ndash; Used to for the title of the Toolbar &ndash;&gt;-->
+        <!--<item name="android:textColorPrimary">@color/textColorPrimary</item>-->
+        <!--&lt;!&ndash; Used to for the title of the Toolbar when parent is Theme.AppCompat.Light &ndash;&gt;-->
+        <!--<item name="android:textColorPrimaryInverse">#fff</item>-->
+        <!--&lt;!&ndash; Used to color the text of the action menu icons &ndash;&gt;-->
+        <!--<item name="android:textColorSecondary">#fff</item>-->
 
-        <!-- Menu item Colour -->
-        <item name="android:actionMenuTextColor">@color/textColorPrimary</item>
-        <item name="actionMenuTextColor">@color/textColorPrimary</item>
+        <!--&lt;!&ndash; Menu item Colour &ndash;&gt;-->
+        <!--<item name="android:actionMenuTextColor">@color/textColorPrimary</item>-->
+        <!--<item name="actionMenuTextColor">@color/textColorPrimary</item>-->
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
