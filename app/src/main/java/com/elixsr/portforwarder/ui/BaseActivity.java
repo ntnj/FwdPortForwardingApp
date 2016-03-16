@@ -23,6 +23,7 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.elixsr.portforwarder.R;
 
@@ -31,16 +32,39 @@ import com.elixsr.portforwarder.R;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        // Check preferences to determine which theme is requested
-        if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean("pref_dark_theme", false)) {
-            setTheme(R.style.AppTheme_Dark);
-        }
+    private static final String TAG = "BaseActivity" ;
 
-        super.onCreate(savedInstanceState);
+    private boolean isDark = false;
+
+    @Override
+    protected void onCreate(Bundle ofJoy) {
+        // Check preferences to determine which theme is requested
+//        if (PreferenceManager.getDefaultSharedPreferences(this)
+//                .getBoolean("pref_dark_theme", false)) {
+//            Log.i(TAG, "onCreate: Entered dark theme");
+//            setTheme(R.style.DarkTheme_NoActionBar);
+//            isDark = true;
+//        }else{
+//            isDark = false;
+//        }
+        super.onCreate(ofJoy);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Log.i(TAG, "RESUMED " + isDark);
+//        if (PreferenceManager.getDefaultSharedPreferences(this)
+//                .getBoolean("pref_dark_theme", false)) {
+//            Log.i(TAG, "THEME IS -->" + isDark);
+//            if(!isDark){
+//                recreate();
+//            }
+//        }
+    }
+
+
 
     // Primary toolbar and drawer toggle
     private Toolbar mActionBarToolbar;

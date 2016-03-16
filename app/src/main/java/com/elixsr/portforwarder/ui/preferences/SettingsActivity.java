@@ -18,12 +18,14 @@
 
 package com.elixsr.portforwarder.ui.preferences;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.ui.BaseActivity;
+import com.elixsr.portforwarder.ui.MainActivity;
 
 /**
  * Created by Niall McShane on 29/02/2016.
@@ -46,7 +48,9 @@ public class SettingsActivity extends BaseActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+//                onBackPressed();
+                Intent mainActivity = new Intent(SettingsActivity.this, MainActivity.class);
+                startActivity(mainActivity);
             }
         });
 
