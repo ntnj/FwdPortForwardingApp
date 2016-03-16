@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Light colour palette -->
     <color name="colorPrimary">#4B9AFF</color>
     <color name="colorPrimaryDark">#3D8BED</color>
     <color name="colorAccent">#536DFE</color>
@@ -7,4 +8,14 @@
     <color name="textColorPrimary">#FFFFFF</color>
 
     <color name="list_dropdown_divider_color">#92a3a3a3</color>
+
+    <!-- Dark colour palette -->
+    <color name="colorPrimaryInverse">#FFFFFF</color>
+    <color name="colorPrimaryDarkInverse">#FFFFFF</color>
+    <color name="colorAccentInverse">#FFFFFF</color>
+
+    <color name="textColorPrimaryInverse">#FFFFFF</color>
+
+    <color name="list_dropdown_divider_color_inverse">#FFFFFF</color>
+
 </resources>

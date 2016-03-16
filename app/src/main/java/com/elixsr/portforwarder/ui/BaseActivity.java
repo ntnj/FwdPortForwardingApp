@@ -18,6 +18,9 @@
 
 package com.elixsr.portforwarder.ui;
 
+import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -28,10 +31,22 @@ import com.elixsr.portforwarder.R;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // Check preferences to determine which theme is requested
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("pref_dark_theme", false)) {
+            setTheme(R.style.AppTheme_Dark);
+        }
+
+        super.onCreate(savedInstanceState);
+    }
+
     // Primary toolbar and drawer toggle
     private Toolbar mActionBarToolbar;
 
     protected Toolbar getActionBarToolbar() {
+
         if (mActionBarToolbar == null) {
             mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
             if (mActionBarToolbar != null) {
@@ -42,5 +57,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return mActionBarToolbar;
     }
+
 
 }

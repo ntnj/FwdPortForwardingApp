@@ -6,13 +6,15 @@
         <!--android:title="@string/pref_enable_ads"-->
         <!--android:summary="@string/pref_enable_ads_summary"-->
         <!--android:defaultValue="true" />-->
-
     <PreferenceCategory
         android:title="@string/pref_general_category_title"
         android:key="pref_general_category">
         <Preference
             android:key="@string/pref_clear_rules"
             android:title="@string/pref_clear_rules_text" />
+        <CheckBoxPreference
+            android:key="pref_dark_theme"
+            android:title="Dark Mode" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_about_category_title"

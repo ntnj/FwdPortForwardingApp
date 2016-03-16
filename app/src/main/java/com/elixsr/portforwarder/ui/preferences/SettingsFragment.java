@@ -20,6 +20,7 @@ package com.elixsr.portforwarder.ui.preferences;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -53,6 +54,11 @@ public class SettingsFragment extends PreferenceFragment {
     private ForwardingManager forwardingManager;
     private Preference clearRulesButton;
     private Preference versionNamePreference;
+
+
+
+    private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferencesListener;
+
     private Tracker tracker;
 
     @Override
@@ -134,6 +140,27 @@ public class SettingsFragment extends PreferenceFragment {
                 return true;
             }
         });
+
+
+
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        //Recreate our activity if we changed to dark theme
+        sharedPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                if (key.equals("pref_dark_theme")) {
+                    getActivity().recreate();
+                }
+            }
+        };
+
+        //prevent garbage collection
+        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(sharedPreferencesListener);
     }
 
     @Override
@@ -154,5 +181,13 @@ public class SettingsFragment extends PreferenceFragment {
             versionName = versionName + "not found";
         }
         versionNamePreference.setTitle(versionName);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        //Ensure we unregister our previous listener - as it now points to a null activity
+        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(sharedPreferencesListener);
     }
 }

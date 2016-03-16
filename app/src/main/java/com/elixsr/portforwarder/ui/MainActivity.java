@@ -81,6 +81,8 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+
         // get an instance of the forwarding manager
         this.forwardingManager = ForwardingManager.getInstance();
 

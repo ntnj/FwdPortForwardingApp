@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Fwd: el enrutamiento de puerto app</string>
+    <string name="pref_about_category_title">Acerca</string>
+    <string name="new_rule_target_ip_address">Dirección IP Destino</string>
+    <string name="new_rule_target">Destino</string>
+    <string name="new_rule_port">Puerto</string>
+    <string name="new_rule_from">De</string>
+    <string name="empty_state_text">No hay reglas para mostrar</string>
+    <string name="app_tag">Fwd</string>
+    <string name="action_start_forwarding">Comienzo</string>
+    <string name="action_settings">Configuraciones</string>
+    <string name="action_save_rule">Guardar</string>
+    <string name="action_help">Ayuda (Inglés)</string>
+    <string name="action_delete_rule">Eliminar</string>
+    <string name="pref_about_link_text">Acerca de Elixsr (Inglés)</string>
+    <string name="pref_clear_rules_text">Borrar Reglas</string>
+    <string name="pref_enable_ads">Habilitar Publicidad</string>
+    <string name="pref_general_category_title">General</string>
+    <string name="pref_help_link_text">Ayuda</string>
+    <string name="rule_title_hint">Regla Titulo</string>
+    <string name="select_rule_protocol">Seleccionar el Protocolo</string>
+</resources>
