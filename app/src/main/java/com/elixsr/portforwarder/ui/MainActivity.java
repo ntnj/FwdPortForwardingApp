@@ -58,7 +58,7 @@ import com.google.android.gms.analytics.Tracker;
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = "MainActivity";
-    private static final String FORWARDING_SERVICE_TAG = "ForwardingManager";
+    private static final String FORWARDING_MANAGER_KEY = "ForwardingManager";
     private static final String FORWARDING_SERVICE_KEY = "ForwardingService";
 
     private List<RuleModel> ruleModels;
@@ -83,9 +83,8 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
 
-
-        // get an instance of the forwarding manager
         this.forwardingManager = ForwardingManager.getInstance();
+
 
         setContentView(R.layout.activity_main);
         setSupportActionBar(getActionBarToolbar());
@@ -140,11 +139,9 @@ public class MainActivity extends BaseActivity {
         //store the coordinator layout for snackbar
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator_layout);
 
-        if(savedInstanceState.containsKey(FORWARDING_SERVICE_KEY)) {
-            forwardingServiceIntent = (Intent) savedInstanceState.getSerializable(FORWARDING_SERVICE_KEY);
-        } else {
-            forwardingServiceIntent = ((FwdApplication) this.getApplication()).getForwardingServiceIntent();
-        }
+
+        forwardingServiceIntent = new Intent(this, ForwardingService.class);
+
 
         /*
             Service stuff
@@ -273,12 +270,14 @@ public class MainActivity extends BaseActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putSerializable(FORWARDING_SERVICE_TAG, this.forwardingManager);
+        outState.putSerializable(FORWARDING_MANAGER_KEY, this.forwardingManager);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+//        stopService(forwardingServiceIntent);
         Log.i(TAG, "Destroyed");
     }
 

@@ -61,8 +61,6 @@ import com.elixsr.portforwarder.models.RuleModel;
  */
 public class ForwardingService extends IntentService {
 
-
-
     // Defines a custom Intent action
     public static final String BROADCAST_ACTION =
             "com.elixsr.portforwarder.forwarding.ForwardingService.BROADCAST";
@@ -209,6 +207,7 @@ public class ForwardingService extends IntentService {
 
         // loop through each callback, and handle an exception
         while (remainingFutures > 0) {
+
             // block until a callable completes
             try {
                 completedFuture = completionService.take();
@@ -269,6 +268,13 @@ public class ForwardingService extends IntentService {
     }
 
     @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        Log.i(TAG, "onTaskRemoved: called");
+        this.onDestroy();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         runService = false;
@@ -292,8 +298,6 @@ public class ForwardingService extends IntentService {
     }
 
     private void hideForwardingEnabledNotification() {
-
-
 
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

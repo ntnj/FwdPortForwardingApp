@@ -54,7 +54,6 @@ public class NewRuleActivity extends BaseRuleActivity {
         //set up toolbar
         Toolbar toolbar = getActionBarToolbar();
         setSupportActionBar(toolbar);
-        toolbar.setTitle("New Rule");
 
         toolbar.setNavigationIcon(R.drawable.ic_close_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

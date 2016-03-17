@@ -90,7 +90,6 @@ public class EditRuleActivity extends BaseRuleActivity {
         //set up toolbar
         Toolbar toolbar = getActionBarToolbar();
         setSupportActionBar(toolbar);
-        toolbar.setTitle("Edit Rule");
 
         toolbar.setNavigationIcon(R.drawable.ic_close_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

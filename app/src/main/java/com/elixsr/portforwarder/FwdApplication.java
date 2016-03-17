@@ -35,8 +35,6 @@ public class FwdApplication extends Application {
     private static final String TAG = "FwdApplication";
     private Tracker mTracker;
 
-    private Intent forwardingServiceIntent;
-
     /**
      * Gets the default {@link Tracker} for this {@link Application}.
      * @return tracker
@@ -51,26 +49,5 @@ public class FwdApplication extends Application {
         return mTracker;
     }
 
-    synchronized public Intent getForwardingServiceIntent () {
-        if (forwardingServiceIntent == null) {
-            forwardingServiceIntent = new Intent(this,ForwardingService.class);
-        }
-        return forwardingServiceIntent;
-    }
 
-
-
-    @Override
-    public void onTerminate() {
-        stopService(forwardingServiceIntent);
-        Log.i(TAG, "onTerminate: ");
-        super.onTerminate();
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-
-    }
 }

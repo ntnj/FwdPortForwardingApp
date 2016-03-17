@@ -63,6 +63,7 @@ public class SettingsFragment extends PreferenceFragment {
     private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferencesListener;
 
     private Tracker tracker;
+    private Preference changeThemeToggle;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -146,6 +147,7 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
 
+        changeThemeToggle = (Preference) findPreference(getString(R.string.pref_dark_theme));
 
     }
 
@@ -175,8 +177,10 @@ public class SettingsFragment extends PreferenceFragment {
         super.onStart();
         if(forwardingManager.isEnabled()){
             clearRulesButton.setEnabled(false);
+//            changeThemeToggle.setEnabled(false);
         }else{
             clearRulesButton.setEnabled(true);
+//            changeThemeToggle.setEnabled(true);
         }
 
         String versionName = "Version ";
