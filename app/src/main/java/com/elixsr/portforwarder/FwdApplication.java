@@ -19,7 +19,10 @@
 package com.elixsr.portforwarder;
 
 import android.app.Application;
+import android.content.Intent;
+import android.util.Log;
 
+import com.elixsr.portforwarder.forwarding.ForwardingService;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
@@ -29,7 +32,10 @@ import com.google.android.gms.analytics.Tracker;
  */
 public class FwdApplication extends Application {
 
+    private static final String TAG = "FwdApplication";
     private Tracker mTracker;
+
+    private Intent forwardingServiceIntent;
 
     /**
      * Gets the default {@link Tracker} for this {@link Application}.
@@ -43,5 +49,28 @@ public class FwdApplication extends Application {
             mTracker.enableAutoActivityTracking(true);
         }
         return mTracker;
+    }
+
+    synchronized public Intent getForwardingServiceIntent () {
+        if (forwardingServiceIntent == null) {
+            forwardingServiceIntent = new Intent(this,ForwardingService.class);
+        }
+        return forwardingServiceIntent;
+    }
+
+
+
+    @Override
+    public void onTerminate() {
+        stopService(forwardingServiceIntent);
+        Log.i(TAG, "onTerminate: ");
+        super.onTerminate();
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+
     }
 }

@@ -18,14 +18,22 @@
 
 package com.elixsr.portforwarder.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.elixsr.portforwarder.R;
+import com.elixsr.portforwarder.forwarding.ForwardingService;
+import com.elixsr.portforwarder.ui.preferences.SettingsFragment;
 
 /**
  * Created by Niall McShane on 28/02/2016.
@@ -36,6 +44,19 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle ofJoy) {
+
+        //handle intents
+        IntentFilter themeChangeIntentFilter = new IntentFilter(
+                SettingsFragment.DARK_MODE_BROADCAST);
+
+        ThemeChangeReceiver themeChangeReceiver =
+                new ThemeChangeReceiver();
+
+        // Registers the ForwardingServiceResponseReceiver and its intent filters
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                themeChangeReceiver,
+                themeChangeIntentFilter);
+
         // Check preferences to determine which theme is requested
         if (PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean("pref_dark_theme", false)) {
@@ -70,6 +91,20 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         }
         return mActionBarToolbar;
+    }
+
+    // Broadcast receiver for receiving status updates from the IntentService
+    private class ThemeChangeReceiver extends BroadcastReceiver {
+        // Prevents instantiation
+        private ThemeChangeReceiver() {
+        }
+
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i(TAG, "onReceive: style changed");
+            recreate();
+        }
     }
 
 

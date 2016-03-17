@@ -59,6 +59,7 @@ public class MainActivity extends BaseActivity {
 
     private static final String TAG = "MainActivity";
     private static final String FORWARDING_SERVICE_TAG = "ForwardingManager";
+    private static final String FORWARDING_SERVICE_KEY = "ForwardingService";
 
     private List<RuleModel> ruleModels;
     private static RuleListAdapter ruleListAdapter;
@@ -139,7 +140,11 @@ public class MainActivity extends BaseActivity {
         //store the coordinator layout for snackbar
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator_layout);
 
-        forwardingServiceIntent = new Intent(this, ForwardingService.class);
+        if(savedInstanceState.containsKey(FORWARDING_SERVICE_KEY)) {
+            forwardingServiceIntent = (Intent) savedInstanceState.getSerializable(FORWARDING_SERVICE_KEY);
+        } else {
+            forwardingServiceIntent = ((FwdApplication) this.getApplication()).getForwardingServiceIntent();
+        }
 
         /*
             Service stuff
@@ -274,9 +279,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        //when this activity is destroyed, destroy the forwarding service
-        stopService(forwardingServiceIntent);
         Log.i(TAG, "Destroyed");
     }
 

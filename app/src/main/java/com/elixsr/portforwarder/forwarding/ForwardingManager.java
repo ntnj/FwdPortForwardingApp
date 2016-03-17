@@ -18,6 +18,8 @@
 
 package com.elixsr.portforwarder.forwarding;
 
+import android.content.Intent;
+
 import java.io.Serializable;
 
 /**
@@ -30,6 +32,7 @@ import java.io.Serializable;
 public class ForwardingManager implements Serializable {
 
     private static ForwardingManager instance = null;
+
 
     private ForwardingManager(){
 
@@ -64,5 +67,8 @@ public class ForwardingManager implements Serializable {
     protected void disableForwarding(){
         this.isEnabled = false;
     }
+
+
+
 
 }

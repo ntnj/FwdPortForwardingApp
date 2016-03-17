@@ -26,6 +26,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
@@ -50,7 +51,9 @@ public class SettingsFragment extends PreferenceFragment {
     private static final String CATEGORY_RULES = "Rules";
     private static final String ACTION_DELETE = "Clear";
     private static final String LABEL_DELETE_RULE = "Delete All Rules";
+    public static final String DARK_MODE_BROADCAST = "com.elixsr.DARK_MODE_TOGGLE";
 
+    private LocalBroadcastManager localBroadcastManager;
     private ForwardingManager forwardingManager;
     private Preference clearRulesButton;
     private Preference versionNamePreference;
@@ -67,6 +70,7 @@ public class SettingsFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences);
 
         forwardingManager = ForwardingManager.getInstance();
+        localBroadcastManager = LocalBroadcastManager.getInstance(getActivity().getBaseContext());
 
         // Get tracker.
         tracker = ((FwdApplication) getActivity().getApplication()).getDefaultTracker();
@@ -154,7 +158,10 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (key.equals("pref_dark_theme")) {
-                    getActivity().recreate();
+                    Intent intent = new Intent();
+                    intent.setAction(DARK_MODE_BROADCAST);
+                    localBroadcastManager.sendBroadcast(intent);
+
                 }
             }
         };
