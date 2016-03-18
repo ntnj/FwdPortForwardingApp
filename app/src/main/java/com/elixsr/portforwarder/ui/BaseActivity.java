@@ -41,6 +41,7 @@ import com.elixsr.portforwarder.ui.preferences.SettingsFragment;
 public abstract class BaseActivity extends AppCompatActivity {
 
     private static final String TAG = "BaseActivity" ;
+    private ThemeChangeReceiver themeChangeReceiver;
 
     @Override
     protected void onCreate(Bundle ofJoy) {
@@ -49,7 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         IntentFilter themeChangeIntentFilter = new IntentFilter(
                 SettingsFragment.DARK_MODE_BROADCAST);
 
-        ThemeChangeReceiver themeChangeReceiver =
+        themeChangeReceiver =
                 new ThemeChangeReceiver();
 
         // Registers the ForwardingServiceResponseReceiver and its intent filters
@@ -75,7 +76,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onResume();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
+        Log.i(TAG, "onDestroy: CALLED");
+
+        //ensure that it is no longer looking out for broadcasts
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(themeChangeReceiver);
+    }
 
     // Primary toolbar and drawer toggle
     private Toolbar mActionBarToolbar;

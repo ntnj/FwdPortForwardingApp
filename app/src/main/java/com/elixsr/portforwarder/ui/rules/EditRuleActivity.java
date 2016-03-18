@@ -223,6 +223,7 @@ public class EditRuleActivity extends BaseRuleActivity {
 
             // move to main activity
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
+            finish();
             startActivity(mainActivityIntent);
         }else{
             Toast.makeText(this, "Rule is not valid. Please check your input.",
@@ -266,7 +267,9 @@ public class EditRuleActivity extends BaseRuleActivity {
 
                         // move to main activity
                         Intent mainActivityIntent = new Intent(getBaseContext(), MainActivity.class);
+                        finish();
                         startActivity(mainActivityIntent);
+
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

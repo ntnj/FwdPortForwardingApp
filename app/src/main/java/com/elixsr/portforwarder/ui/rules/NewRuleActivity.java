@@ -120,6 +120,7 @@ public class NewRuleActivity extends BaseRuleActivity {
 
             // move to main activity
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
+            finish();
             startActivity(mainActivityIntent);
 
         }else{
