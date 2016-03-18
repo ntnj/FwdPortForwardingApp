@@ -2,7 +2,7 @@
 <resources xmlns:tools="https://schemas.android.com/tools" tools:ignore="TypographyDashes">
 
     <!-- Tracking ID -->
-    <string name="ga_trackingId">UA-75043752-1</string>
+    <string name="ga_trackingId">UA-75043752-3</string>
 
     <!-- Enable automatic Activity measurement -->
     <bool name="ga_autoActivityTracking">true</bool>
@@ -12,6 +12,9 @@
 
     <!-- Anonymize tracking -->
     <bool name="ga_anonymizeIp">true</bool>
+
+    <!-- Enable debugging -->
+    <bool name="ga_debug">true</bool>
 
     <!-- The screen names that will appear in reports -->
     <screenName name="com.elixsr.portforwarder.ui.MainActivity">
