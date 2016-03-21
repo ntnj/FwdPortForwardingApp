@@ -54,7 +54,6 @@ public class NewRuleActivity extends BaseRuleActivity {
         //set up toolbar
         Toolbar toolbar = getActionBarToolbar();
         setSupportActionBar(toolbar);
-        toolbar.setTitle("New Rule");
 
         toolbar.setNavigationIcon(R.drawable.ic_close_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -121,6 +120,7 @@ public class NewRuleActivity extends BaseRuleActivity {
 
             // move to main activity
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
+            finish();
             startActivity(mainActivityIntent);
 
         }else{

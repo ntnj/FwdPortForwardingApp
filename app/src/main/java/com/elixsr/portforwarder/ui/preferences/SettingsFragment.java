@@ -26,6 +26,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -52,6 +53,8 @@ public class SettingsFragment extends PreferenceFragment {
     private static final String ACTION_DELETE = "Clear";
     private static final String LABEL_DELETE_RULE = "Delete All Rules";
     public static final String DARK_MODE_BROADCAST = "com.elixsr.DARK_MODE_TOGGLE";
+    private static final String CATEGORY_THEME = "Theme";
+    private static final String ACTION_CHANGE = "Change";
 
     private LocalBroadcastManager localBroadcastManager;
     private ForwardingManager forwardingManager;
@@ -63,6 +66,7 @@ public class SettingsFragment extends PreferenceFragment {
     private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferencesListener;
 
     private Tracker tracker;
+    private Preference changeThemeToggle;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -146,6 +150,7 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
 
+        changeThemeToggle = (Preference) findPreference(getString(R.string.pref_dark_theme));
 
     }
 
@@ -158,6 +163,16 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (key.equals("pref_dark_theme")) {
+
+
+                    // Build and send an Event.
+                    tracker.send(new HitBuilders.EventBuilder()
+                            .setCategory(CATEGORY_THEME)
+                            .setAction(ACTION_CHANGE)
+                            .setLabel("Dark Mode: " + sharedPreferences
+                                    .getBoolean("pref_dark_theme", false))
+                            .build());
+
                     Intent intent = new Intent();
                     intent.setAction(DARK_MODE_BROADCAST);
                     localBroadcastManager.sendBroadcast(intent);
@@ -175,8 +190,10 @@ public class SettingsFragment extends PreferenceFragment {
         super.onStart();
         if(forwardingManager.isEnabled()){
             clearRulesButton.setEnabled(false);
+//            changeThemeToggle.setEnabled(false);
         }else{
             clearRulesButton.setEnabled(true);
+//            changeThemeToggle.setEnabled(true);
         }
 
         String versionName = "Version ";

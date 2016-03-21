@@ -25,33 +25,38 @@
         </activity>
         <activity
             android:name=".ui.preferences.SettingsActivity"
-            android:parentActivityName=".ui.MainActivity">
+            android:parentActivityName=".ui.MainActivity"
+            android:label="@string/settings_title">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.MainActivity"/>
         </activity>
         <activity
             android:name=".ui.rules.NewRuleActivity"
-            android:parentActivityName=".ui.MainActivity">
+            android:parentActivityName=".ui.MainActivity"
+            android:label="@string/new_rule_title">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.MainActivity"/>
         </activity>
         <activity
             android:name=".ui.rules.EditRuleActivity"
-            android:parentActivityName=".ui.MainActivity">
+            android:parentActivityName=".ui.MainActivity"
+            android:label="@string/edit_rule_title">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.MainActivity"/>
         </activity>
         <activity android:name=".ui.preferences.HelpActivity"
-            android:parentActivityName=".ui.preferences.SettingsActivity">
+            android:parentActivityName=".ui.preferences.SettingsActivity"
+            android:label="@string/help_title">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.preferences.SettingsActivity"/>
         </activity>
         <activity android:name=".ui.preferences.AboutElixsrActivity"
-            android:parentActivityName=".ui.preferences.SettingsActivity">
+            android:parentActivityName=".ui.preferences.SettingsActivity"
+            android:label="@string/about_elixsr_title">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.preferences.SettingsActivity"/>

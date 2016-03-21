@@ -46,7 +46,7 @@ public class SettingsActivity extends BaseActivity {
 
         Toolbar toolbar = getActionBarToolbar();
         setSupportActionBar(toolbar);
-        toolbar.setTitle("Settings");
+//        toolbar.setTitle("Settings");
 
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

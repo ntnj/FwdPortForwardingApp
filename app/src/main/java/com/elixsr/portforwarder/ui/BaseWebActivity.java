@@ -32,11 +32,9 @@ import com.elixsr.portforwarder.R;
 public abstract class BaseWebActivity  extends BaseActivity {
 
     private final String url;
-    private final String title;
 
-    public BaseWebActivity(String url, String title) {
+    public BaseWebActivity(String url) {
         this.url = url;
-        this.title = title;
     }
 
     @Override
@@ -48,7 +46,6 @@ public abstract class BaseWebActivity  extends BaseActivity {
         //set up toolbar
         Toolbar toolbar = getActionBarToolbar();
         setSupportActionBar(toolbar);
-        toolbar.setTitle(this.title);
 
         toolbar.setNavigationIcon(R.drawable.ic_close_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

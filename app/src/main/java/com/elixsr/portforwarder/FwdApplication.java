@@ -35,8 +35,6 @@ public class FwdApplication extends Application {
     private static final String TAG = "FwdApplication";
     private Tracker mTracker;
 
-    private Intent forwardingServiceIntent;
-
     /**
      * Gets the default {@link Tracker} for this {@link Application}.
      * @return tracker
@@ -45,32 +43,16 @@ public class FwdApplication extends Application {
         if (mTracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
-            mTracker = analytics.newTracker(R.xml.analytics);
+
+            if (BuildConfig.DEBUG) {
+                mTracker = analytics.newTracker(R.xml.analytics_debug);
+            }else{
+                mTracker = analytics.newTracker(R.xml.analytics);
+            }
             mTracker.enableAutoActivityTracking(true);
         }
         return mTracker;
     }
 
-    synchronized public Intent getForwardingServiceIntent () {
-        if (forwardingServiceIntent == null) {
-            forwardingServiceIntent = new Intent(this,ForwardingService.class);
-        }
-        return forwardingServiceIntent;
-    }
 
-
-
-    @Override
-    public void onTerminate() {
-        stopService(forwardingServiceIntent);
-        Log.i(TAG, "onTerminate: ");
-        super.onTerminate();
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-
-    }
 }
