@@ -78,7 +78,7 @@
 
         <receiver
             android:name=".forwarding.StartForwardingServiceAtBootReceiver"
-            android:label="StartMyServiceAtBootReceiver">
+            android:label="StartForwardingServiceAtBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
