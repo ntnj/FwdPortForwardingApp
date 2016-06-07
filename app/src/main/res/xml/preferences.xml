@@ -15,6 +15,9 @@
         <CheckBoxPreference
             android:key="@string/pref_dark_theme"
             android:title="@string/pref_dark_theme_text" />
+        <CheckBoxPreference
+            android:key="@string/pref_start_on_boot"
+            android:title="@string/pref_start_on_boot_text" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_about_category_title"
