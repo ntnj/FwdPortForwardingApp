@@ -5,24 +5,28 @@ It is a must have for network enthusiasts and professionals who are interested i
 ## Features
 
 * __Rules__ 
+
     Create and remove port forwarding rules.
     
 * __Protocols__
+
     Port forward through TCP, UDP or both at the same time.
     
 * __Flexible__ 
+
     Forward from every available network adapter on your device.
     
 * __User Friendly__ 
+
     Easily remove all existing rules and start again.
     
 * __Support__ 
+
      Get help through a fully featured support page.
 
 
 ## Extra Information
-Get a quick rundown of the app on the 
-####[Fwd website](http://elix.sr/fwd)
+Get a quick rundown of the app on the ####[Fwd website](http://elix.sr/fwd)
 
 ## Download
 ####[Get Fwd on the Google Play Store here!](https://play.google.com/store/apps/details?id=com.elixsr.portforwarder)
