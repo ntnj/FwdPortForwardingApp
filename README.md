@@ -41,6 +41,4 @@ Fwd: the port forwarding app is completely **ad-free** and **open source**. If y
 **To support development, please [donate here](http://elix.sr/fwd/donate/donate.html)**
 
 ## Feedback and Support
-As always, comments and criticism are more than encouraged, we love hearing everyone’s feedback! And should you need any help, feel free to visit our [support site](http://support.elix.sr/#!/products/fwd).
-
-If you have any questions please contact us at contact@elix.sr 
+As always, comments and criticism are more than encouraged, we love hearing everyone’s feedback! And should you need any help, feel free to visit our [support site](http://support.elix.sr/#!/products/fwd) or contact us at contact@elix.sr 
