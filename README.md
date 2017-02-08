@@ -38,7 +38,9 @@ Get a quick rundown of the app on the [Fwd website](http://elix.sr/fwd)
 ## Donate
 Fwd: the port forwarding app is completely **ad-free** and **open source**. If you find the app useful please consider donating to help support continued development. Your donation will help us improve the app and continue support :) 
 
-To support development, please [donate here](https://elix.sr/fwd/donate). If you have any questions please contact us at contact@elix.sr 
+###To support development, please [donate here](http://elix.sr/fwd/donate/donate.html) 
+
+If you have any questions please contact us at contact@elix.sr 
 
 ## Feedback and Support
-As always, comments and criticism are more than encouraged, we love hearing everyone’s feedback! And should you need any help, feel free to visit our [support site](https://play.google.com/store/apps/details?id=com.elixsr.portforwarder&hl=en).
+As always, comments and criticism are more than encouraged, we love hearing everyone’s feedback! And should you need any help, feel free to visit our [support site](http://support.elix.sr/#!/products/fwd).
