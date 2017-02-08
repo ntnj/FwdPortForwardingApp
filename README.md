@@ -1,3 +1,7 @@
+# Fwd: the port forwarding app
+
+![Fwd icon](app/src/main/res/mipmap-xxxhdpi/ic_launcher.png)
+
 *Fwd: the port forwarding app* allows you to use your Android device's network interfaces to forward ports over a tethered connection, perfect for hosting servers or opening your NAT type for gaming. Fwd is  designed to facilitate easy and accessible port forwarding from your Android device. 
 
 It is a must have for network enthusiasts and professionals who are interested in port forwarding. When using your phone as a hotspot (tethering), this app allows you to use your Android device as a gateway to a webserver, media server or game server (just to name a few).
@@ -26,10 +30,10 @@ It is a must have for network enthusiasts and professionals who are interested i
 
 
 ## Extra Information
-Get a quick rundown of the app on the ####[Fwd website](http://elix.sr/fwd)
+Get a quick rundown of the app on the [Fwd website](http://elix.sr/fwd)
 
 ## Download
-####[Get Fwd on the Google Play Store here!](https://play.google.com/store/apps/details?id=com.elixsr.portforwarder)
+[Get Fwd on the Google Play Store here!](https://play.google.com/store/apps/details?id=com.elixsr.portforwarder)
 
 ## Donate
 Fwd: the port forwarding app is completely **ad-free** and **open source**. If you find the app useful please consider donating to help support continued development. Your donation will help us improve the app and continue support :) 
