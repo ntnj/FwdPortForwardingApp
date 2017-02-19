@@ -69,6 +69,7 @@ public class RuleHelper {
         contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_FROM_PORT, ruleModel.getFromPort());
         contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_TARGET_IP_ADDRESS, ruleModel.getTargetIpAddress());
         contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_TARGET_PORT, ruleModel.getTargetPort());
+        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED, ruleModel.isEnabled());
 
         return contentValues;
     }
@@ -90,6 +91,10 @@ public class RuleHelper {
         ruleModel.setFromInterfaceName(cursor.getString(4));
         ruleModel.setFromPort(cursor.getInt(5));
         ruleModel.setTarget(new InetSocketAddress(cursor.getString(6), cursor.getInt(7)));
+
+        if(cursor.getColumnIndex(RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED) > -1) {
+            ruleModel.setEnabled(cursor.getInt(cursor.getColumnIndex(RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED)) > 0);
+        }
 
         return ruleModel;
     }

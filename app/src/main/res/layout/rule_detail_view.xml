@@ -56,14 +56,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="40sp"
-            android:hint="@string/rule_title_hint" />
+            android:hint="@string/rule_title_hint"
+            android:theme="@style/TextInputTextHint"
+            />
     </android.support.design.widget.TextInputLayout>
 
 
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/select_rule_protocol"/>
+        android:text="@string/select_rule_protocol"
+        android:paddingLeft="3dp"
+        android:textSize="12sp"
+        android:theme="@style/TextInputTextHint"/>
 
     <android.support.v7.widget.AppCompatSpinner
         android:layout_width="match_parent"
@@ -72,7 +77,9 @@
         android:layout_marginTop="5dip"
         android:prompt="@string/select_rule_protocol"
         style="@style/tempSpinnerOverride"
-        android:id="@+id/protocol_spinner">
+        android:id="@+id/protocol_spinner"
+        app:layout_widthPercent="100%"
+        android:theme="@style/TextInputTextHint">
     </android.support.v7.widget.AppCompatSpinner>
 
 
@@ -82,7 +89,10 @@
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/new_rule_from"/>
+        android:text="@string/new_rule_from"
+        android:paddingLeft="3dp"
+        android:textSize="12sp"
+        android:theme="@style/TextInputTextHint"/>
 
     <android.support.percent.PercentRelativeLayout
         android:layout_width="match_parent"
@@ -95,7 +105,9 @@
             android:prompt="@string/select_rule_protocol"
             android:id="@+id/from_interface_spinner"
             style="@style/tempSpinnerOverride"
-            app:layout_widthPercent="70%">
+            app:layout_widthPercent="70%"
+            android:textSize="40sp"
+            android:theme="@style/TextInputTextHint">
         </android.support.v7.widget.AppCompatSpinner>
 
         <android.support.design.widget.TextInputEditText
@@ -106,7 +118,8 @@
             android:layout_toRightOf="@id/from_interface_spinner"
             android:inputType="number"
             android:textSize="@dimen/new_rule_default_text_size"
-            android:hint="@string/new_rule_port" />
+            android:hint="@string/new_rule_port"
+            android:theme="@style/TextInputTextHint"/>
 
     </android.support.percent.PercentRelativeLayout>
 
@@ -116,7 +129,10 @@
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/new_rule_target"/>
+        android:text="@string/new_rule_target"
+        android:paddingLeft="3dp"
+        android:textSize="12sp"
+        android:theme="@style/TextInputTextHint"/>
 
     <android.support.percent.PercentRelativeLayout
         android:layout_width="match_parent"
@@ -130,7 +146,8 @@
             android:inputType="numberDecimal"
             android:digits="0123456789."
             android:textSize="@dimen/new_rule_default_text_size"
-            android:hint="@string/new_rule_target_ip_address" />
+            android:hint="@string/new_rule_target_ip_address"
+            android:theme="@style/TextInputTextHint"/>
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/new_rule_target_port"
@@ -140,7 +157,8 @@
             android:layout_toRightOf="@id/new_rule_target_ip_address"
             android:inputType="number"
             android:textSize="@dimen/new_rule_default_text_size"
-            android:hint="@string/new_rule_port" />
+            android:hint="@string/new_rule_port"
+            android:theme="@style/TextInputTextHint"/>
 
     </android.support.percent.PercentRelativeLayout>
 

@@ -19,6 +19,7 @@
 package com.elixsr.portforwarder.db;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -29,7 +30,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class RuleDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "Rule.db";
 
     private static final String TEXT_TYPE = " TEXT";
@@ -44,7 +45,8 @@ public class RuleDbHelper extends SQLiteOpenHelper {
                     RuleContract.RuleEntry.COLUMN_NAME_FROM_INTERFACE_NAME + TEXT_TYPE + COMMA_SEP +
                     RuleContract.RuleEntry.COLUMN_NAME_FROM_PORT + INTEGER_TYPE + COMMA_SEP +
                     RuleContract.RuleEntry.COLUMN_NAME_TARGET_IP_ADDRESS + TEXT_TYPE + COMMA_SEP +
-                    RuleContract.RuleEntry.COLUMN_NAME_TARGET_PORT + INTEGER_TYPE +
+                    RuleContract.RuleEntry.COLUMN_NAME_TARGET_PORT + INTEGER_TYPE + COMMA_SEP +
+                    RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED + INTEGER_TYPE +
             " )";
 
     private static final String SQL_DELETE_ENTRIES =
@@ -53,15 +55,26 @@ public class RuleDbHelper extends SQLiteOpenHelper {
     public RuleDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_ENTRIES);
     }
+
+    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
-        db.execSQL(SQL_DELETE_ENTRIES);
-        onCreate(db);
+//        db.execSQL(SQL_DELETE_ENTRIES);
+//        onCreate(db);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + RuleContract.RuleEntry.TABLE_NAME, null); // grab cursor for all data
+        int deleteStateColumnIndex = cursor.getColumnIndex(RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED);  // see if the column is there
+        if (deleteStateColumnIndex < 0) {
+            // missing_column not there - add it
+            db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s int null;",
+                    RuleContract.RuleEntry.TABLE_NAME, RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED));
+        }
     }
+
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
     }

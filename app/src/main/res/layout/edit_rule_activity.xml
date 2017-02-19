@@ -18,7 +18,9 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true">
@@ -32,6 +34,21 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/rule_detail_view" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:orientation="vertical">
+        <com.elixsr.core.common.widgets.SwitchBar
+            android:id="@+id/switch_bar"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:elevation="2dp"
+            android:theme="@style/EditRuleSwitchBar"
+            android:background="@color/editRuleSwitchBarColor"/>
+        <include layout="@layout/rule_detail_view" />
+    </LinearLayout>
 
 </LinearLayout>

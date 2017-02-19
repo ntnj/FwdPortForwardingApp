@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Fwd: the port forwarding app</string>
+    <string name="action_delete_rule">Löschen</string>
+    <string name="app_tag">Fwd</string>
+    <string name="action_start_forwarding">Starten</string>
+    <string name="edit_rule_title">Regel bearbeiten</string>
+    <string name="action_help">Hilfe</string>
+    <string name="action_save_rule">Speichern</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="switch_on_text">Aktiviert</string>
+    <string name="switch_off_text">Deaktiviert</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="select_rule_protocol">Protokoll</string>
+    <string name="rule_title_hint">Regelbezeichnung</string>
+    <string name="pref_help_link_text">Hilfe</string>
+    <string name="about_elixsr_title">Über Elixsr</string>
+    <string name="help_title">Hilfe</string>
+    <string name="empty_state_text">Keine Regeln</string>
+    <string name="new_rule_from">Von</string>
+    <string name="new_rule_port">Port</string>
+    <string name="new_rule_target">Ziel</string>
+    <string name="new_rule_target_ip_address">Ziel-IP-Adresse</string>
+    <string name="new_rule_title">Neue Regel</string>
+    <string name="pref_about_category_title">Über</string>
+    <string name="pref_about_link_text">Über Elixsr</string>
+    <string name="pref_clear_rules_text">Regeln löschen</string>
+    <string name="pref_dark_theme_text">Dunkles Thema</string>
+    <string name="pref_enable_ads">Anzeigen aktivieren</string>
+    <string name="pref_general_category_title">Allgemein</string>
+</resources>

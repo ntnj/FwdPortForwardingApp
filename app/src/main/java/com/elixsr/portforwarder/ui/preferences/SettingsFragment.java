@@ -87,8 +87,8 @@ public class SettingsFragment extends PreferenceFragment {
                 //code for what you want it to do
 
                 new AlertDialog.Builder(getActivity())
-                        .setTitle("Delete all Rules")
-                        .setMessage("Are you sure you want to delete all rules?")
+                        .setTitle(R.string.alert_dialog_delete_all_rules_title)
+                        .setMessage(R.string.alert_dialog_delete_all_rules_text)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
 

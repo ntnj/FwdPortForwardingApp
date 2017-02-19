@@ -239,7 +239,7 @@ public class MainActivity extends BaseActivity {
         if (!forwardingManager.isEnabled()) {
 //                    startPortForwarding();
 
-            Snackbar.make(this.coordinatorLayout, "Port Forwarding Started", Snackbar.LENGTH_LONG)
+            Snackbar.make(this.coordinatorLayout, R.string.snackbar_port_forwarding_started_text, Snackbar.LENGTH_LONG)
                     .setAction("Stop", null).show();
 
             fab.hide();
@@ -249,7 +249,7 @@ public class MainActivity extends BaseActivity {
             //stop forwarding
             fab.show();
 
-            Snackbar.make(this.coordinatorLayout, "Port Forwarding Stopped", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(this.coordinatorLayout, R.string.snackbar_port_forwarding_stopped_text, Snackbar.LENGTH_LONG).show();
 
             stopService(forwardingServiceIntent);
         }

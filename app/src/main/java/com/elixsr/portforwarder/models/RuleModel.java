@@ -49,6 +49,8 @@ public class RuleModel implements Serializable {
 
     private InetSocketAddress target;
 
+    private boolean isEnabled = true;
+
     //Null constructor - for object building
     public RuleModel() {
 
@@ -192,5 +194,13 @@ public class RuleModel implements Serializable {
 
         return true;
 
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 }

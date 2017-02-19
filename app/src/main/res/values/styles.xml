@@ -12,7 +12,6 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-
     <!-- Base application theme. -->
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -21,6 +20,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="emptyState">@drawable/empty_state_sloth</item>
+
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -41,5 +41,18 @@
 
     <style name="tempSpinnerOverride"/>
 
+    <style name="EditRuleSwitchBar" parent="Theme.AppCompat">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="colorAccent">#FFFFFF</item>
+        <item name="colorControlActivated">#FFFFFF</item>
+        <item name="colorSwitchThumbNormal">#4B9AFF</item>
+        <item name="android:colorForeground">#10407F</item>
+    </style>
+
+    <style name="TextInputTextHint" parent="AppTheme">
+        <item name="android:textColorHint">@color/textInputHintColor</item>
+        <item name="android:textColor">@color/textInputHintColor</item>
+        <item name="android:textColorSecondary">@color/textInputUnderlineColor</item>
+    </style>
 
 </resources>

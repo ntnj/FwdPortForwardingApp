@@ -7,7 +7,12 @@
 
     <color name="textColorPrimary">#FFFFFF</color>
 
-    <color name="list_dropdown_divider_color">#92a3a3a3</color>
+    <color name="listDropdownDividerColor">#92a3a3a3</color>
+
+    <color name="editRuleSwitchBarColor">#2F7FE3</color>
+
+    <color name="textInputHintColor">#A1A1A1</color>
+    <color name="textInputUnderlineColor">#B9B9B9</color>
 
     <!-- Dark colour palette -->
     <color name="colorPrimaryInverse">#FFFFFF</color>
@@ -16,6 +21,6 @@
 
     <color name="textColorPrimaryInverse">#FFFFFF</color>
 
-    <color name="list_dropdown_divider_color_inverse">#FFFFFF</color>
+    <color name="listDropdownDividerColorInverse">#FFFFFF</color>
 
 </resources>

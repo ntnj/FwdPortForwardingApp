@@ -41,5 +41,6 @@ public class RuleContract {
         public static final String COLUMN_NAME_FROM_PORT = "from_port";
         public static final String COLUMN_NAME_TARGET_IP_ADDRESS = "target_ip_address";
         public static final String COLUMN_NAME_TARGET_PORT = "target_port";
+        public static final String COLUMN_NAME_IS_ENABLED = "is_enabled";
     }
 }
