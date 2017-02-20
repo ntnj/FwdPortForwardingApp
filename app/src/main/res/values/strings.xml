@@ -72,6 +72,10 @@
     <string name="text_input_error_invalid_ip_address_text">Please enter a valid IP Address</string>
     <string name="toast_error_rule_not_valid_text">Rule is not valid. Please check your input.</string>
 
+    <!-- Notifications -->
+    <string name="notification_forwarding_active_title">Port Forwarding Active</string>
+    <string name="notification_forwarding_touch_disable_text">Touch to disable</string>
+
 
 
 
