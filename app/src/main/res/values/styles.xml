@@ -1,10 +1,16 @@
 <resources>
+
+    <!--
+        Good article: https://android.jlelse.eu/android-developers-we-ve-been-using-themes-all-wrong-eed7755da586#.6ok28b5y0
+    -->
+
     <!-- Dark theme -->
 
     <style name="DarkTheme" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="editRuleTextInputColour">#FFF</item>
         <item name="emptyState">@drawable/empty_state_sloth_dark</item>
     </style>
 
@@ -20,6 +26,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="editRuleTextInputColour">#000</item>
         <item name="emptyState">@drawable/empty_state_sloth</item>
 
     </style>
@@ -39,7 +46,9 @@
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
-    <style name="tempSpinnerOverride" />
+    <style name="tempSpinnerOverride">
+        <item name="android:textColor">?attr/editRuleTextInputColour</item>
+    </style>
 
     <style name="EditRuleSwitchBar" parent="Theme.AppCompat">
         <item name="android:textColor">#FFFFFF</item>
@@ -49,14 +58,20 @@
         <item name="android:colorForeground">#10407F</item>
     </style>
 
-    <style name="TextInputTextHint" parent="AppTheme">
+    <style name="TextInputTextHint">
         <item name="android:textColorHint">@color/textInputHintColor</item>
         <item name="android:textColor">@color/textInputHintColor</item>
         <item name="android:textColorSecondary">@color/textInputUnderlineColor</item>
+        <item name="colorControlNormal">?attr/editRuleTextInputColour</item>
+        <item name="colorControlActivated">?attr/editRuleTextInputColour</item>
+        <item name="android:textColorPrimary">?attr/editRuleTextInputColour</item>
     </style>
 
-    <style name="SpinnerText" parent="AppTheme">
-        <item name="android:textColorSecondary">@color/textInputUnderlineColor</item>
+    <style name="SpinnerText">
+        <item name="android:color">?attr/editRuleTextInputColour</item>
+        <item name="android:textColor">?attr/editRuleTextInputColour</item>
+        <item name="android:textColorHint">?attr/editRuleTextInputColour</item>
+        <item name="android:textColorSecondary">?attr/editRuleTextInputColour</item>
     </style>
 
     <style name="AppTheme.NoActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

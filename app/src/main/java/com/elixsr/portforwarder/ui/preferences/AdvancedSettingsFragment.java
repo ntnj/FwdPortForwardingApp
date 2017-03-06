@@ -35,7 +35,7 @@ public class AdvancedSettingsFragment extends PreferenceFragment {
         ipChecker.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Intent ipCheckerActivity = new Intent(getActivity(), IpAddressChecker.class);
+                Intent ipCheckerActivity = new Intent(getActivity(), IpAddressCheckerActivity.class);
                 startActivity(ipCheckerActivity);
                 return true;
             }

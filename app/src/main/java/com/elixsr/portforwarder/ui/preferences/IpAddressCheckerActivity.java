@@ -19,7 +19,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IpAddressChecker extends BaseActivity {
+public class IpAddressCheckerActivity extends BaseActivity {
 
 
     List<InterfaceHelper.InterfaceModel> interfaces = new ArrayList<>();
@@ -66,7 +66,7 @@ public class IpAddressChecker extends BaseActivity {
             TextView interfaceStatusView = (TextView) view.findViewById(R.id.interface_status);
 
             interfaceNameView.setText(interfaceModel.getName());
-            interfaceIpAddressView.setText(interfaceModel.getInetAddress().toString());
+            interfaceIpAddressView.setText(interfaceModel.getInetAddress().getHostAddress());
             if(interfaceModel.getInetAddress().isSiteLocalAddress() || interfaceModel.getInetAddress().isLoopbackAddress()) {
                 interfaceStatusView.setText("Private");
             } else {

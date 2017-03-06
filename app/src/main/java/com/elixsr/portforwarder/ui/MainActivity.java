@@ -311,6 +311,9 @@ public class MainActivity extends BaseActivity {
 
                 Toast.makeText(context, intent.getExtras().getString(ForwardingService.PORT_FORWARD_SERVICE_ERROR_MESSAGE),
                         Toast.LENGTH_SHORT).show();
+                Snackbar.make(coordinatorLayout, R.string.snackbar_port_forwarding_stopped_text, Snackbar.LENGTH_SHORT).show();
+                fab.show();
+
             }
         }
     }
