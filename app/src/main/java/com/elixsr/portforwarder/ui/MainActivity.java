@@ -265,11 +265,12 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    private static String generateForwardingActionMenuText(boolean forwardingFlag) {
+    private String generateForwardingActionMenuText(boolean forwardingFlag) {
         if (forwardingFlag) {
-            return "Stop";
+            return this.getString(R.string.action_stop_forwarding);
         }
-        return "Start";
+        return this.getString(R.string.action_start_forwarding);
+
     }
 
     @Override

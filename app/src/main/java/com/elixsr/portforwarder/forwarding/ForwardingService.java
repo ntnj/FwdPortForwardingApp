@@ -211,7 +211,7 @@ public class ForwardingService extends IntentService {
                 localIntent =
                         new Intent(BROADCAST_ACTION)
                                 // Puts the status into the Intent
-                                .putExtra(PORT_FORWARD_SERVICE_ERROR_MESSAGE, "Error while trying to start rule '" + ruleModel.getName() + "'");
+                                .putExtra(PORT_FORWARD_SERVICE_ERROR_MESSAGE, getString(R.string.start_rule_error_message) + " '" + ruleModel.getName() + "'");
                 // Broadcasts the Intent to receivers in this app.
                 LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
             }

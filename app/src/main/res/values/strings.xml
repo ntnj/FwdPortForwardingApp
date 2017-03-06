@@ -5,6 +5,7 @@
 
     <!-- Main Screen -->
     <string name="action_start_forwarding">Start</string>
+    <string name="action_stop_forwarding">Stop</string>
     <string name="empty_state_text">No rules to show</string>
 
     <string name="pref_help_link_text">Help</string>
@@ -111,5 +112,7 @@
     <string name="pref_ip_checker">pref_ip_checker</string>
     <string name="pref_ip_checker_title">IP Checker</string>
     <string name="ip_checker_title">IP Checker</string>
+    <string name="invalid_port_error_message">Please enter a value greater than or equal to %s and less than or equal to %s</string>
+    <string name="start_rule_error_message">Error while trying to start rule</string>
 
 </resources>

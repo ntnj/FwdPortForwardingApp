@@ -57,7 +57,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
     protected static final String CATEGORY_RULES = "Rules";
 
     private static final String TAG = "BaseRuleActivity";
-    private static final String INVALID_PORT_ERROR_MESSAGE = "Please enter a value greater than or equal to %s and less than or equal to %s";
+    private static String INVALID_PORT_ERROR_MESSAGE;
 
     protected Spinner protocolSpinner;
     protected Spinner fromInterfaceSpinner;
@@ -71,6 +71,8 @@ public abstract class BaseRuleActivity extends BaseActivity {
      * This will pre-populate the {@link Spinner} Objects.
      */
     protected void constructDetailUi() {
+
+        INVALID_PORT_ERROR_MESSAGE = getString(R.string.invalid_port_error_message);
 
         //set up protocol spinner/dropdown
         protocolSpinner = (Spinner) findViewById(R.id.protocol_spinner);
