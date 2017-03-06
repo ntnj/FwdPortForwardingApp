@@ -22,7 +22,7 @@
     <string name="pref_dark_theme_text">Tema scuro</string>
     <string name="settings_title">Impostazioni</string>
     <string name="pref_help_link_text">Guida</string>
-    <string name="pref_enable_ads">Attiva annunci</string>
+    <string name="pref_enable_ads">Disattivare annunci</string>
     <string name="pref_general_category_title">Generale</string>
     <string name="switch_on_text">Abilitato</string>
     <string name="switch_off_text">Disattivato</string>

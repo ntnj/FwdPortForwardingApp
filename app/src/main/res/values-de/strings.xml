@@ -25,7 +25,7 @@
     <string name="pref_about_category_title">Über</string>
     <string name="pref_about_link_text">Über Elixsr</string>
     <string name="pref_clear_rules_text">Regeln löschen</string>
-    <string name="pref_dark_theme_text">Dunkles Thema</string>
-    <string name="pref_enable_ads">Anzeigen aktivieren</string>
+    <string name="pref_dark_theme_text">Dunklen Thema</string>
+    <string name="pref_enable_ads">Deaktiviere Anzeigen</string>
     <string name="pref_general_category_title">Allgemein</string>
 </resources>

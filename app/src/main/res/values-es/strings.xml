@@ -24,7 +24,7 @@
     <string name="new_rule_title">Nueva regla</string>
     <string name="pref_about_category_title">Información</string>
     <string name="pref_dark_theme_text">Tema oscuro</string>
-    <string name="pref_enable_ads">Habilitar Anuncios</string>
+    <string name="pref_enable_ads">Deshabilitar Anuncios</string>
     <string name="switch_on_text">Habilitado</string>
     <string name="select_rule_protocol">Protocolo</string>
     <string name="rule_title_hint">Título de la regla</string>

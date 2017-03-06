@@ -46,7 +46,7 @@
 
     <!-- Advanced Settings -->
     <string name="pref_enable_ads">Disable Advertisements</string>
-    <string name="pref_enable_ads_summary">Enabling this option helps support the development of this app.</string>
+    <string name="pref_enable_ads_summary">Advertisements help us support the development of Fwd</string>
 
     <!-- App Intros -->
     <string name="app_intro_1_title">Add Rules</string>
@@ -105,14 +105,13 @@
     <string name="app_intro" translatable="false">app_intro</string>
     <string name="pref_dark_theme" translatable="false">pref_dark_theme</string>
     <string name="pref_start_on_boot" translatable="false">pref_start_on_boot</string>
-    <string name="title_activity_advanced_settings">AdvancedSettingsActivity</string>
+    <string name="title_activity_advanced_settings" translatable="false">AdvancedSettingsActivity</string>
     <string name="advanced_settings_title">Advanced Settings</string>
     <string name="pref_advanced_category_title">Advanced</string>
-    <string name="pref_disable_ads_key">disable_ads_key</string>
-    <string name="pref_ip_checker">pref_ip_checker</string>
+    <string name="pref_disable_ads_key" translatable="false">disable_ads_key</string>
+    <string name="pref_ip_checker" translatable="false">pref_ip_checker</string>
     <string name="pref_ip_checker_title">IP Checker</string>
     <string name="ip_checker_title">IP Checker</string>
-    <string name="invalid_port_error_message">Please enter a value greater than or equal to %s and less than or equal to %s</string>
     <string name="start_rule_error_message">Error while trying to start rule</string>
 
 </resources>
