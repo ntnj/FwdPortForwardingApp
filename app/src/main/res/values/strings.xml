@@ -53,8 +53,8 @@
     <string name="app_intro_1_text">Create and edit port forwarding rules</string>
     <string name="app_intro_2_title">Start and Stop</string>
     <string name="app_intro_2_text">Easily start and stop forwarding of all rules with a tap</string>
-    <string name="app_intro_3_title">Start and Stop</string>
-    <string name="app_intro_3_text">Easily start and stop forwarding of all rules with a tap</string>
+    <string name="app_intro_3_title">Extensive Help</string>
+    <string name="app_intro_3_text">Should you need any support, visit our help section</string>
 
     <!-- Alert Dialogs -->
     <string name="alert_dialog_delete_entry_title">Delete entry</string>
