@@ -133,7 +133,7 @@ public class MainActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        ruleListAdapter = new RuleListAdapter(ruleModels, forwardingManager);
+        ruleListAdapter = new RuleListAdapter(ruleModels, forwardingManager, getApplicationContext());
         mRecyclerView.setAdapter(ruleListAdapter);
 
         //store the coordinator layout for snackbar
@@ -185,9 +185,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
+    protected void onStart() { super.onStart(); }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -199,8 +197,16 @@ public class MainActivity extends BaseActivity {
         //setup the start forwarding button
         MenuItem toggleForwarding = menu.findItem(R.id.action_toggle_forwarding);
 
+        int enabledRuleModels = 0;
+
+        for (RuleModel ruleModel : ruleModels) {
+            if(ruleModel.isEnabled()) {
+                ++enabledRuleModels;
+            }
+        }
+
         //it should not be able to start if there are no rules
-        if (ruleModels.size() <= 0) {
+        if (enabledRuleModels <= 0) {
             toggleForwarding.setVisible(false);
         } else {
             toggleForwarding.setVisible(true);
@@ -311,6 +317,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        
         finish();
     }
 

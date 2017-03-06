@@ -52,6 +52,9 @@ public class RuleDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + RuleContract.RuleEntry.TABLE_NAME;
 
+    private static final String DATABASE_ALTER_RULES_1 = String.format("ALTER TABLE %s ADD COLUMN %s int 1;",
+            RuleContract.RuleEntry.TABLE_NAME, RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED);
+
     public RuleDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -62,21 +65,11 @@ public class RuleDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // This database is only a cache for online data, so its upgrade policy is
-        // to simply to discard the data and start over
-//        db.execSQL(SQL_DELETE_ENTRIES);
-//        onCreate(db);
-        Cursor cursor = db.rawQuery("SELECT * FROM " + RuleContract.RuleEntry.TABLE_NAME, null); // grab cursor for all data
-        int deleteStateColumnIndex = cursor.getColumnIndex(RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED);  // see if the column is there
-        if (deleteStateColumnIndex < 0) {
-            // missing_column not there - add it
-            db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s int null;",
-                    RuleContract.RuleEntry.TABLE_NAME, RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED));
-        }
-    }
 
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onUpgrade(db, oldVersion, newVersion);
+        if (oldVersion < 3) {
+            db.execSQL(DATABASE_ALTER_RULES_1);
+        }
+
     }
 
     public static String[] generateAllRowsSelection(){
@@ -88,7 +81,8 @@ public class RuleDbHelper extends SQLiteOpenHelper {
             RuleContract.RuleEntry.COLUMN_NAME_FROM_INTERFACE_NAME,
             RuleContract.RuleEntry.COLUMN_NAME_FROM_PORT + TEXT_TYPE,
             RuleContract.RuleEntry.COLUMN_NAME_TARGET_IP_ADDRESS,
-            RuleContract.RuleEntry.COLUMN_NAME_TARGET_PORT
+            RuleContract.RuleEntry.COLUMN_NAME_TARGET_PORT,
+            RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED
         };
 
         return projection;

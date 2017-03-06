@@ -173,7 +173,7 @@ public class ForwardingService extends IntentService {
         //load the rules from the datastore
         //TODO: inject the rules as extras
         RuleDao ruleDao = new RuleDao(new RuleDbHelper(this));
-        List<RuleModel> ruleModels = ruleDao.getAllRuleModels();
+        List<RuleModel> ruleModels = ruleDao.getAllEnabledRuleModels();
 
         InetSocketAddress from;
 
@@ -189,6 +189,7 @@ public class ForwardingService extends IntentService {
         int remainingFutures = 0;
 
         for (RuleModel ruleModel : ruleModels){
+
 
             try {
                 from = generateFromIpUsingInterface(ruleModel.getFromInterfaceName(), ruleModel.getFromPort());

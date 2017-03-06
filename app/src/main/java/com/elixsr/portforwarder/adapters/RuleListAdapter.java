@@ -18,31 +18,73 @@
 
 package com.elixsr.portforwarder.adapters;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.elixsr.portforwarder.forwarding.ForwardingManager;
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.ui.rules.EditRuleActivity;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.NativeExpressAdView;
 
 /**
  * Created by Niall McShane on 01/03/2016.
  */
-public class RuleListAdapter extends RecyclerView.Adapter<RuleListAdapter.ViewHolder> {
+public class RuleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final String TAG = "RuleListAdapter";
     private List<RuleModel> ruleModels;
+    private List<ListItem> listItems;
     private ForwardingManager forwardingManager;
+
+    protected static final int AD_VIEW = 1;
+    protected static final int RULE_VIEW = 0;
+
+
+    public static class AdViewHolder extends RecyclerView.ViewHolder {
+
+        public static final String DARK_AD_ID = "ca-app-pub-9546697987163387/2461888950";
+        public static final String LIGHT_AD_ID = "ca-app-pub-9546697987163387/6696735750";
+        public static final String PREF_DARK_THEME = "pref_dark_theme";
+
+        public AdViewHolder(View v ) {
+            super(v);
+
+            AdRequest request = new AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .build();
+            NativeExpressAdView adView = new NativeExpressAdView(v.getContext());
+            adView.setAdSize(new AdSize(AdSize.FULL_WIDTH, 80));
+
+            // Load ad type based on theme - dark or light
+            if (PreferenceManager.getDefaultSharedPreferences(v.getContext())
+                    .getBoolean(PREF_DARK_THEME, false)) {
+                adView.setAdUnitId(DARK_AD_ID);
+            } else {
+                adView.setAdUnitId(LIGHT_AD_ID);
+            }
+            ((LinearLayout) v).addView(adView, 1);
+            adView.loadAd(request);
+        }
+    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener {
+    public static class RuleViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener {
         // each data item is just a string in this case
         public TextView ruleProtocolText;
         public TextView ruleNameText;
@@ -52,7 +94,7 @@ public class RuleListAdapter extends RecyclerView.Adapter<RuleListAdapter.ViewHo
         private long ruleId;
 
 
-        public ViewHolder(View v, ForwardingManager forwardingManager) {
+        public RuleViewHolder(View v, ForwardingManager forwardingManager) {
             super(v);
             this.forwardingManager = forwardingManager;
             this.ruleId = ruleId;
@@ -78,44 +120,111 @@ public class RuleListAdapter extends RecyclerView.Adapter<RuleListAdapter.ViewHo
     }
 
         // Provide a suitable constructor (depends on the kind of dataset)
-        public RuleListAdapter(List<RuleModel> ruleModels, ForwardingManager forwardingManager) {
+        public RuleListAdapter(List<RuleModel> ruleModels, ForwardingManager forwardingManager, Context context) {
             this.ruleModels = ruleModels;
             this.forwardingManager = forwardingManager;
+            this.listItems = new ArrayList<>();
+
+            for(RuleModel rule : ruleModels) {
+                ListItem<RuleModel> ruleListItem = new ListItem<>(RULE_VIEW);
+                ruleListItem.setPayload(rule);
+                this.listItems.add(ruleListItem);
+            }
+
+            if (!(PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean("disable_ads_key", false))) {
+                if(ruleModels.size() > 3) {
+                    this.listItems.add(3, new ListItem(AD_VIEW));
+                } else {
+                    this.listItems.add(new ListItem(AD_VIEW));
+                }
+            }
+
         }
 
         // Create new views (invoked by the layout manager)
         @Override
-        public RuleListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                       int viewType) {
-            // create a new view
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.rule_item_view, parent, false);
-            // set the view's size, margins, paddings and layout parameters
-            // ...
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                             int viewType) {
 
-            ViewHolder vh = new ViewHolder(v, forwardingManager);
-            return vh;
+            // create a new view
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.rule_item_view, parent, false);
+            View adView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.advertisement_item, parent, false);
+
+            switch (viewType) {
+                case 0: return new RuleViewHolder(view, forwardingManager);
+                case 1: return new AdViewHolder(adView);
+            }
+
+            return new RuleViewHolder(view, forwardingManager);
         }
 
         // Replace the contents of a view (invoked by the layout manager)
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
-            RuleModel ruleModel = ruleModels.get(position);
 
-            //TODO: potentially should add some validation :/ / exception handling
-            holder.ruleId = ruleModel.getId();
-            holder.ruleProtocolText.setText(ruleModel.protocolToString());
+            switch (holder.getItemViewType()) {
+                case RULE_VIEW:
+                    RuleViewHolder ruleHolder = (RuleViewHolder) holder;
+                    RuleModel ruleModel = (RuleModel) listItems.get(position).getPayload();
 
-            holder.ruleNameText.setText(ruleModel.getName());
-            holder.ruleFromPortText.setText(String.valueOf(ruleModel.getFromPort()));
-            holder.ruleTargetPortText.setText(String.valueOf(ruleModel.getTarget().getPort()));
+                    //TODO: potentially should add some validation :/ / exception handling
+                    ruleHolder.ruleId = ruleModel.getId();
+                    ruleHolder.ruleProtocolText.setText(ruleModel.protocolToString());
+
+                    if (!ruleModel.isEnabled()) {
+                        ruleHolder.ruleNameText.setAlpha(0.4f);
+                        ruleHolder.ruleProtocolText.setBackgroundResource(R.drawable.bg_grey);
+                    } else {
+                        ruleHolder.ruleNameText.setAlpha(1f);
+                        ruleHolder.ruleProtocolText.setBackgroundResource(R.drawable.bg_red);
+                    }
+                    ruleHolder.ruleNameText.setText(ruleModel.getName());
+                    ruleHolder.ruleFromPortText.setText(String.valueOf(ruleModel.getFromPort()));
+                    ruleHolder.ruleTargetPortText.setText(String.valueOf(ruleModel.getTarget().getPort()));
+                    break;
+                case AD_VIEW:
+                    AdViewHolder adHolder = (AdViewHolder) holder;
+                    break;
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            // Just as an example, return 0 or 2 depending on position
+            // Note that unlike in ListView adapters, types don't have to be contiguous
+            return this.listItems.get(position).getViewType();
         }
 
         // Return the size of your dataset (invoked by the layout manager)
+        // Total amount of rules + 1 for an advertisement
         @Override
         public int getItemCount() {
-            return ruleModels.size();
+            return listItems.size();
         }
+
+    private class ListItem<T> {
+        private int viewType;
+        private T payload;
+
+        public ListItem(int viewType) {
+            this.viewType = viewType;
+        }
+
+        public void setPayload(T payload) {
+            this.payload = payload;
+        }
+
+        public T getPayload() {
+            return payload;
+        }
+
+        public int getViewType() {
+            return viewType;
+        }
+    }
 }

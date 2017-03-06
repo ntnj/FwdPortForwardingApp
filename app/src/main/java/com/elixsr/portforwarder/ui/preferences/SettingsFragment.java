@@ -125,6 +125,23 @@ public class SettingsFragment extends PreferenceFragment {
 
         versionNamePreference = (Preference)findPreference(getString(R.string.pref_version));
 
+        versionNamePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            int versionPrefClicks = 0;
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if(++versionPrefClicks == 5) {
+                    versionPrefClicks = 0;
+                    Toast.makeText(getActivity(), "Entered the slothlight zone...",
+                            Toast.LENGTH_SHORT).show();
+
+                    Intent advancedSettingsActivity = new Intent(getActivity(), AdvancedSettingsActivity.class);
+                    startActivity(advancedSettingsActivity);
+                    return true;
+                }
+                return false;
+            }
+        });
+
         // set up click of help button - show webview
 //        Preference helpButton = (Preference) findPreference(getString(R.string.pref_help_link));
 //        helpButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

@@ -22,5 +22,6 @@
     <color name="textColorPrimaryInverse">#FFFFFF</color>
 
     <color name="listDropdownDividerColorInverse">#FFFFFF</color>
+    <color name="colorDisabled">#ACACAC</color>
 
 </resources>

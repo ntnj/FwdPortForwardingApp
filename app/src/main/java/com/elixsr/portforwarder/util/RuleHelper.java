@@ -20,11 +20,14 @@ package com.elixsr.portforwarder.util;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 
 import java.net.InetSocketAddress;
 
 import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.db.RuleContract;
+
+import static com.facebook.GraphRequest.TAG;
 
 /**
  * The {@link RuleModel} class provides static objects and methods related to rules.
@@ -91,10 +94,7 @@ public class RuleHelper {
         ruleModel.setFromInterfaceName(cursor.getString(4));
         ruleModel.setFromPort(cursor.getInt(5));
         ruleModel.setTarget(new InetSocketAddress(cursor.getString(6), cursor.getInt(7)));
-
-        if(cursor.getColumnIndex(RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED) > -1) {
-            ruleModel.setEnabled(cursor.getInt(cursor.getColumnIndex(RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED)) > 0);
-        }
+        ruleModel.setEnabled(cursor.getInt(8) != 0);
 
         return ruleModel;
     }

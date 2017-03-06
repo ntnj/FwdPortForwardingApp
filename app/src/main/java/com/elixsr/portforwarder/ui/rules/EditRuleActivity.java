@@ -124,7 +124,7 @@ public class EditRuleActivity extends BaseRuleActivity {
         cursor.moveToFirst();
 
         this.ruleModel = RuleHelper.cursorToRuleModel(cursor);
-
+        Log.i(TAG, Boolean.toString(ruleModel.isEnabled()));
         //close the DB
         cursor.close();
         db.close();
@@ -132,8 +132,7 @@ public class EditRuleActivity extends BaseRuleActivity {
         // Set up the switchBar for enabling/disabling
         switchBar = (SwitchBar) findViewById(R.id.switch_bar);
         switchBar.show();
-        switchBar.setEnabled(this.ruleModel.isEnabled());
-
+        switchBar.setChecked(this.ruleModel.isEnabled());
         /*
         Set the text fields content
          */
@@ -203,10 +202,12 @@ public class EditRuleActivity extends BaseRuleActivity {
 
         if(ruleModel.isValid()) {
             // Determine if rule is enabled
-            this.ruleModel.setEnabled(switchBar.isEnabled());
+            this.ruleModel.setEnabled(switchBar.isChecked());
 
             Log.i(TAG, "Rule " + ruleModel.getName() + " is valid, time to update.");
             SQLiteDatabase db = new RuleDbHelper(this).getReadableDatabase();
+
+            Log.i(TAG, "Is enabled is: " + this.ruleModel.isEnabled() );
 
             // New model to store
             ContentValues values = RuleHelper.ruleModelToContentValues(this.ruleModel);
@@ -236,8 +237,9 @@ public class EditRuleActivity extends BaseRuleActivity {
 
             // move to main activity
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            finish();
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );
             startActivity(mainActivityIntent);
+            finish();
         }else{
             Toast.makeText(this, R.string.toast_error_rule_not_valid_text,
                     Toast.LENGTH_LONG).show();

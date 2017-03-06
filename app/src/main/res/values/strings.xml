@@ -44,7 +44,7 @@
 
 
     <!-- Advanced Settings -->
-    <string name="pref_enable_ads">Enable Advertisements</string>
+    <string name="pref_enable_ads">Disable Advertisements</string>
     <string name="pref_enable_ads_summary">Enabling this option helps support the development of this app.</string>
 
     <!-- App Intros -->
@@ -77,18 +77,12 @@
     <string name="notification_forwarding_touch_disable_text">Touch to disable</string>
 
 
-
-
     <!-- TO ADD -->
 
     <!-- Error Messages -->
     <!--<string name="p">Please enter a value greater than or equal to 1024 and less than or equal to 65535</string>-->
 
     <!--<string name="port_eroolor">Could not bind port 6000 for TCP Rule 'fgh'</string>-->
-
-
-
-
 
 
     <string-array name="rule_protocol_array">
@@ -110,5 +104,12 @@
     <string name="app_intro" translatable="false">app_intro</string>
     <string name="pref_dark_theme" translatable="false">pref_dark_theme</string>
     <string name="pref_start_on_boot" translatable="false">pref_start_on_boot</string>
+    <string name="title_activity_advanced_settings">AdvancedSettingsActivity</string>
+    <string name="advanced_settings_title">Advanced Settings</string>
+    <string name="pref_advanced_category_title">Advanced</string>
+    <string name="pref_disable_ads_key">disable_ads_key</string>
+    <string name="pref_ip_checker">pref_ip_checker</string>
+    <string name="pref_ip_checker_title">IP Checker</string>
+    <string name="ip_checker_title">IP Checker</string>
 
 </resources>

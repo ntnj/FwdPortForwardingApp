@@ -120,9 +120,9 @@ public class NewRuleActivity extends BaseRuleActivity {
 
             // move to main activity
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            finish();
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );
             startActivity(mainActivityIntent);
-
+            finish();
         }else{
             Toast.makeText(this, "Rule is not valid. Please check your input.",
                     Toast.LENGTH_LONG).show();

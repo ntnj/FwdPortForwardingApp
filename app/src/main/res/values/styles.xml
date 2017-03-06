@@ -7,6 +7,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="emptyState">@drawable/empty_state_sloth_dark</item>
     </style>
+
     <style name="DarkTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -28,8 +29,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-    </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"></style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
@@ -39,7 +39,7 @@
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
-    <style name="tempSpinnerOverride"/>
+    <style name="tempSpinnerOverride" />
 
     <style name="EditRuleSwitchBar" parent="Theme.AppCompat">
         <item name="android:textColor">#FFFFFF</item>
@@ -54,5 +54,9 @@
         <item name="android:textColor">@color/textInputHintColor</item>
         <item name="android:textColorSecondary">@color/textInputUnderlineColor</item>
     </style>
+
+    <style name="AppTheme.NoActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

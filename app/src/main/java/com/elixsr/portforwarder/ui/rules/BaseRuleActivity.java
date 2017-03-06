@@ -26,19 +26,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.ui.BaseActivity;
 import com.elixsr.portforwarder.ui.MainActivity;
+import com.elixsr.portforwarder.util.InterfaceHelper;
 import com.elixsr.portforwarder.util.IpAddressValidator;
 import com.elixsr.portforwarder.util.NetworkHelper;
 import com.elixsr.portforwarder.util.RuleHelper;
@@ -139,29 +135,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
      */
     public List<String> generateInterfaceList() throws SocketException {
 
-        //create an empty list
-        List<String> interfaces = new LinkedList<String>();
-
-        String address = null;
-        for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
-            NetworkInterface intf = en.nextElement();
-
-            //while we have more elements
-            for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-
-                //get the next address in from the iterator
-                InetAddress inetAddress = enumIpAddr.nextElement();
-
-                address = new String(inetAddress.getHostAddress().toString());
-
-                if (address != null & address.length() > 0 && inetAddress instanceof Inet4Address) {
-
-                    Log.i(TAG, intf.getDisplayName() + " " + address);
-                    interfaces.add(intf.getDisplayName());
-                }
-            }
-        }
-        return interfaces;
+        return InterfaceHelper.generateInterfaceNamesList();
     }
 
     /**
