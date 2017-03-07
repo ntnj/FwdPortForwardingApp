@@ -52,7 +52,7 @@ public class RuleDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + RuleContract.RuleEntry.TABLE_NAME;
 
-    private static final String DATABASE_ALTER_RULES_1 = String.format("ALTER TABLE %s ADD COLUMN %s int 1;",
+    private static final String DATABASE_ALTER_RULES_1 = String.format("ALTER TABLE %s ADD COLUMN %s int default 1;",
             RuleContract.RuleEntry.TABLE_NAME, RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED);
 
     public RuleDbHelper(Context context) {
