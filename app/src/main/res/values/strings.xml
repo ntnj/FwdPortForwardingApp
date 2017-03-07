@@ -46,7 +46,7 @@
 
     <!-- Advanced Settings -->
     <string name="pref_enable_ads">Disable Advertisements</string>
-    <string name="pref_enable_ads_summary">Advertisements help us support the development of Fwd</string>
+    <string name="pref_enable_ads_summary">Ads help support the development of Fwd</string>
 
     <!-- App Intros -->
     <string name="app_intro_1_title">Add Rules</string>

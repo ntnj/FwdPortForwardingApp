@@ -67,6 +67,7 @@ public class SettingsFragment extends PreferenceFragment {
 
     private Tracker tracker;
     private Preference changeThemeToggle;
+    Toast toast;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,6 +76,9 @@ public class SettingsFragment extends PreferenceFragment {
 
         forwardingManager = ForwardingManager.getInstance();
         localBroadcastManager = LocalBroadcastManager.getInstance(getActivity().getBaseContext());
+
+        toast = Toast.makeText(getActivity(), "",
+                Toast.LENGTH_SHORT);
 
         // Get tracker.
         tracker = ((FwdApplication) getActivity().getApplication()).getDefaultTracker();
@@ -127,19 +131,26 @@ public class SettingsFragment extends PreferenceFragment {
 
         versionNamePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             int versionPrefClicks = 0;
+
             @Override
             public boolean onPreferenceClick(Preference preference) {
+
+                if(versionPrefClicks >= 2 && versionPrefClicks <= 3 ) {
+                    toast.setText(4 - versionPrefClicks + " more...");
+                    toast.show();
+                }
                 if(++versionPrefClicks == 5) {
                     versionPrefClicks = 0;
-                    Toast.makeText(getActivity(), "Entered the slothlight zone...",
-                            Toast.LENGTH_SHORT).show();
-
+                    toast.setText("...");
+                    toast.show();
                     Intent advancedSettingsActivity = new Intent(getActivity(), AdvancedSettingsActivity.class);
                     startActivity(advancedSettingsActivity);
                     return true;
                 }
                 return false;
             }
+
+
         });
 
         // set up click of help button - show webview
