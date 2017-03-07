@@ -41,9 +41,9 @@ public class MainIntro extends AppIntro2 {
 
         // Instead of fragments, you can also use our default slide
         // Just set a title, description, background and image. AppIntro will do the rest.
-        addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_1_title), getString(R.string.app_intro_1_text), R.drawable.ic_appintro1graphic, ContextCompat.getColor(this, R.color.colorPrimary)));
-        addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_2_title), getString(R.string.app_intro_2_text), R.drawable.ic_appintro2graphic, ContextCompat.getColor(this, R.color.colorPrimary)));
-        addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_3_title), getString(R.string.app_intro_3_text), R.drawable.ic_appintro2graphic, ContextCompat.getColor(this, R.color.colorPrimary)));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_1_title), getString(R.string.app_intro_1_text), R.drawable.appintro1, ContextCompat.getColor(this, R.color.colorPrimary)));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_2_title), getString(R.string.app_intro_2_text), R.drawable.appintro2, ContextCompat.getColor(this, R.color.colorPrimary)));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_3_title), getString(R.string.app_intro_3_text), R.drawable.appintro3, ContextCompat.getColor(this, R.color.colorPrimary)));
     }
 
     private void loadMainActivity() {
