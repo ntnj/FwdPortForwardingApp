@@ -8,6 +8,7 @@
     </style>
 
     <style name="tempSpinnerOverride" parent="Widget.AppCompat.Spinner.Underlined">
+
     </style>
 
 

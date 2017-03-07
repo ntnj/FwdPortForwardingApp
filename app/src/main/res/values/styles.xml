@@ -61,13 +61,14 @@
         <item name="android:textColorHint">@color/textInputHintColor</item>
         <item name="android:textColor">@color/textInputHintColor</item>
         <item name="android:textColorSecondary">@color/textInputUnderlineColor</item>
-        <item name="colorControlNormal">?attr/editRuleTextInputColour</item>
-        <item name="colorControlActivated">?attr/editRuleTextInputColour</item>
-        <item name="android:textColorPrimary">?attr/editRuleTextInputColour</item>
+        <!--<item name="colorControlNormal">?attr/editRuleTextInputColour</item>-->
+        <!--<item name="colorControlActivated">?attr/editRuleTextInputColour</item>-->
+        <!--<item name="android:textColorPrimary">?attr/editRuleTextInputColour</item>-->
     </style>
 
     <style name="SpinnerText">
-        <item name="android:color">?attr/editRuleTextInputColour</item>
+        <!--<item name="android:color">?attr/editRuleTextInputColour</item>-->
+        <item name="colorControlNormal">@color/textInputUnderlineColor</item>
     </style>
 
     <style name="AppTheme.NoActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
