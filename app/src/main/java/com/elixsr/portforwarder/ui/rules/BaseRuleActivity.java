@@ -26,19 +26,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.ui.BaseActivity;
 import com.elixsr.portforwarder.ui.MainActivity;
+import com.elixsr.portforwarder.util.InterfaceHelper;
 import com.elixsr.portforwarder.util.IpAddressValidator;
 import com.elixsr.portforwarder.util.NetworkHelper;
 import com.elixsr.portforwarder.util.RuleHelper;
@@ -81,7 +77,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         protocolAdapter = ArrayAdapter.createFromResource(this,
-                R.array.rule_protocol_array, android.R.layout.simple_spinner_item);
+                R.array.rule_protocol_array, R.layout.my_spinner);
 
         // Specify the layout to use when the list of choices appears
         protocolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -139,29 +135,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
      */
     public List<String> generateInterfaceList() throws SocketException {
 
-        //create an empty list
-        List<String> interfaces = new LinkedList<String>();
-
-        String address = null;
-        for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
-            NetworkInterface intf = en.nextElement();
-
-            //while we have more elements
-            for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-
-                //get the next address in from the iterator
-                InetAddress inetAddress = enumIpAddr.nextElement();
-
-                address = new String(inetAddress.getHostAddress().toString());
-
-                if (address != null & address.length() > 0 && inetAddress instanceof Inet4Address) {
-
-                    Log.i(TAG, intf.getDisplayName() + " " + address);
-                    interfaces.add(intf.getDisplayName());
-                }
-            }
-        }
-        return interfaces;
+        return InterfaceHelper.generateInterfaceNamesList();
     }
 
     /**
@@ -209,7 +183,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
         // validate the input, and show error message if wrong
         if (ruleNameText.getText() == null || ruleNameText.getText().toString().length() <= 0) {
             ruleNameTextInputLayout.setErrorEnabled(true);
-            ruleNameTextInputLayout.setError("You must enter a name");
+            ruleNameTextInputLayout.setError(getString(R.string.text_input_error_enter_name_text));
             Log.w(TAG, "No rule name was included");
         } else {
             //if everything is correct, set the name
@@ -248,11 +222,11 @@ public abstract class BaseRuleActivity extends BaseActivity {
 
         // validate the input, and show error message if wrong
         if (targetIpAddressText.getText() == null || targetIpAddressText.getText().toString().length() <= 0) {
-            targetIpAddressText.setError("You must enter a target IP Address");
+            targetIpAddressText.setError(getString(R.string.text_input_error_enter_ip_address_text));
             Log.w(TAG, "No target IP address was included");
         } else if (!new IpAddressValidator().validate(targetIpAddressText.getText().toString())) {
             //if the ip address is not valid
-            targetIpAddressText.setError("Please enter a valid IP Address");
+            targetIpAddressText.setError(getString(R.string.text_input_error_invalid_ip_address_text));
             Log.w(TAG, "Target IP address was not valid");
         } else {
             //if everything is correct, set the name

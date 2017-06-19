@@ -173,7 +173,7 @@ public class ForwardingService extends IntentService {
         //load the rules from the datastore
         //TODO: inject the rules as extras
         RuleDao ruleDao = new RuleDao(new RuleDbHelper(this));
-        List<RuleModel> ruleModels = ruleDao.getAllRuleModels();
+        List<RuleModel> ruleModels = ruleDao.getAllEnabledRuleModels();
 
         InetSocketAddress from;
 
@@ -189,6 +189,7 @@ public class ForwardingService extends IntentService {
         int remainingFutures = 0;
 
         for (RuleModel ruleModel : ruleModels){
+
 
             try {
                 from = generateFromIpUsingInterface(ruleModel.getFromInterfaceName(), ruleModel.getFromPort());
@@ -210,7 +211,7 @@ public class ForwardingService extends IntentService {
                 localIntent =
                         new Intent(BROADCAST_ACTION)
                                 // Puts the status into the Intent
-                                .putExtra(PORT_FORWARD_SERVICE_ERROR_MESSAGE, "Error while trying to start rule '" + ruleModel.getName() + "'");
+                                .putExtra(PORT_FORWARD_SERVICE_ERROR_MESSAGE, getString(R.string.start_rule_error_message) + " '" + ruleModel.getName() + "'");
                 // Broadcasts the Intent to receivers in this app.
                 LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
             }
@@ -349,8 +350,8 @@ public class ForwardingService extends IntentService {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_fwd_24dp)
-                        .setContentTitle("Port Forwarding Active")
-                        .setContentText("Touch to disable");
+                        .setContentTitle(getString(R.string.notification_forwarding_active_title))
+                        .setContentText(getString(R.string.notification_forwarding_touch_disable_text));
 
         mBuilder.setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
 

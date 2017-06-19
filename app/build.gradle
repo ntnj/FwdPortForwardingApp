@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.1"
 
     def versionPropsFile = file('version.properties')
 
@@ -20,7 +20,7 @@ android {
         }
 
         def versionMajor = 1
-        def versionMinor = 3
+        def versionMinor = 4
         def versionPatch = versionProps['VERSION_PATCH'].toInteger() + value
         def versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
         def version_Code = versionProps['VERSION_CODE'].toInteger() + value
@@ -33,7 +33,7 @@ android {
 
         defaultConfig {
             applicationId "com.elixsr.portforwarder"
-            minSdkVersion 11
+            minSdkVersion 16
             targetSdkVersion 23
             versionCode version_Code
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
@@ -52,13 +52,17 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.2.1'
-    compile 'com.android.support:design:23.2.+'
-    compile 'com.android.support:percent:23.+'
-    compile 'com.android.support:recyclerview-v7:+'
+    compile 'com.android.support:appcompat-v7:25.1.1'
+    compile 'com.android.support:design:25.1.1'
+    compile 'com.android.support:percent:25.1.1'
+    compile 'com.android.support:recyclerview-v7:25.1.1'
+    compile 'com.elixsr:elixsr-core:0.1.8'
     compile 'com.github.paolorotolo:appintro:3.4.0'
-    compile 'com.google.android.gms:play-services-analytics:8.4.0'
+    compile 'com.google.android.gms:play-services-analytics:9.2.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.1'
+    testCompile 'junit:junit:4.12'
 }
+
+
 
 apply plugin: 'com.google.gms.google-services'

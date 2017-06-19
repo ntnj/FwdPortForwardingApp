@@ -7,5 +7,9 @@
         <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
     </style>
 
-    <style name="tempSpinnerOverride" parent="Widget.AppCompat.Spinner.Underlined" />
+    <style name="tempSpinnerOverride" parent="Widget.AppCompat.Spinner.Underlined">
+
+    </style>
+
+
 </resources>

@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -33,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.elixsr.core.common.widgets.SwitchBar;
 import com.elixsr.portforwarder.FwdApplication;
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.db.RuleContract;
@@ -64,6 +66,7 @@ public class EditRuleActivity extends BaseRuleActivity {
 
     private SQLiteDatabase db;
     private Tracker tracker;
+    private SwitchBar switchBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -100,6 +103,8 @@ public class EditRuleActivity extends BaseRuleActivity {
         });
 
 
+
+
         //use the base class to construct the common UI
         constructDetailUi();
 
@@ -119,11 +124,15 @@ public class EditRuleActivity extends BaseRuleActivity {
         cursor.moveToFirst();
 
         this.ruleModel = RuleHelper.cursorToRuleModel(cursor);
-
+        Log.i(TAG, Boolean.toString(ruleModel.isEnabled()));
         //close the DB
         cursor.close();
         db.close();
 
+        // Set up the switchBar for enabling/disabling
+        switchBar = (SwitchBar) findViewById(R.id.switch_bar);
+        switchBar.show();
+        switchBar.setChecked(this.ruleModel.isEnabled());
         /*
         Set the text fields content
          */
@@ -192,8 +201,13 @@ public class EditRuleActivity extends BaseRuleActivity {
         this.ruleModel = generateNewRule();
 
         if(ruleModel.isValid()) {
+            // Determine if rule is enabled
+            this.ruleModel.setEnabled(switchBar.isChecked());
+
             Log.i(TAG, "Rule " + ruleModel.getName() + " is valid, time to update.");
             SQLiteDatabase db = new RuleDbHelper(this).getReadableDatabase();
+
+            Log.i(TAG, "Is enabled is: " + this.ruleModel.isEnabled() );
 
             // New model to store
             ContentValues values = RuleHelper.ruleModelToContentValues(this.ruleModel);
@@ -223,10 +237,11 @@ public class EditRuleActivity extends BaseRuleActivity {
 
             // move to main activity
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            finish();
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );
             startActivity(mainActivityIntent);
+            finish();
         }else{
-            Toast.makeText(this, "Rule is not valid. Please check your input.",
+            Toast.makeText(this, R.string.toast_error_rule_not_valid_text,
                     Toast.LENGTH_LONG).show();
         }
     }
@@ -234,8 +249,8 @@ public class EditRuleActivity extends BaseRuleActivity {
     private void deleteRule(){
 
         new AlertDialog.Builder(this)
-                .setTitle("Delete entry")
-                .setMessage("Are you sure you want to delete this entry?")
+                .setTitle(R.string.alert_dialog_delete_entry_title)
+                .setMessage(R.string.alert_dialog_delete_entry_text)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete

@@ -67,6 +67,7 @@ public class SettingsFragment extends PreferenceFragment {
 
     private Tracker tracker;
     private Preference changeThemeToggle;
+    Toast toast;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,6 +76,9 @@ public class SettingsFragment extends PreferenceFragment {
 
         forwardingManager = ForwardingManager.getInstance();
         localBroadcastManager = LocalBroadcastManager.getInstance(getActivity().getBaseContext());
+
+        toast = Toast.makeText(getActivity(), "",
+                Toast.LENGTH_SHORT);
 
         // Get tracker.
         tracker = ((FwdApplication) getActivity().getApplication()).getDefaultTracker();
@@ -87,8 +91,8 @@ public class SettingsFragment extends PreferenceFragment {
                 //code for what you want it to do
 
                 new AlertDialog.Builder(getActivity())
-                        .setTitle("Delete all Rules")
-                        .setMessage("Are you sure you want to delete all rules?")
+                        .setTitle(R.string.alert_dialog_delete_all_rules_title)
+                        .setMessage(R.string.alert_dialog_delete_all_rules_text)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
 
@@ -124,6 +128,30 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
         versionNamePreference = (Preference)findPreference(getString(R.string.pref_version));
+
+        versionNamePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            int versionPrefClicks = 0;
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+
+                if(versionPrefClicks >= 2 && versionPrefClicks <= 3 ) {
+                    toast.setText(4 - versionPrefClicks + " more...");
+                    toast.show();
+                }
+                if(++versionPrefClicks == 5) {
+                    versionPrefClicks = 0;
+                    toast.setText("...");
+                    toast.show();
+                    Intent advancedSettingsActivity = new Intent(getActivity(), AdvancedSettingsActivity.class);
+                    startActivity(advancedSettingsActivity);
+                    return true;
+                }
+                return false;
+            }
+
+
+        });
 
         // set up click of help button - show webview
 //        Preference helpButton = (Preference) findPreference(getString(R.string.pref_help_link));

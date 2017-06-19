@@ -111,4 +111,19 @@ public class RuleDao {
 
         return ruleModels;
     }
+
+    public List<RuleModel> getAllEnabledRuleModels() {
+        List<RuleModel> ruleModels = new LinkedList<RuleModel>();
+        List<RuleModel> enabledRuleModels = new LinkedList<RuleModel>();
+
+        ruleModels = getAllRuleModels();
+
+        for (RuleModel ruleModel : ruleModels) {
+            if(ruleModel.isEnabled()){
+                enabledRuleModels.add(ruleModel);
+            }
+        }
+
+        return enabledRuleModels;
+    }
 }

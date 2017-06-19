@@ -1,17 +1,23 @@
 <resources>
+
+    <!--
+        Good article: https://android.jlelse.eu/android-developers-we-ve-been-using-themes-all-wrong-eed7755da586#.6ok28b5y0
+    -->
+
     <!-- Dark theme -->
 
     <style name="DarkTheme" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="editRuleTextInputColour">#FFF</item>
         <item name="emptyState">@drawable/empty_state_sloth_dark</item>
     </style>
+
     <style name="DarkTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
 
     <!-- Base application theme. -->
     <!-- Base application theme. -->
@@ -20,7 +26,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="editRuleTextInputColour">#000</item>
         <item name="emptyState">@drawable/empty_state_sloth</item>
+
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -28,18 +36,43 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-    </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"></style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="spinnerItemStyle">
-        <item name="android:padding">10dp</item>
+        <item name="android:padding">10dp</item>    
         <item name="android:textSize">50sp</item>
-        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColor">?attr/editRuleTextInputColour</item>
     </style>
 
-    <style name="tempSpinnerOverride"/>
+    <style name="tempSpinnerOverride">
+    </style>
 
+    <style name="EditRuleSwitchBar" parent="Theme.AppCompat">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="colorAccent">#FFFFFF</item>
+        <item name="colorControlActivated">#FFFFFF</item>
+        <item name="colorSwitchThumbNormal">#4B9AFF</item>
+        <item name="android:colorForeground">#10407F</item>
+    </style>
+
+    <style name="TextInputTextHint">
+        <item name="android:textColorHint">@color/textInputHintColor</item>
+        <item name="android:textColor">@color/textInputHintColor</item>
+        <item name="android:textColorSecondary">@color/textInputUnderlineColor</item>
+        <!--<item name="colorControlNormal">?attr/editRuleTextInputColour</item>-->
+        <!--<item name="colorControlActivated">?attr/editRuleTextInputColour</item>-->
+        <!--<item name="android:textColorPrimary">?attr/editRuleTextInputColour</item>-->
+    </style>
+
+    <style name="SpinnerText">
+        <!--<item name="android:color">?attr/editRuleTextInputColour</item>-->
+        <item name="colorControlNormal">@color/textInputUnderlineColor</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

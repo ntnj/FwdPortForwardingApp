@@ -23,6 +23,7 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/selectableItemBackground"
     >
 
@@ -43,7 +44,9 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="20dp"
+            tools:text="TCP"
+            />
 
         <LinearLayout
             android:id="@+id/textview_container"
@@ -62,8 +65,9 @@
                 android:id="@+id/rule_item_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TEst"
+                android:text=" "
                 android:textSize="16sp"
+                tools:text="Test Rule"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
             <android.support.v7.widget.LinearLayoutCompat
@@ -74,7 +78,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textSize="14sp"
-                android:id="@+id/rule_item_from_port" />
+                android:id="@+id/rule_item_from_port"
+                    tools:text="3000"
+                    />
 
                 <TextView
                 android:layout_width="wrap_content"
@@ -90,7 +96,8 @@
                 android:layout_marginLeft="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:id="@+id/rule_item_target_port" />
+                android:id="@+id/rule_item_target_port"
+                    tools:text="3001"/>
 
             </android.support.v7.widget.LinearLayoutCompat>
 
@@ -171,7 +178,7 @@
         android:id="@+id/separator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/list_dropdown_divider_color" />
+        android:background="@color/listDropdownDividerColor" />
 
 
 </LinearLayout>

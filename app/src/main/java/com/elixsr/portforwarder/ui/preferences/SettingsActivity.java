@@ -46,9 +46,6 @@ public class SettingsActivity extends BaseActivity {
 
         Toolbar toolbar = getActionBarToolbar();
         setSupportActionBar(toolbar);
-//        toolbar.setTitle("Settings");
-
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
@@ -59,10 +56,13 @@ public class SettingsActivity extends BaseActivity {
             }
         });
 
-//        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_action_back));
-
         getFragmentManager().beginTransaction().replace(R.id.content_frame, new SettingsFragment()).commit();
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

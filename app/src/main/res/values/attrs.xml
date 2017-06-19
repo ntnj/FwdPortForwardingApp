@@ -1,3 +1,5 @@
 <resources>
     <attr name="emptyState" format="reference" />
+    <attr name="editRuleTextInputColour" format="reference|color" />
+
 </resources>

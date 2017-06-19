@@ -1,21 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.elixsr.portforwarder">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
 
     <application
         android:name=".FwdApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:persistent="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar"
-        android:persistent="true">
-
+        android:theme="@style/AppTheme.NoActionBar">
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name">
@@ -27,44 +26,46 @@
         </activity>
         <activity
             android:name=".ui.preferences.SettingsActivity"
-            android:parentActivityName=".ui.MainActivity"
-            android:label="@string/settings_title">
+            android:label="@string/settings_title"
+            android:parentActivityName=".ui.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity"/>
+                android:value=".ui.MainActivity" />
         </activity>
         <activity
             android:name=".ui.rules.NewRuleActivity"
-            android:parentActivityName=".ui.MainActivity"
-            android:label="@string/new_rule_title">
+            android:label="@string/new_rule_title"
+            android:parentActivityName=".ui.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity"/>
+                android:value=".ui.MainActivity" />
         </activity>
         <activity
             android:name=".ui.rules.EditRuleActivity"
-            android:parentActivityName=".ui.MainActivity"
-            android:label="@string/edit_rule_title">
+            android:label="@string/edit_rule_title"
+            android:parentActivityName=".ui.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity"/>
+                android:value=".ui.MainActivity" />
         </activity>
-        <activity android:name=".ui.preferences.HelpActivity"
-            android:parentActivityName=".ui.preferences.SettingsActivity"
-            android:label="@string/help_title">
+        <activity
+            android:name=".ui.preferences.HelpActivity"
+            android:label="@string/help_title"
+            android:parentActivityName=".ui.preferences.SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.preferences.SettingsActivity"/>
+                android:value=".ui.preferences.SettingsActivity" />
         </activity>
-        <activity android:name=".ui.preferences.AboutElixsrActivity"
-            android:parentActivityName=".ui.preferences.SettingsActivity"
-            android:label="@string/about_elixsr_title">
+        <activity
+            android:name=".ui.preferences.AboutElixsrActivity"
+            android:label="@string/about_elixsr_title"
+            android:parentActivityName=".ui.preferences.SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.preferences.SettingsActivity"/>
+                android:value=".ui.preferences.SettingsActivity" />
         </activity>
-
-        <activity android:name=".ui.intro.MainIntro"
+        <activity
+            android:name=".ui.intro.MainIntro"
             android:label="@string/app_intro" />
 
         <!--
@@ -74,7 +75,7 @@
         <service
             android:name=".forwarding.ForwardingService"
             android:exported="false"
-            android:label="Forwarding Service"/>
+            android:label="Forwarding Service" />
 
         <receiver
             android:name=".forwarding.StartForwardingServiceAtBootReceiver"
@@ -84,31 +85,45 @@
             </intent-filter>
         </receiver>
 
-
         <!-- Analytics -->
 
-        <!-- Optionally, register AnalyticsReceiver and AnalyticsService to support background
-      dispatching on non-Google Play devices -->
-        <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+
+        <!--
+      Optionally, register AnalyticsReceiver and AnalyticsService to support background
+      dispatching on non-Google Play devices
+        -->
+        <receiver
+            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
             </intent-filter>
         </receiver>
 
-        <service android:name="com.google.android.gms.analytics.AnalyticsService"
+        <service
+            android:name="com.google.android.gms.analytics.AnalyticsService"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
 
-        <!-- Optionally, register CampaignTrackingReceiver and CampaignTrackingService to enable
-             installation campaign reporting -->
-        <receiver android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+        <!--
+             Optionally, register CampaignTrackingReceiver and CampaignTrackingService to enable
+             installation campaign reporting
+        -->
+        <receiver
+            android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
+
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+
+        <activity
+            android:name=".ui.preferences.AdvancedSettingsActivity"
+            android:label="@string/title_activity_advanced_settings"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.preferences.IpAddressCheckerActivity"></activity>
     </application>
 
 </manifest>

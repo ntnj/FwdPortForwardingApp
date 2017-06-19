@@ -133,7 +133,7 @@ public class MainActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        ruleListAdapter = new RuleListAdapter(ruleModels, forwardingManager);
+        ruleListAdapter = new RuleListAdapter(ruleModels, forwardingManager, getApplicationContext());
         mRecyclerView.setAdapter(ruleListAdapter);
 
         //store the coordinator layout for snackbar
@@ -185,9 +185,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
+    protected void onStart() { super.onStart(); }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -199,8 +197,16 @@ public class MainActivity extends BaseActivity {
         //setup the start forwarding button
         MenuItem toggleForwarding = menu.findItem(R.id.action_toggle_forwarding);
 
+        int enabledRuleModels = 0;
+
+        for (RuleModel ruleModel : ruleModels) {
+            if(ruleModel.isEnabled()) {
+                ++enabledRuleModels;
+            }
+        }
+
         //it should not be able to start if there are no rules
-        if (ruleModels.size() <= 0) {
+        if (enabledRuleModels <= 0) {
             toggleForwarding.setVisible(false);
         } else {
             toggleForwarding.setVisible(true);
@@ -239,7 +245,7 @@ public class MainActivity extends BaseActivity {
         if (!forwardingManager.isEnabled()) {
 //                    startPortForwarding();
 
-            Snackbar.make(this.coordinatorLayout, "Port Forwarding Started", Snackbar.LENGTH_LONG)
+            Snackbar.make(this.coordinatorLayout, R.string.snackbar_port_forwarding_started_text, Snackbar.LENGTH_LONG)
                     .setAction("Stop", null).show();
 
             fab.hide();
@@ -249,7 +255,7 @@ public class MainActivity extends BaseActivity {
             //stop forwarding
             fab.show();
 
-            Snackbar.make(this.coordinatorLayout, "Port Forwarding Stopped", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(this.coordinatorLayout, R.string.snackbar_port_forwarding_stopped_text, Snackbar.LENGTH_LONG).show();
 
             stopService(forwardingServiceIntent);
         }
@@ -259,11 +265,12 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    private static String generateForwardingActionMenuText(boolean forwardingFlag) {
+    private String generateForwardingActionMenuText(boolean forwardingFlag) {
         if (forwardingFlag) {
-            return "Stop";
+            return this.getString(R.string.action_stop_forwarding);
         }
-        return "Start";
+        return this.getString(R.string.action_start_forwarding);
+
     }
 
     @Override
@@ -304,6 +311,9 @@ public class MainActivity extends BaseActivity {
 
                 Toast.makeText(context, intent.getExtras().getString(ForwardingService.PORT_FORWARD_SERVICE_ERROR_MESSAGE),
                         Toast.LENGTH_SHORT).show();
+                Snackbar.make(coordinatorLayout, R.string.snackbar_port_forwarding_stopped_text, Snackbar.LENGTH_SHORT).show();
+                fab.show();
+
             }
         }
     }
@@ -311,6 +321,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        
         finish();
     }
 
