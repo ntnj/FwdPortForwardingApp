@@ -23,10 +23,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -34,11 +34,31 @@ import android.widget.Toast;
 
 import com.elixsr.portforwarder.FwdApplication;
 import com.elixsr.portforwarder.R;
+import com.elixsr.portforwarder.adapters.RuleListJsonSerializer;
+import com.elixsr.portforwarder.adapters.RuleListJsonDeserializer;
+import com.elixsr.portforwarder.dao.RuleDao;
 import com.elixsr.portforwarder.db.RuleContract;
 import com.elixsr.portforwarder.db.RuleDbHelper;
 import com.elixsr.portforwarder.forwarding.ForwardingManager;
+import com.elixsr.portforwarder.models.RuleModel;
+import com.elixsr.portforwarder.ui.MainActivity;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.net.InetSocketAddress;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by Niall McShane on 29/02/2016.
@@ -58,21 +78,29 @@ public class SettingsFragment extends PreferenceFragment {
 
     private LocalBroadcastManager localBroadcastManager;
     private ForwardingManager forwardingManager;
-    private Preference clearRulesButton;
-    private Preference versionNamePreference;
+    private Preference clearRulesButton, versionNamePreference, exportRulesPreference, importRulesPreference, changeThemeToggle;
 
 
 
     private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferencesListener;
 
     private Tracker tracker;
-    private Preference changeThemeToggle;
-    Toast toast;
+    private static final int RULE_LIST_CODE = 1;
+    private Gson gson;
+    private RuleDao ruleDao;
+    private Toast toast;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+
+        ruleDao = new RuleDao(new RuleDbHelper(getActivity()));
+
+        gson = new GsonBuilder()
+                .registerTypeAdapter(InetSocketAddress.class, new RuleListJsonSerializer())
+                .registerTypeAdapter(InetSocketAddress.class, new RuleListJsonDeserializer())
+                .create();
 
         forwardingManager = ForwardingManager.getInstance();
         localBroadcastManager = LocalBroadcastManager.getInstance(getActivity().getBaseContext());
@@ -130,6 +158,7 @@ public class SettingsFragment extends PreferenceFragment {
         versionNamePreference = (Preference)findPreference(getString(R.string.pref_version));
 
         versionNamePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
             int versionPrefClicks = 0;
 
             @Override
@@ -150,20 +179,32 @@ public class SettingsFragment extends PreferenceFragment {
                 return false;
             }
 
+        });
+
+        importRulesPreference = (Preference)findPreference(getString(R.string.pref_import));
+
+        importRulesPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                importRules();
+                return false;
+            }
 
         });
 
-        // set up click of help button - show webview
-//        Preference helpButton = (Preference) findPreference(getString(R.string.pref_help_link));
-//        helpButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-//            @Override
-//            public boolean onPreferenceClick(Preference preference) {
-//                //code for what you want it to do
-//                Intent helpActivityIntent = new Intent(getActivity(), HelpActivity.class);
-//                startActivity(helpActivityIntent);
-//                return true;
-//            }
-//        });
+        exportRulesPreference = (Preference)findPreference(getString(R.string.pref_export));
+
+        exportRulesPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                exportRules();
+                return false;
+            }
+
+        });
+
 
         // set up click of about elixsr button - show webview
         Preference aboutElixsrButton = (Preference) findPreference(getString(R.string.pref_about_link));
@@ -218,10 +259,8 @@ public class SettingsFragment extends PreferenceFragment {
         super.onStart();
         if(forwardingManager.isEnabled()){
             clearRulesButton.setEnabled(false);
-//            changeThemeToggle.setEnabled(false);
         }else{
             clearRulesButton.setEnabled(true);
-//            changeThemeToggle.setEnabled(true);
         }
 
         String versionName = "Version ";
@@ -241,5 +280,83 @@ public class SettingsFragment extends PreferenceFragment {
 
         //Ensure we unregister our previous listener - as it now points to a null activity
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(sharedPreferencesListener);
+    }
+
+    private void importRules() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("application/json");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            startActivityForResult(Intent.createChooser(intent, "Select a rule list to import"), RULE_LIST_CODE);
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(getActivity(), "A file manager is required to import rule lists.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void exportRules() {
+        if(ruleDao.getAllRuleModels().size() > 0) {
+            //lets create out file to store our data
+            File outputDir = getActivity().getExternalCacheDir();
+            String ruleList = ruleListToJsonString();
+            try {
+                File outputFile = File.createTempFile("fwd_rule_list", ".json", outputDir);
+                outputFile.createNewFile();
+
+                FileWriter writer = new FileWriter(outputFile);
+
+                writer.append(ruleList);
+
+                //ensure the writer is closed - assuming its blocking
+                writer.close();
+
+                //everything good, lets send an intent
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("application/json");
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Fwd Rule List");
+                intent.putExtra(Intent.EXTRA_TEXT, "Your fwd rules have been attached with the name '" + outputFile.getName() + "'.");
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(outputFile));
+                startActivity(Intent.createChooser(intent, getString(R.string.export_rules_action_title)));
+
+                Log.i(TAG, "onDataChange: URI " + Uri.fromFile(outputFile).toString());
+
+            } catch (IOException e) {
+                Log.e(TAG, "onDataChange: error trying to create file to store exported data", e);
+                Toast.makeText(getActivity().getBaseContext(), "Error when trying to export dreams.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private String ruleListToJsonString() {
+        List<RuleModel> ruleModels = ruleDao.getAllRuleModels();
+
+        String json = gson.toJson(ruleModels);
+
+        return json;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == RULE_LIST_CODE && data.getData() != null) {
+            JsonReader reader;
+            Type collectionType = new TypeToken<Collection<RuleModel>>(){}.getType();
+            try {
+                InputStream fileContentStream = getActivity().getContentResolver().openInputStream(data.getData());
+                reader = new JsonReader(new InputStreamReader(fileContentStream));
+                List<RuleModel> ruleModels = gson.fromJson(reader, collectionType);
+                for (RuleModel ruleModel : ruleModels) {
+                    ruleDao.insertRule(ruleModel);
+                }
+
+                Toast.makeText(getActivity().getApplicationContext(), "Successfully imported " + ruleModels.size() + " rules.", Toast.LENGTH_SHORT).show();
+                // move to main activity
+                Intent mainActivityIntent = new Intent(getActivity(), MainActivity.class);
+                mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );
+                startActivity(mainActivityIntent);
+                getActivity().finish();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

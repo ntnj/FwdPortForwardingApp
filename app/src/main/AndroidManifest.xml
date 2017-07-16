@@ -123,7 +123,7 @@
             android:name=".ui.preferences.AdvancedSettingsActivity"
             android:label="@string/title_activity_advanced_settings"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.preferences.IpAddressCheckerActivity"></activity>
+        <activity android:name=".ui.preferences.IpAddressCheckerActivity" />
     </application>
 
 </manifest>

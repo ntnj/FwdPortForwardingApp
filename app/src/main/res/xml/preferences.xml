@@ -20,6 +20,16 @@
             android:title="@string/pref_start_on_boot_text" />
     </PreferenceCategory>
     <PreferenceCategory
+        android:title="@string/pref_import_export_category_title"
+        android:key="pref_import_export_category">
+        <Preference
+            android:key="@string/pref_import"
+            android:title="@string/pref_import_export_button"/>
+        <Preference
+            android:key="@string/pref_export"
+            android:title="@string/pref_export_button"/>
+    </PreferenceCategory>
+    <PreferenceCategory
         android:title="@string/pref_about_category_title"
         android:key="pref_about_category">
         <!--<Preference-->

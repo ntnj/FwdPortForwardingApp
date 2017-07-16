@@ -113,5 +113,15 @@
     <string name="pref_ip_checker_title">IP Checker</string>
     <string name="ip_checker_title">IP Checker</string>
     <string name="start_rule_error_message">Error while trying to start rule</string>
+    <string name="pref_import_export" />
+    <string name="pref_import_export_title">Import/Export Rules</string>
+    <string name="import_rules_button_text">Import Rules</string>
+    <string name="export_rules_button_text">Export Rules</string>
+    <string name="export_rules_action_title">Export Rules</string>
+    <string name="pref_import_export_category_title">Import/Export Rules</string>
+    <string name="pref_import_export_button">Import Rules</string>
+    <string name="pref_export_button">Export Rules</string>
+    <string name="pref_import">pref_import</string>
+    <string name="pref_export">pref_export</string>
 
 </resources>

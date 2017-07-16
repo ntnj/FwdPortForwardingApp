@@ -16,7 +16,6 @@ public class AdvancedSettingsFragment extends PreferenceFragment {
 
     private Preference advertisementsEnabled;
     private Preference ipChecker;
-
     private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferencesListener;
 
     public AdvancedSettingsFragment() {
@@ -40,7 +39,6 @@ public class AdvancedSettingsFragment extends PreferenceFragment {
                 return true;
             }
         });
-
 
     }
 
