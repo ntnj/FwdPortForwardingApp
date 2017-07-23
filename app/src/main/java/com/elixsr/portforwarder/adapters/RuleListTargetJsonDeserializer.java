@@ -13,7 +13,7 @@ import java.net.InetSocketAddress;
  * Created by Cathan on 14/07/2017.
  */
 
-public class RuleListJsonDeserializer implements JsonDeserializer<InetSocketAddress>
+public class RuleListTargetJsonDeserializer implements JsonDeserializer<InetSocketAddress>
 {
     @Override
     public InetSocketAddress deserialize(JsonElement je, Type type, JsonDeserializationContext jdc)
@@ -22,9 +22,11 @@ public class RuleListJsonDeserializer implements JsonDeserializer<InetSocketAddr
 
         JsonObject jsonObject = je.getAsJsonObject();
 
-        // Deserialize it. You use a new instance of Gson to avoid infinite recursion
-        // to this deserializer
-        return new InetSocketAddress(jsonObject.get("hostname").getAsString(), jsonObject.get("port").getAsInt());
+        if(jsonObject.has("hostname") && jsonObject.has("port")) {
+            return new InetSocketAddress(jsonObject.get("hostname").getAsString(), jsonObject.get("port").getAsInt());
+        } else {
+            throw new JsonParseException("Target is missing host and port");
+        }
 
     }
 }

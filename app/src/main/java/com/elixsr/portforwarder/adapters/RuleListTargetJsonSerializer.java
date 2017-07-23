@@ -12,7 +12,7 @@ import java.net.InetSocketAddress;
  * Created by Cathan on 14/07/2017.
  */
 
-public class RuleListJsonSerializer implements JsonSerializer<InetSocketAddress> {
+public class RuleListTargetJsonSerializer implements JsonSerializer<InetSocketAddress> {
 
     @Override
     public JsonElement serialize(InetSocketAddress src, Type typeOfSrc, JsonSerializationContext context) {

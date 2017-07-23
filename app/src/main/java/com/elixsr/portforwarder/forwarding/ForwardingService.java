@@ -44,6 +44,7 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import com.elixsr.portforwarder.FwdApplication;
 import com.elixsr.portforwarder.ui.MainActivity;
@@ -190,16 +191,20 @@ public class ForwardingService extends IntentService {
 
         for (RuleModel ruleModel : ruleModels){
 
+            // Something has killed the runService, no point in looping anymore
+            if(!runService) {
+                break;
+            }
 
             try {
                 from = generateFromIpUsingInterface(ruleModel.getFromInterfaceName(), ruleModel.getFromPort());
 
-                if (ruleModel.isTcp()) {
+                if (ruleModel.isTcp() && runService) {
                     completionService.submit(new TcpForwarder(from, ruleModel.getTarget(), ruleModel.getName()));
                     remainingFutures++;
                 }
 
-                if (ruleModel.isUdp()) {
+                if (ruleModel.isUdp() && runService) {
                     completionService.submit(new UdpForwarder(from, ruleModel.getTarget(), ruleModel.getName()));
                     remainingFutures++;
                 }
@@ -225,11 +230,10 @@ public class ForwardingService extends IntentService {
                 .build());
 
 
-
         Future<?> completedFuture;
 
         // loop through each callback, and handle an exception
-        while (remainingFutures > 0) {
+        while (remainingFutures > 0 && runService) {
 
             // block until a callable completes
             try {
@@ -310,7 +314,21 @@ public class ForwardingService extends IntentService {
         super.onDestroy();
         runService = false;
 
-        executorService.shutdownNow();
+        // Reject any new tasks
+        executorService.shutdown();
+
+        try {
+            // Shutdown any existing tasks
+            executorService.shutdownNow();
+            if (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
+                Log.e(TAG, "onDestroy: Pool did not terminate");
+            }
+        } catch (InterruptedException ie) {
+            // (Re-)Cancel if current thread also interrupted
+            executorService.shutdownNow();
+            // Preserve interrupt status
+            Thread.currentThread().interrupt();
+        }
 
         ForwardingManager.getInstance().disableForwarding();
 

@@ -34,8 +34,8 @@ import android.widget.Toast;
 
 import com.elixsr.portforwarder.FwdApplication;
 import com.elixsr.portforwarder.R;
-import com.elixsr.portforwarder.adapters.RuleListJsonSerializer;
-import com.elixsr.portforwarder.adapters.RuleListJsonDeserializer;
+import com.elixsr.portforwarder.adapters.RuleListJsonValidator;
+import com.elixsr.portforwarder.adapters.RuleListTargetJsonSerializer;
 import com.elixsr.portforwarder.dao.RuleDao;
 import com.elixsr.portforwarder.db.RuleContract;
 import com.elixsr.portforwarder.db.RuleDbHelper;
@@ -46,6 +46,8 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
@@ -59,6 +61,8 @@ import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.List;
+
+import static android.app.Activity.RESULT_CANCELED;
 
 /**
  * Created by Niall McShane on 29/02/2016.
@@ -98,8 +102,8 @@ public class SettingsFragment extends PreferenceFragment {
         ruleDao = new RuleDao(new RuleDbHelper(getActivity()));
 
         gson = new GsonBuilder()
-                .registerTypeAdapter(InetSocketAddress.class, new RuleListJsonSerializer())
-                .registerTypeAdapter(InetSocketAddress.class, new RuleListJsonDeserializer())
+                .registerTypeAdapter(InetSocketAddress.class, new RuleListTargetJsonSerializer())
+                .registerTypeAdapter(RuleModel.class, new RuleListJsonValidator())
                 .create();
 
         forwardingManager = ForwardingManager.getInstance();
@@ -337,7 +341,7 @@ public class SettingsFragment extends PreferenceFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == RULE_LIST_CODE && data.getData() != null) {
+        if(resultCode != RESULT_CANCELED && requestCode == RULE_LIST_CODE && data.getData() != null) {
             JsonReader reader;
             Type collectionType = new TypeToken<Collection<RuleModel>>(){}.getType();
             try {
@@ -356,7 +360,12 @@ public class SettingsFragment extends PreferenceFragment {
                 getActivity().finish();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
+            } catch (JsonSyntaxException e) {
+                Toast.makeText(getActivity().getApplicationContext(), "Error importing rules - JSON file is malformed.", Toast.LENGTH_LONG).show();
+            } catch (JsonParseException e) {
+                Toast.makeText(getActivity().getApplicationContext(), "Error importing rules - Rule is invalid.", Toast.LENGTH_LONG).show();
             }
         }
+
     }
 }
