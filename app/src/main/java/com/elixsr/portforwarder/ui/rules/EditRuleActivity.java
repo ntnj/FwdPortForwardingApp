@@ -44,6 +44,7 @@ import com.elixsr.portforwarder.ui.MainActivity;
 import com.elixsr.portforwarder.util.RuleHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 /**
  * Created by Niall McShane on 02/03/2016.
@@ -59,6 +60,7 @@ public class EditRuleActivity extends BaseRuleActivity {
     private static final String LABEL_DELETE_RULE = "Delete Rule";
     private static final String LABEL_UPDATE_RULE = "Rule Updated";
 
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     private RuleModel ruleModel;
 
@@ -89,6 +91,9 @@ public class EditRuleActivity extends BaseRuleActivity {
         ruleModelId = getIntent().getExtras().getLong(RuleHelper.RULE_MODEL_ID);
 
         setContentView(R.layout.edit_rule_activity);
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         //set up toolbar
         Toolbar toolbar = getActionBarToolbar();

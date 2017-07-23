@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "26.0.0"
 
     def versionPropsFile = file('version.properties')
 
@@ -34,7 +34,7 @@ android {
         defaultConfig {
             applicationId "com.elixsr.portforwarder"
             minSdkVersion 16
-            targetSdkVersion 23
+            targetSdkVersion 25
             versionCode version_Code
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
         }
@@ -57,12 +57,15 @@ dependencies {
     compile 'com.android.support:design:25.1.1'
     compile 'com.android.support:percent:25.1.1'
     compile 'com.android.support:recyclerview-v7:25.1.1'
+    compile 'com.google.firebase:firebase-core:9.2.1'
     compile 'com.elixsr:elixsr-core:0.1.8'
-    compile 'com.github.paolorotolo:appintro:3.4.0'
+    compile 'com.github.paolorotolo:appintro:4.0.0'
     compile 'com.google.android.gms:play-services-analytics:9.2.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+    implementation 'com.google.firebase:firebase-crash:9.2.1'
 }
+
 
 
 

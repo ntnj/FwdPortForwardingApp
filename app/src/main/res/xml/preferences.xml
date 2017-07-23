@@ -9,9 +9,6 @@
     <PreferenceCategory
         android:title="@string/pref_general_category_title"
         android:key="pref_general_category">
-        <Preference
-            android:key="@string/pref_clear_rules"
-            android:title="@string/pref_clear_rules_text" />
         <CheckBoxPreference
             android:key="@string/pref_dark_theme"
             android:title="@string/pref_dark_theme_text" />
@@ -28,6 +25,9 @@
         <Preference
             android:key="@string/pref_export"
             android:title="@string/pref_export_button"/>
+        <Preference
+            android:key="@string/pref_clear_rules"
+            android:title="@string/pref_clear_rules_text" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_about_category_title"
