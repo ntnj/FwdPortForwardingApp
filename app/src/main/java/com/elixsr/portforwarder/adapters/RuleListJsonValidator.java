@@ -1,5 +1,7 @@
 package com.elixsr.portforwarder.adapters;
 
+import android.util.Log;
+
 import com.elixsr.portforwarder.models.RuleModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,6 +20,8 @@ import java.net.InetSocketAddress;
 
 public class RuleListJsonValidator implements JsonDeserializer<RuleModel> {
 
+    private static final String TAG = "RuleListJsonValidator";
+
     @Override
     public RuleModel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         Gson gson = new GsonBuilder()
@@ -25,6 +29,10 @@ public class RuleListJsonValidator implements JsonDeserializer<RuleModel> {
                 .create();
 
         JsonObject jsonObject = json.getAsJsonObject();
+//        JsonObject location = jsonObject.getAsJsonObject("name");
+
+//        Log.i(TAG, "VALIDATOR rule json: " + location);
+
         if( jsonObject.has("fromInterfaceName") &&
             jsonObject.has("fromPort") &&
             jsonObject.has("id") &&
@@ -38,6 +46,8 @@ public class RuleListJsonValidator implements JsonDeserializer<RuleModel> {
             throw new JsonParseException("Rule is invalid.");
         }
 
-
+//        if(jsonObject.equals()) {
+//
+//        }
     }
 }

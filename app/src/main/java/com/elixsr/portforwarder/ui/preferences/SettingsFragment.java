@@ -263,8 +263,10 @@ public class SettingsFragment extends PreferenceFragment {
         super.onStart();
         if(forwardingManager.isEnabled()){
             clearRulesButton.setEnabled(false);
+            importRulesPreference.setEnabled(false);
         }else{
             clearRulesButton.setEnabled(true);
+            importRulesPreference.setEnabled(true);
         }
 
         String versionName = "Version ";
@@ -328,6 +330,8 @@ public class SettingsFragment extends PreferenceFragment {
                 Log.e(TAG, "onDataChange: error trying to create file to store exported data", e);
                 Toast.makeText(getActivity().getBaseContext(), "Error when trying to export dreams.", Toast.LENGTH_SHORT).show();
             }
+        }else{
+            Toast.makeText(getActivity().getBaseContext(), "No rules to export.", Toast.LENGTH_SHORT).show();
         }
     }
 
