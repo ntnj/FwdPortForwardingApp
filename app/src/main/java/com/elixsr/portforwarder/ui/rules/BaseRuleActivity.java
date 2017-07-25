@@ -31,6 +31,7 @@ import java.net.SocketException;
 import java.util.List;
 
 import com.elixsr.portforwarder.R;
+import com.elixsr.portforwarder.exceptions.RuleValidationException;
 import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.ui.BaseActivity;
 import com.elixsr.portforwarder.ui.MainActivity;
@@ -38,6 +39,7 @@ import com.elixsr.portforwarder.util.InterfaceHelper;
 import com.elixsr.portforwarder.util.IpAddressValidator;
 import com.elixsr.portforwarder.util.NetworkHelper;
 import com.elixsr.portforwarder.util.RuleHelper;
+import com.elixsr.portforwarder.validators.RuleModelValidator;
 
 /**
  * The BaseRuleActivity class  provides logic for subclasses which utilise the shared Rule detail
@@ -199,15 +201,12 @@ public abstract class BaseRuleActivity extends BaseActivity {
         TextInputEditText fromPortText = (TextInputEditText) findViewById(R.id.new_rule_from_port);
 
         // validate the input, and show error message if wrong
-        if (fromPortText.getText() == null || fromPortText.getText().toString().length() <= 0) {
-            fromPortText.setError(String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.MIN_PORT_VALUE, RuleHelper.MAX_PORT_VALUE));
-            Log.w(TAG, "No from port was included");
-        } else if (Integer.valueOf(fromPortText.getText().toString()) < RuleHelper.MIN_PORT_VALUE || Integer.valueOf(fromPortText.getText().toString()) > RuleHelper.MAX_PORT_VALUE) {
-            fromPortText.setError(String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.MIN_PORT_VALUE, RuleHelper.MAX_PORT_VALUE));
-            Log.w(TAG, "From port was below or equal to " + RuleHelper.MIN_PORT_VALUE);
-        } else {
-            //if everything is correct, set the name
-            ruleModel.setFromPort(Integer.valueOf(fromPortText.getText().toString()));
+        try {
+            if(RuleModelValidator.validateRuleFromPort(fromPortText.getText().toString())) {
+                ruleModel.setFromPort(Integer.valueOf(fromPortText.getText().toString()));
+            }
+        } catch( RuleValidationException e ) {
+            fromPortText.setError(e.getMessage());
         }
 
         /*

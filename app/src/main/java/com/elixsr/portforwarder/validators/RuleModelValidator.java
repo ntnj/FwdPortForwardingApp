@@ -30,12 +30,20 @@ public class RuleModelValidator implements Validator<RuleModel> {
         return true;
     }
 
-    public boolean validateRuleFromPort(int ruleFromPort) {
+    public static boolean validateRuleFromPort(int ruleFromPort) throws RuleValidationException {
         if (ruleFromPort <= 0 || ruleFromPort < RuleHelper.MIN_PORT_VALUE || ruleFromPort > RuleHelper.MAX_PORT_VALUE) {
-            return false;
+            throw new RuleValidationException(String.format("From port must be a value greater than or equal to %s and less than or equal to %s ", RuleHelper.MIN_PORT_VALUE, RuleHelper.MAX_PORT_VALUE ));
         }
 
         return true;
+    }
+
+    public static boolean validateRuleFromPort(String ruleFromPort) throws RuleValidationException {
+        if (ruleFromPort != null && ruleFromPort.length() > 0) {
+            return validateRuleFromPort(Integer.parseInt(ruleFromPort));
+        }
+
+        throw new RuleValidationException(String.format("From port must be a value greater than or equal to %s and less than or equal to %s ", RuleHelper.MIN_PORT_VALUE, RuleHelper.MAX_PORT_VALUE ));
     }
 
     public boolean validateRuleTargetPort(int ruleTargetPort) {
