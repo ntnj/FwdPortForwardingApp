@@ -57,12 +57,14 @@ public abstract class BaseRuleActivity extends BaseActivity {
     protected static final String CATEGORY_RULES = "Rules";
 
     private static final String TAG = "BaseRuleActivity";
-    private static final String INVALID_PORT_ERROR_MESSAGE = "Please enter a value greater than or equal to %s and less than or equal to %s";
 
     protected Spinner protocolSpinner;
     protected Spinner fromInterfaceSpinner;
     protected ArrayAdapter<String> fromSpinnerAdapter;
     protected ArrayAdapter<CharSequence> protocolAdapter;
+
+    private static final String INVALID_PORT_ERROR_MESSAGE = "Please enter a value greater than or equal to %s and less than or equal to %s";
+
 
     /**
      * Generate a user interface for all shared activities that use the {@link com.elixsr
