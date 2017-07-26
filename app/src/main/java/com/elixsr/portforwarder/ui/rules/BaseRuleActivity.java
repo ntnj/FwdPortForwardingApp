@@ -181,18 +181,20 @@ public abstract class BaseRuleActivity extends BaseActivity {
             Rule Name
          */
         TextInputEditText ruleNameText = (TextInputEditText) findViewById(R.id.new_rule_name);
-
         TextInputLayout ruleNameTextInputLayout = (TextInputLayout) findViewById(R.id.new_rule_name_input_layout);
 
-        // validate the input, and show error message if wrong
-        if (ruleNameText.getText() == null || ruleNameText.getText().toString().length() <= 0) {
+        try {
+            if(RuleModelValidator.validateRuleName(ruleNameText.getText().toString())){
+                //if everything is correct, set the name
+                ruleModel.setName(ruleNameText.getText().toString());
+                ruleNameTextInputLayout.setErrorEnabled(false);
+            }
+        } catch (RuleValidationException e){
             ruleNameTextInputLayout.setErrorEnabled(true);
+            //Alternate error style above line
+            //ruleNameText.setError(e.getMessage());
             ruleNameTextInputLayout.setError(getString(R.string.text_input_error_enter_name_text));
             Log.w(TAG, "No rule name was included");
-        } else {
-            //if everything is correct, set the name
-            ruleModel.setName(ruleNameText.getText().toString());
-            ruleNameTextInputLayout.setErrorEnabled(false);
         }
 
         /*
@@ -220,18 +222,13 @@ public abstract class BaseRuleActivity extends BaseActivity {
          */
         TextInputEditText targetIpAddressText = (TextInputEditText) findViewById(R.id.new_rule_target_ip_address);
 
-
         // validate the input, and show error message if wrong
-        if (targetIpAddressText.getText() == null || targetIpAddressText.getText().toString().length() <= 0) {
-            targetIpAddressText.setError(getString(R.string.text_input_error_enter_ip_address_text));
-            Log.w(TAG, "No target IP address was included");
-        } else if (!new IpAddressValidator().validate(targetIpAddressText.getText().toString())) {
-            //if the ip address is not valid
-            targetIpAddressText.setError(getString(R.string.text_input_error_invalid_ip_address_text));
-            Log.w(TAG, "Target IP address was not valid");
-        } else {
-            //if everything is correct, set the name
-            targetIpAddress = targetIpAddressText.getText().toString();
+        try {
+            if(RuleModelValidator.validateRuleTargetIpAddress(targetIpAddressText.getText().toString())){
+                targetIpAddress = targetIpAddressText.getText().toString();
+            }
+        } catch (RuleValidationException e){
+            targetIpAddressText.setError(e.getMessage());
         }
 
         /*
@@ -240,15 +237,12 @@ public abstract class BaseRuleActivity extends BaseActivity {
         TextInputEditText targetPortText = (TextInputEditText) findViewById(R.id.new_rule_target_port);
 
         // validate the input, and show error message if wrong
-        if (targetPortText.getText() == null || targetPortText.getText().toString().length() <= 0) {
-            targetPortText.setError(String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.TARGET_MIN_PORT, RuleHelper.MAX_PORT_VALUE));
-            Log.e(TAG, "No target port was included");
-        } else if (Integer.valueOf(targetPortText.getText().toString()) < RuleHelper.TARGET_MIN_PORT || Integer.valueOf(targetPortText.getText().toString()) > RuleHelper.MAX_PORT_VALUE) {
-            targetPortText.setError(String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.TARGET_MIN_PORT, RuleHelper.MAX_PORT_VALUE));
-            Log.w(TAG, String.format(INVALID_PORT_ERROR_MESSAGE, RuleHelper.TARGET_MIN_PORT, RuleHelper.MAX_PORT_VALUE));
-        } else {
-            //if everything is correct, set the name
-            targetPort = Integer.valueOf(targetPortText.getText().toString());
+        try {
+            if (RuleModelValidator.validateRuleTargetPort(targetPortText.getText().toString())){
+                targetPort = Integer.valueOf(targetPortText.getText().toString());
+            }
+        }catch ( RuleValidationException e ){
+            targetPortText.setError(e.getMessage());
         }
 
         if (targetIpAddress != null && targetIpAddress.length() > 0 && targetPort >= 0) {
