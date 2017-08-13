@@ -34,7 +34,7 @@ import android.widget.Toast;
 
 import com.elixsr.portforwarder.FwdApplication;
 import com.elixsr.portforwarder.R;
-import com.elixsr.portforwarder.adapters.RuleListTargetJsonDeserializer;
+import com.elixsr.portforwarder.adapters.RuleListJsonValidator;
 import com.elixsr.portforwarder.adapters.RuleListTargetJsonSerializer;
 import com.elixsr.portforwarder.dao.RuleDao;
 import com.elixsr.portforwarder.db.RuleContract;
@@ -105,7 +105,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         gson = new GsonBuilder()
                 .registerTypeAdapter(InetSocketAddress.class, new RuleListTargetJsonSerializer())
-                .registerTypeAdapter(RuleModel.class, new RuleListTargetJsonDeserializer())
+                .registerTypeAdapter(RuleModel.class, new RuleListJsonValidator())
                 .create();
 
         forwardingManager = ForwardingManager.getInstance();
