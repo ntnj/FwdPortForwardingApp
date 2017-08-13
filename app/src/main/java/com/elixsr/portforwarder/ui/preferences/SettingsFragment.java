@@ -34,14 +34,16 @@ import android.widget.Toast;
 
 import com.elixsr.portforwarder.FwdApplication;
 import com.elixsr.portforwarder.R;
-import com.elixsr.portforwarder.adapters.RuleListJsonValidator;
+import com.elixsr.portforwarder.adapters.RuleListTargetJsonDeserializer;
 import com.elixsr.portforwarder.adapters.RuleListTargetJsonSerializer;
 import com.elixsr.portforwarder.dao.RuleDao;
 import com.elixsr.portforwarder.db.RuleContract;
 import com.elixsr.portforwarder.db.RuleDbHelper;
+import com.elixsr.portforwarder.exceptions.RuleValidationException;
 import com.elixsr.portforwarder.forwarding.ForwardingManager;
 import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.ui.MainActivity;
+import com.elixsr.portforwarder.validators.RuleModelValidator;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
@@ -103,7 +105,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         gson = new GsonBuilder()
                 .registerTypeAdapter(InetSocketAddress.class, new RuleListTargetJsonSerializer())
-                .registerTypeAdapter(RuleModel.class, new RuleListJsonValidator())
+                .registerTypeAdapter(RuleModel.class, new RuleListTargetJsonDeserializer())
                 .create();
 
         forwardingManager = ForwardingManager.getInstance();
@@ -346,6 +348,8 @@ public class SettingsFragment extends PreferenceFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode != RESULT_CANCELED && requestCode == RULE_LIST_CODE && data.getData() != null) {
+            boolean ruleFailedValidation = false;
+            int successfulRuleAdditions = 0;
             JsonReader reader;
             Type collectionType = new TypeToken<Collection<RuleModel>>(){}.getType();
             try {
@@ -353,10 +357,21 @@ public class SettingsFragment extends PreferenceFragment {
                 reader = new JsonReader(new InputStreamReader(fileContentStream));
                 List<RuleModel> ruleModels = gson.fromJson(reader, collectionType);
                 for (RuleModel ruleModel : ruleModels) {
-                    ruleDao.insertRule(ruleModel);
+                    try {
+                        if(RuleModelValidator.validateRule(ruleModel)) {
+                            ruleDao.insertRule(ruleModel);
+                            successfulRuleAdditions++;
+                        }
+                    } catch (RuleValidationException e) {
+                        ruleFailedValidation = true;
+                    }
                 }
 
-                Toast.makeText(getActivity().getApplicationContext(), "Successfully imported " + ruleModels.size() + " rules.", Toast.LENGTH_SHORT).show();
+                if(ruleFailedValidation) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Some rules failed validation. Imported " + successfulRuleAdditions + " rules.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Successfully imported " + successfulRuleAdditions + " rules.", Toast.LENGTH_SHORT).show();
+                }
                 // move to main activity
                 Intent mainActivityIntent = new Intent(getActivity(), MainActivity.class);
                 mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );

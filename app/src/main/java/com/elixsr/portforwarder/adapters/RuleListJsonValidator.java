@@ -29,9 +29,6 @@ public class RuleListJsonValidator implements JsonDeserializer<RuleModel> {
                 .create();
 
         JsonObject jsonObject = json.getAsJsonObject();
-//        JsonObject location = jsonObject.getAsJsonObject("name");
-
-//        Log.i(TAG, "VALIDATOR rule json: " + location);
 
         if( jsonObject.has("fromInterfaceName") &&
             jsonObject.has("fromPort") &&
@@ -46,8 +43,5 @@ public class RuleListJsonValidator implements JsonDeserializer<RuleModel> {
             throw new JsonParseException("Rule is invalid.");
         }
 
-//        if(jsonObject.equals()) {
-//
-//        }
     }
 }

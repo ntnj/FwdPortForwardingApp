@@ -2,7 +2,6 @@ package com.elixsr.portforwarder.validators;
 
 import android.util.Log;
 
-import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.exceptions.RuleValidationException;
 import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.util.RuleHelper;
@@ -20,8 +19,21 @@ public class RuleModelValidator implements Validator<RuleModel> {
 
     @Override
     public boolean validate(RuleModel ruleModel) throws RuleValidationException {
+        return validateRule(ruleModel);
+    }
 
-        return true;
+    public static boolean validateRule(RuleModel ruleModel) throws RuleValidationException {
+        boolean isValidRuleModel = false;
+
+        if( validateRuleName(ruleModel.getName()) &&
+            validateRuleFromPort(ruleModel.getFromPort()) &&
+            validateRuleTargetPort(ruleModel.getTargetPort()) &&
+            validateRuleTargetIpAddress(ruleModel.getTargetIpAddress()) &&
+            validateRuleTargetIpAddressSyntax(ruleModel.getTargetIpAddress()) ) {
+            isValidRuleModel = true;
+        }
+
+        return isValidRuleModel;
     }
 
     public static boolean validateRuleName(String ruleName) throws RuleValidationException {
@@ -80,4 +92,5 @@ public class RuleModelValidator implements Validator<RuleModel> {
 
         return true;
     }
+
 }
