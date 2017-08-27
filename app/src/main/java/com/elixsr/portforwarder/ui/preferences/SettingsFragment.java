@@ -368,9 +368,9 @@ public class SettingsFragment extends PreferenceFragment {
                 }
 
                 if(ruleFailedValidation) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Some rules failed validation. Imported " + successfulRuleAdditions + " rules.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "Some rules failed validation. Imported " + successfulRuleAdditions + " rules.", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Successfully imported " + successfulRuleAdditions + " rules.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "Successfully imported " + successfulRuleAdditions + " rules.", Toast.LENGTH_LONG).show();
                 }
                 // move to main activity
                 Intent mainActivityIntent = new Intent(getActivity(), MainActivity.class);

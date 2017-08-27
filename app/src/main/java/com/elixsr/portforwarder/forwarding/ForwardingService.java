@@ -95,7 +95,7 @@ public class ForwardingService extends IntentService {
     private boolean runService = false;
 
     //change the magic number
-    private final ExecutorService executorService;
+    private ExecutorService executorService;
 
     //wake lock
     private PowerManager.WakeLock wakeLock;
@@ -175,6 +175,8 @@ public class ForwardingService extends IntentService {
         //TODO: inject the rules as extras
         RuleDao ruleDao = new RuleDao(new RuleDbHelper(this));
         List<RuleModel> ruleModels = ruleDao.getAllEnabledRuleModels();
+
+        executorService = Executors.newFixedThreadPool(ruleModels.size());
 
         InetSocketAddress from;
 

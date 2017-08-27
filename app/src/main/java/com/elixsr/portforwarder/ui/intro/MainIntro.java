@@ -44,6 +44,12 @@ public class MainIntro extends AppIntro2 {
         addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_1_title), getString(R.string.app_intro_1_text), R.drawable.appintro1, ContextCompat.getColor(this, R.color.colorPrimary)));
         addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_2_title), getString(R.string.app_intro_2_text), R.drawable.appintro2, ContextCompat.getColor(this, R.color.colorPrimary)));
         addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_3_title), getString(R.string.app_intro_3_text), R.drawable.appintro3, ContextCompat.getColor(this, R.color.colorPrimary)));
+        showSkipButton(false);
+    }
+
+    public void showSkipButton(boolean showButton) {
+        this.skipButtonEnabled = showButton;
+        setButtonState(skipButton, showButton);
     }
 
     private void loadMainActivity() {
@@ -64,6 +70,11 @@ public class MainIntro extends AppIntro2 {
 
     @Override
     public void onNextPressed() {
+        // Do something when users tap on Next button.
+    }
+
+    @Override
+    public void onBackPressed() {
         // Do something when users tap on Next button.
     }
 

@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    buildToolsVersion "26.0.1"
 
     def versionPropsFile = file('version.properties')
 
@@ -20,7 +20,7 @@ android {
         }
 
         def versionMajor = 1
-        def versionMinor = 4
+        def versionMinor = 5
         def versionPatch = versionProps['VERSION_PATCH'].toInteger() + value
         def versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
         def version_Code = versionProps['VERSION_CODE'].toInteger() + value
@@ -34,7 +34,7 @@ android {
         defaultConfig {
             applicationId "com.elixsr.portforwarder"
             minSdkVersion 16
-            targetSdkVersion 25
+            targetSdkVersion 26
             versionCode version_Code
             versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
             multiDexEnabled true
@@ -51,19 +51,30 @@ android {
     }
 }
 
+def playServicesVersion = '11.0.4'
+def firebaseVersion = '11.0.4'
+def supportLibraryVersion = '26.0.1'
+
 dependencies {
     compile group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:26.0.0+'
-    compile 'com.android.support:design:26.0.0+'
-    compile 'com.android.support:percent:26.0.0+'
-    compile 'com.android.support:recyclerview-v7:26.0.0+'
+    compile "com.android.support:appcompat-v7:$supportLibraryVersion"
+    compile "com.android.support:cardview-v7:$supportLibraryVersion"
+    compile "com.android.support:customtabs:$supportLibraryVersion"
+    compile "com.android.support:design:$supportLibraryVersion"
+    compile "com.android.support:percent:$supportLibraryVersion"
+    compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
     compile 'com.elixsr:elixsr-core:0.1.8'
     compile 'com.github.paolorotolo:appintro:4.0.0'
-    compile 'com.google.android.gms:play-services-analytics:9.2.1'
+    compile "com.google.android.gms:play-services-analytics:$playServicesVersion"
+    compile "com.google.android.gms:play-services-ads:$playServicesVersion"
+    compile "com.google.android.gms:play-services-auth:$playServicesVersion"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
-    implementation 'com.google.firebase:firebase-crash:9.2.1'
+    implementation "com.google.firebase:firebase-crash:$firebaseVersion"
+    implementation "com.google.firebase:firebase-auth:$firebaseVersion"
+    implementation "com.google.firebase:firebase-ads:$firebaseVersion"
+    implementation "com.google.firebase:firebase-database:$firebaseVersion"
 }
 
 apply plugin: 'com.google.gms.google-services'

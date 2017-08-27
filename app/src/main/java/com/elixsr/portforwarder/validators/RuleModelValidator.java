@@ -90,6 +90,7 @@ public class RuleModelValidator implements Validator<RuleModel> {
             throw new RuleValidationException(String.format("Target IP address was not valid"));
         }
 
+        Log.i(TAG, "validateRuleTargetIpAddressSyntax: TARGET IP VALID");
         return true;
     }
 
