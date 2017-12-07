@@ -31,7 +31,7 @@ import static com.facebook.GraphRequest.TAG;
 
 /**
  * The {@link RuleModel} class provides static objects and methods related to rules.
- *
+ * <p>
  * The class provides functions to convert {@link RuleModel} object to and from other common object
  * types.
  */
@@ -41,7 +41,7 @@ public class RuleHelper {
 
     /**
      * The minimum from port value.
-     *
+     * <p>
      * This is a result of not having root permissions.
      */
     public static final int MIN_PORT_VALUE = 1024;
@@ -58,10 +58,11 @@ public class RuleHelper {
 
     /**
      * Convert a {@link RuleModel} object to a {@link ContentValues} object.
+     *
      * @param ruleModel The {@link RuleModel} object to be converted.
      * @return a {@link ContentValues} object based off the input {@link RuleModel} object.
      */
-    public static ContentValues ruleModelToContentValues(RuleModel ruleModel){
+    public static ContentValues ruleModelToContentValues(RuleModel ruleModel) {
 
         // Create a new map of values, where column names are the keys
         ContentValues contentValues = new ContentValues();
@@ -79,10 +80,11 @@ public class RuleHelper {
 
     /**
      * Convert a {@link Cursor} object to a {@link RuleModel} object.
+     *
      * @param cursor The {@link Cursor} object to be converted.
      * @return a {@link RuleModel} based off the input {@link Cursor}
      */
-    public static RuleModel cursorToRuleModel(Cursor cursor){
+    public static RuleModel cursorToRuleModel(Cursor cursor) {
 
         RuleModel ruleModel = new RuleModel();
         ruleModel.setId(cursor.getLong(0));
@@ -101,22 +103,23 @@ public class RuleHelper {
 
     /**
      * Function to find the relevant Protocol based of a {@link RuleModel} object.
+     *
      * @param ruleModel The source {@link RuleModel} object.
      * @return A String describing the protocol. Can be; "TCP", "UDP" or "BOTH".
      */
-    public static String getRuleProtocolFromModel(RuleModel ruleModel){
+    public static String getRuleProtocolFromModel(RuleModel ruleModel) {
 
         String result = "";
 
-        if(ruleModel.isTcp()){
+        if (ruleModel.isTcp()) {
             result = NetworkHelper.TCP;
         }
 
-        if(ruleModel.isUdp()){
+        if (ruleModel.isUdp()) {
             result = NetworkHelper.UDP;
         }
 
-        if(ruleModel.isTcp() && ruleModel.isUdp()){
+        if (ruleModel.isTcp() && ruleModel.isUdp()) {
             result = NetworkHelper.BOTH;
         }
 

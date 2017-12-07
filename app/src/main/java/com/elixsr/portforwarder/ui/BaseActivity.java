@@ -40,13 +40,13 @@ import com.elixsr.portforwarder.ui.preferences.SettingsFragment;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private static final String TAG = "BaseActivity" ;
+    private static final String TAG = "BaseActivity";
     private ThemeChangeReceiver themeChangeReceiver;
 
     @Override
     protected void onCreate(Bundle ofJoy) {
 
-        //handle intents
+        // Handle intents
         IntentFilter themeChangeIntentFilter = new IntentFilter(
                 SettingsFragment.DARK_MODE_BROADCAST);
 
@@ -82,7 +82,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         Log.i(TAG, "onDestroy: CALLED");
 
-        //ensure that it is no longer looking out for broadcasts
+        // Ensure that it is no longer looking out for broadcasts
         LocalBroadcastManager.getInstance(this).unregisterReceiver(themeChangeReceiver);
     }
 

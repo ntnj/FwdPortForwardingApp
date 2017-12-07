@@ -30,14 +30,14 @@ public class RuleListJsonValidator implements JsonDeserializer<RuleModel> {
 
         JsonObject jsonObject = json.getAsJsonObject();
 
-        if( jsonObject.has("fromInterfaceName") &&
-            jsonObject.has("fromPort") &&
-            jsonObject.has("id") &&
-            jsonObject.has("isEnabled") &&
-            jsonObject.has("isTcp") &&
-            jsonObject.has("isUdp") &&
-            jsonObject.has("name") &&
-            jsonObject.has("target") ) {
+        if (jsonObject.has("fromInterfaceName") &&
+                jsonObject.has("fromPort") &&
+                jsonObject.has("id") &&
+                jsonObject.has("isEnabled") &&
+                jsonObject.has("isTcp") &&
+                jsonObject.has("isUdp") &&
+                jsonObject.has("name") &&
+                jsonObject.has("target")) {
             return gson.fromJson(jsonObject, RuleModel.class);
         } else {
             throw new JsonParseException("Rule is invalid.");

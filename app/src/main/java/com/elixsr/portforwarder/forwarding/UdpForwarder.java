@@ -35,7 +35,7 @@ import java.util.concurrent.Callable;
 
 /**
  * Skeleton taken from: http://cs.ecs.baylor.edu/~donahoo/practical/JavaSockets2/code/UDPEchoServerSelector.java
- *
+ * <p>
  * Created by Niall McShane on 21/02/2016.
  */
 public class UdpForwarder extends Forwarder implements Callable<Void> {
@@ -61,7 +61,7 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
 
             try {
                 inChannel.socket().bind(this.from);
-            }catch(SocketException e){
+            } catch (SocketException e) {
                 Log.e(TAG, String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
                 throw new BindException(String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
             }
@@ -71,7 +71,7 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
 
             while (true) { // Run forever, receiving and echoing datagrams
 
-                if (Thread.currentThread().isInterrupted()){
+                if (Thread.currentThread().isInterrupted()) {
                     Log.i(TAG, String.format(super.THREAD_INTERRUPT_CLEANUP_MESSAGE, protocol));
                     inChannel.socket().close();
                     break;
@@ -88,14 +88,14 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
 
                         // Client socket channel has pending data?
                         if (key.isReadable()) {
-//                            Log.i(TAG, "Have Something to READ");
+                            // Log.i(TAG, "Have Something to READ");
                             handleRead(key, readBuffer);
                         }
 
                         // Client socket channel is available for writing and
                         // key is valid (i.e., channel not closed).
                         if (key.isValid() && key.isWritable()) {
-//                            Log.i(TAG, "Have Something to WRITE");
+                            // Log.i(TAG, "Have Something to WRITE");
                             handleWrite(key);
                         }
 
@@ -103,8 +103,7 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
                     }
                 }
             }
-        }
-        catch(IOException e){
+        } catch (IOException e) {
             Log.e(TAG, "Problem opening Selector", e);
             throw e;
         }
@@ -114,21 +113,21 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
 
     public static void handleRead(SelectionKey key, ByteBuffer readBuffer) throws IOException {
 
-//        Log.i("UdpForwarder", "Handling Read");
+        // Log.i("UdpForwarder", "Handling Read");
         DatagramChannel channel = (DatagramChannel) key.channel();
         ClientRecord clientRecord = (ClientRecord) key.attachment();
 
-        //ensure the buffer is empty
+        // Ensure the buffer is empty
         readBuffer.clear();
 
-        //receive the data
+        // Receive the data
         channel.receive(readBuffer);
 
-        //get read to wrte, then send
+        // Get read to wrte, then send
         readBuffer.flip();
         channel.send(readBuffer, clientRecord.toAddress);
 
-        //if there is anything remaining in the buffer
+        // If there is anything remaining in the buffer
         if (readBuffer.remaining() > 0) {
             clientRecord.writeBuffer.put(readBuffer);
             key.interestOps(SelectionKey.OP_WRITE);
@@ -168,7 +167,7 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
         public SocketAddress toAddress;
         public ByteBuffer writeBuffer = ByteBuffer.allocate(BUFFER_SIZE);
 
-        public ClientRecord(SocketAddress toAddress){
+        public ClientRecord(SocketAddress toAddress) {
             this.toAddress = toAddress;
         }
     }

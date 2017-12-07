@@ -88,17 +88,17 @@ public class MainActivity extends BaseActivity {
 
         setContentView(R.layout.activity_main);
         setSupportActionBar(getActionBarToolbar());
-//        getActionBarToolbar().setTitle(R.string.app_tag);
+        // getActionBarToolbar().setTitle(R.string.app_tag);
         getActionBarToolbar().setTitle("");
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_nav_logo);
 
-        //determine if this is first start - and whether to show app intro
+        // Determine if this is first start - and whether to show app intro
         onFirstStart();
 
         final Intent newRuleIntent = new Intent(this, NewRuleActivity.class);
 
-        // move to the new rule activity
+        // Move to the new rule activity
         this.fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +107,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        // hide the fab if forwarding is enabled
+        // Hide the fab if forwarding is enabled
         // the user should not be able to add/delete rules
         if (this.forwardingManager.isEnabled()) {
             //if the forwarding service is enabled, then we should ensure not to show the fab
@@ -116,27 +116,27 @@ public class MainActivity extends BaseActivity {
             fab.show();
         }
 
-        //get all models from the data store
+        // Get all models from the data store
         ruleDao = new RuleDao(new RuleDbHelper(this));
         ruleModels = ruleDao.getAllRuleModels();
 
-        //set up rule list and empty view
+        // Set up rule list and empty view
         mRecyclerView = (RecyclerView) findViewById(R.id.rule_recycler_view);
         mRuleListEmptyView = (PercentRelativeLayout) findViewById(R.id.rule_list_empty_view);
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
+        // Use this setting to improve performance if you know that changes
+        // In content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
-        // use a linear layout manager
+        // Use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // specify an adapter (see also next example)
+        // Specify an adapter (see also next example)
         ruleListAdapter = new RuleListAdapter(ruleModels, forwardingManager, getApplicationContext());
         mRecyclerView.setAdapter(ruleListAdapter);
 
-        //store the coordinator layout for snackbar
+        // Store the coordinator layout for snackbar
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator_layout);
 
 
@@ -147,7 +147,7 @@ public class MainActivity extends BaseActivity {
             Service stuff
          */
 
-        //handle intents
+        // Handle intents
         IntentFilter mStatusIntentFilter = new IntentFilter(
                 ForwardingService.BROADCAST_ACTION);
 
@@ -174,7 +174,7 @@ public class MainActivity extends BaseActivity {
         this.ruleListAdapter.notifyDataSetChanged();
         invalidateOptionsMenu();
 
-        //decide whether to show the rule list or the empty view
+        // Decide whether to show the rule list or the empty view
         if (this.ruleModels.isEmpty()) {
             mRecyclerView.setVisibility(View.GONE);
             mRuleListEmptyView.setVisibility(View.VISIBLE);
@@ -185,7 +185,9 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() { super.onStart(); }
+    protected void onStart() {
+        super.onStart();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -194,18 +196,18 @@ public class MainActivity extends BaseActivity {
 
         menu.findItem(R.id.action_toggle_forwarding).setTitle(generateForwardingActionMenuText(forwardingManager.isEnabled()));
 
-        //setup the start forwarding button
+        // Setup the start forwarding button
         MenuItem toggleForwarding = menu.findItem(R.id.action_toggle_forwarding);
 
         int enabledRuleModels = 0;
 
         for (RuleModel ruleModel : ruleModels) {
-            if(ruleModel.isEnabled()) {
+            if (ruleModel.isEnabled()) {
                 ++enabledRuleModels;
             }
         }
 
-        //it should not be able to start if there are no rules
+        // It should not be able to start if there are no rules
         if (enabledRuleModels <= 0) {
             toggleForwarding.setVisible(false);
         } else {
@@ -243,7 +245,7 @@ public class MainActivity extends BaseActivity {
 
 
         if (!forwardingManager.isEnabled()) {
-//                    startPortForwarding();
+            // startPortForwarding();
 
             Snackbar.make(this.coordinatorLayout, R.string.snackbar_port_forwarding_started_text, Snackbar.LENGTH_LONG)
                     .setAction("Stop", null).show();
@@ -252,7 +254,7 @@ public class MainActivity extends BaseActivity {
 
             startService(forwardingServiceIntent);
         } else {
-            //stop forwarding
+            // Stop forwarding
             fab.show();
 
             Snackbar.make(this.coordinatorLayout, R.string.snackbar_port_forwarding_stopped_text, Snackbar.LENGTH_LONG).show();
@@ -284,7 +286,7 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-//        stopService(forwardingServiceIntent);
+        // stopService(forwardingServiceIntent);
         Log.i(TAG, "Destroyed");
     }
 
@@ -321,36 +323,36 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        
+
         finish();
     }
 
     private void onFirstStart() {
-        //  Declare a new thread to do a preference check
+        // Declare a new thread to do a preference check
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                //  Initialize SharedPreferences
+                // Initialize SharedPreferences
                 SharedPreferences getPrefs = PreferenceManager
                         .getDefaultSharedPreferences(getBaseContext());
 
-                //  Create a new boolean and preference and set it to true
+                // Create a new boolean and preference and set it to true
                 boolean isFirstStart = getPrefs.getBoolean("firstStart", true);
 
-                //  If the activity has never started before...
+                // If the activity has never started before...
                 if (isFirstStart) {
 
-                    //  Launch app intro
+                    // Launch app intro
                     Intent i = new Intent(MainActivity.this, MainIntro.class);
                     startActivity(i);
 
-                    //  Make a new preferences editor
+                    // Make a new preferences editor
                     SharedPreferences.Editor e = getPrefs.edit();
 
-                    //  Edit preference to make it false because we don't want this to run again
+                    // Edit preference to make it false because we don't want this to run again
                     e.putBoolean("firstStart", false);
 
-                    //  Apply changes
+                    // Apply changes
                     e.apply();
                 }
             }

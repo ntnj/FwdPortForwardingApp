@@ -71,13 +71,13 @@ public class EditRuleActivity extends BaseRuleActivity {
     private SwitchBar switchBar;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //if we can't locate the id, then we can't continue
-        if(!getIntent().getExtras().containsKey(RuleHelper.RULE_MODEL_ID)){
+        // If we can't locate the id, then we can't continue
+        if (!getIntent().getExtras().containsKey(RuleHelper.RULE_MODEL_ID)) {
 
-            /// show toast containing message to the user
+            /// Show toast containing message to the user
             Toast.makeText(this, NO_RULE_ID_FOUND_TOAST_MESSAGE,
                     Toast.LENGTH_SHORT).show();
 
@@ -85,7 +85,7 @@ public class EditRuleActivity extends BaseRuleActivity {
 
             onBackPressed();
 
-            //return from the method - ensure we don't continue
+            // Return from the method - ensure we don't continue
             return;
         }
         ruleModelId = getIntent().getExtras().getLong(RuleHelper.RULE_MODEL_ID);
@@ -95,7 +95,7 @@ public class EditRuleActivity extends BaseRuleActivity {
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-        //set up toolbar
+        // Set up toolbar
         Toolbar toolbar = getActionBarToolbar();
         setSupportActionBar(toolbar);
 
@@ -108,9 +108,7 @@ public class EditRuleActivity extends BaseRuleActivity {
         });
 
 
-
-
-        //use the base class to construct the common UI
+        // Use the base class to construct the common UI
         constructDetailUi();
 
         //TODO: move this
@@ -130,7 +128,7 @@ public class EditRuleActivity extends BaseRuleActivity {
 
         this.ruleModel = RuleHelper.cursorToRuleModel(cursor);
         Log.i(TAG, Boolean.toString(ruleModel.isEnabled()));
-        //close the DB
+        // Close the DB
         cursor.close();
         db.close();
 
@@ -161,11 +159,11 @@ public class EditRuleActivity extends BaseRuleActivity {
         Log.i(TAG, "FROM INTERFACE : " + this.ruleModel.getFromInterfaceName());
         fromInterfaceSpinner.setSelection(fromSpinnerAdapter.getPosition(this.ruleModel.getFromInterfaceName()));
 
-        //protocol spinner
+        // Protocol spinner
         protocolSpinner.setSelection(protocolAdapter.getPosition(RuleHelper.getRuleProtocolFromModel(this.ruleModel)));
-        
-        
-        //set up tracking
+
+
+        // Set up tracking
         // Get tracker.
         tracker = ((FwdApplication) this.getApplication()).getDefaultTracker();
     }
@@ -184,12 +182,12 @@ public class EditRuleActivity extends BaseRuleActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch(id) {
+        switch (id) {
             case R.id.action_save_rule:
                 Log.i(TAG, "Save Menu Button Clicked");
 
 
-                //set the item to disabled while saving
+                // Set the item to disabled while saving
                 item.setEnabled(false);
                 saveEditedRule();
                 item.setEnabled(true);
@@ -202,17 +200,17 @@ public class EditRuleActivity extends BaseRuleActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void saveEditedRule(){
+    private void saveEditedRule() {
         this.ruleModel = generateNewRule();
 
-        if(ruleModel.isValid()) {
+        if (ruleModel.isValid()) {
             // Determine if rule is enabled
             this.ruleModel.setEnabled(switchBar.isChecked());
 
             Log.i(TAG, "Rule " + ruleModel.getName() + " is valid, time to update.");
             SQLiteDatabase db = new RuleDbHelper(this).getReadableDatabase();
 
-            Log.i(TAG, "Is enabled is: " + this.ruleModel.isEnabled() );
+            Log.i(TAG, "Is enabled is: " + this.ruleModel.isEnabled());
 
             // New model to store
             ContentValues values = RuleHelper.ruleModelToContentValues(this.ruleModel);
@@ -229,7 +227,7 @@ public class EditRuleActivity extends BaseRuleActivity {
                     selection,
                     selectionArgs);
 
-            //close db
+            // Close db
             db.close();
 
             // Build and send an Event.
@@ -240,30 +238,30 @@ public class EditRuleActivity extends BaseRuleActivity {
                     .build());
 
 
-            // move to main activity
+            // Move to main activity
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(mainActivityIntent);
             finish();
-        }else{
+        } else {
             Toast.makeText(this, R.string.toast_error_rule_not_valid_text,
                     Toast.LENGTH_LONG).show();
         }
     }
 
-    private void deleteRule(){
+    private void deleteRule() {
 
         new AlertDialog.Builder(this)
                 .setTitle(R.string.alert_dialog_delete_entry_title)
                 .setMessage(R.string.alert_dialog_delete_entry_text)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        // continue with delete
+                        // Continue with delete
 
-                        //TODO: add exception handling
-                        //TODO: add db delete
-//                        MainActivity.RULE_MODELS.remove(ruleModelLocation);
-//                        MainActivity.ruleListAdapter.notifyItemRemoved(ruleModelLocation);
+                        // TODO: add exception handling
+                        // TODO: add db delete
+                        // MainActivity.RULE_MODELS.remove(ruleModelLocation);
+                        // MainActivity.ruleListAdapter.notifyItemRemoved(ruleModelLocation);
 
                         //construct the db
                         db = new RuleDbHelper(getBaseContext()).getReadableDatabase();
@@ -271,11 +269,11 @@ public class EditRuleActivity extends BaseRuleActivity {
                         // Define 'where' part of query.
                         String selection = RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + "=?";
                         // Specify arguments in placeholder order.
-                        String[] selectionArgs = { String.valueOf(ruleModelId) };
+                        String[] selectionArgs = {String.valueOf(ruleModelId)};
                         // Issue SQL statement.
                         db.delete(RuleContract.RuleEntry.TABLE_NAME, selection, selectionArgs);
 
-                        //close the db
+                        // Close the db
                         db.close();
 
                         // Build and send an Event.
@@ -285,7 +283,7 @@ public class EditRuleActivity extends BaseRuleActivity {
                                 .setLabel(LABEL_DELETE_RULE)
                                 .build());
 
-                        // move to main activity
+                        // Move to main activity
                         Intent mainActivityIntent = new Intent(getBaseContext(), MainActivity.class);
                         finish();
                         startActivity(mainActivityIntent);
@@ -294,7 +292,7 @@ public class EditRuleActivity extends BaseRuleActivity {
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
+                        // Do nothing
                     }
                 })
                 .show();

@@ -16,8 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:title="@string/ip_checker_title"
-            app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay"
+            app:title="@string/ip_checker_title" />
 
     </android.support.design.widget.AppBarLayout>
 
@@ -25,12 +25,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <LinearLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/container"
-            android:orientation="vertical">
-        </LinearLayout>
+            android:orientation="vertical" />
     </ScrollView>
 
 </android.support.design.widget.CoordinatorLayout>

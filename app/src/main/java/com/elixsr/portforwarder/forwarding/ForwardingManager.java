@@ -25,7 +25,7 @@ import java.io.Serializable;
 /**
  * The {@link ForwardingManager} class encapsulates all meta data related to the status of
  * forwarding throughout the application.
- *
+ * <p>
  * The class is a singleton, and can be accessed by any object to query the current status of
  * forwarding.
  */
@@ -34,12 +34,13 @@ public class ForwardingManager implements Serializable {
     private static ForwardingManager instance = null;
 
 
-    private ForwardingManager(){
+    private ForwardingManager() {
 
     }
 
     /**
      * Return an instance of the {@link ForwardingManager} class.
+     *
      * @return
      */
     public static ForwardingManager getInstance() {
@@ -60,15 +61,13 @@ public class ForwardingManager implements Serializable {
         return isEnabled;
     }
 
-    protected void enableForwarding(){
+    protected void enableForwarding() {
         this.isEnabled = true;
     }
 
-    protected void disableForwarding(){
+    protected void disableForwarding() {
         this.isEnabled = false;
     }
-
-
 
 
 }

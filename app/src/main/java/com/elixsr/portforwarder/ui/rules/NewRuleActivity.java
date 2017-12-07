@@ -46,12 +46,12 @@ public class NewRuleActivity extends BaseRuleActivity {
     private Tracker tracker;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.new_rule_activity);
 
-        //set up toolbar
+        // Set up toolbar
         Toolbar toolbar = getActionBarToolbar();
         setSupportActionBar(toolbar);
 
@@ -83,10 +83,10 @@ public class NewRuleActivity extends BaseRuleActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if(id == R.id.action_save_rule){
+        if (id == R.id.action_save_rule) {
             Log.i(TAG, "Save Menu Button Clicked");
 
-            //set the item to disabled while saving
+            // Set the item to disabled while saving
             item.setEnabled(false);
             saveNewRule();
             item.setEnabled(true);
@@ -97,14 +97,14 @@ public class NewRuleActivity extends BaseRuleActivity {
     }
 
 
-    private void saveNewRule(){
+    private void saveNewRule() {
 
         RuleModel ruleModel = generateNewRule();
 
-        if(ruleModel.isValid()){
+        if (ruleModel.isValid()) {
             Log.i(TAG, "Rule '" + ruleModel.getName() + "' is valid, time to save.");
 
-            //create a DAO and save the object
+            // Create a DAO and save the object
             RuleDao ruleDao = new RuleDao(new RuleDbHelper(this));
             long newRowId = ruleDao.insertRule(ruleModel);
 
@@ -118,12 +118,12 @@ public class NewRuleActivity extends BaseRuleActivity {
                     .setLabel(LABEL_SAVE_RULE)
                     .build());
 
-            // move to main activity
+            // Move to main activity
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(mainActivityIntent);
             finish();
-        }else{
+        } else {
             Toast.makeText(this, "Rule is not valid. Please check your input.",
                     Toast.LENGTH_LONG).show();
         }

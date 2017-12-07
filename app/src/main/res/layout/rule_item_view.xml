@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Fwd: the port forwarding app
   ~ Copyright (C) 2016  Elixsr Ltd
   ~
@@ -18,17 +17,15 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="?attr/selectableItemBackground"
-    >
+    android:orientation="vertical">
 
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="72dp">
@@ -37,16 +34,17 @@
             android:id="@+id/rule_item_protocol"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/bg_red"
-            android:textColor="#FFFFFF"
-            android:textSize="13dp"
-            android:gravity="center"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="20dp"
-            tools:text="TCP"
-            />
+            android:background="@drawable/bg_red"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            tools:text="TCP" />
 
         <LinearLayout
             android:id="@+id/textview_container"
@@ -56,6 +54,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
+            android:layout_toEndOf="@+id/rule_item_protocol"
             android:layout_toRightOf="@+id/rule_item_protocol"
             android:orientation="vertical"
             android:paddingBottom="20dp"
@@ -66,111 +65,111 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" "
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:textSize="16sp"
-                tools:text="Test Rule"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+                tools:text="Test Rule" />
 
             <android.support.v7.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textSize="14sp"
-                android:id="@+id/rule_item_from_port"
-                    tools:text="3000"
-                    />
+                    android:id="@+id/rule_item_from_port"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textSize="14sp"
+                    tools:text="3000" />
 
                 <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text=" >"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text=" >" />
 
                 <!--<android.support.v7.widget.AppCompatImageView-->
-                    <!--android:src="@drawable/ic_fwd_24dp"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="match_parent" />-->
+                <!--android:src="@drawable/ic_fwd_24dp"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent" />-->
 
                 <TextView
-                android:layout_marginLeft="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/rule_item_target_port"
-                    tools:text="3001"/>
+                    android:id="@+id/rule_item_target_port"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    tools:text="3001" />
 
             </android.support.v7.widget.LinearLayoutCompat>
 
         </LinearLayout>
 
-        </RelativeLayout>
+    </RelativeLayout>
 
     <!--<android.support.v7.widget.LinearLayoutCompat-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:orientation="horizontal">-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center"-->
+    <!--android:orientation="horizontal">-->
 
-        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_margin="5dp"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:id="@+id/rule_item_protocol" />&ndash;&gt;-->
+    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_margin="5dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:id="@+id/rule_item_protocol" />&ndash;&gt;-->
 
-        <!--<TextView-->
-            <!--android:id="@+id/rule_item_protocol"-->
-            <!--android:layout_width="50dp"-->
-            <!--android:layout_height="50dp"-->
-            <!--android:background="@drawable/bg_red"-->
-            <!--android:gravity="center"-->
-            <!--android:textColor="#FFFFFF"-->
-            <!--android:textSize="15dp"-->
-            <!--android:layout_marginLeft="15dp"-->
-            <!--android:layout_marginRight="15dp"/>-->
+    <!--<TextView-->
+    <!--android:id="@+id/rule_item_protocol"-->
+    <!--android:layout_width="50dp"-->
+    <!--android:layout_height="50dp"-->
+    <!--android:background="@drawable/bg_red"-->
+    <!--android:gravity="center"-->
+    <!--android:textColor="#FFFFFF"-->
+    <!--android:textSize="15dp"-->
+    <!--android:layout_marginLeft="15dp"-->
+    <!--android:layout_marginRight="15dp"/>-->
 
-        <!--<android.support.v7.widget.LinearLayoutCompat-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginRight="15dp"-->
-            <!--android:layout_marginTop="20dp"-->
-            <!--android:layout_marginBottom="20dp"-->
-            <!--android:orientation="vertical">-->
+    <!--<android.support.v7.widget.LinearLayoutCompat-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginRight="15dp"-->
+    <!--android:layout_marginTop="20dp"-->
+    <!--android:layout_marginBottom="20dp"-->
+    <!--android:orientation="vertical">-->
 
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:textSize="16sp"-->
-                <!--android:id="@+id/rule_item_name" />-->
+    <!--<TextView-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:textSize="16sp"-->
+    <!--android:id="@+id/rule_item_name" />-->
 
-            <!--<android.support.v7.widget.LinearLayoutCompat-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content">-->
+    <!--<android.support.v7.widget.LinearLayoutCompat-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content">-->
 
-                <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:textSize="14sp"-->
-                    <!--android:id="@+id/rule_item_from_port" />-->
+    <!--<TextView-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:textSize="14sp"-->
+    <!--android:id="@+id/rule_item_from_port" />-->
 
-                <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:text=" >"/>-->
+    <!--<TextView-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:text=" >"/>-->
 
-                <!--<android.support.v7.widget.AppCompatImageView-->
-                    <!--android:src="@drawable/ic_fwd_24dp"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="match_parent" />-->
+    <!--<android.support.v7.widget.AppCompatImageView-->
+    <!--android:src="@drawable/ic_fwd_24dp"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="match_parent" />-->
 
-                <!--<TextView-->
-                    <!--android:layout_marginLeft="5dp"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:id="@+id/rule_item_target_port" />-->
+    <!--<TextView-->
+    <!--android:layout_marginLeft="5dp"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:id="@+id/rule_item_target_port" />-->
 
-            <!--</android.support.v7.widget.LinearLayoutCompat>-->
+    <!--</android.support.v7.widget.LinearLayoutCompat>-->
 
-        <!--</android.support.v7.widget.LinearLayoutCompat>-->
+    <!--</android.support.v7.widget.LinearLayoutCompat>-->
 
     <!--</android.support.v7.widget.LinearLayoutCompat>-->
 

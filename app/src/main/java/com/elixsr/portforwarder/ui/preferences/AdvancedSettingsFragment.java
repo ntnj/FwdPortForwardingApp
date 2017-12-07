@@ -27,9 +27,9 @@ public class AdvancedSettingsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.advanced_preferences);
-        advertisementsEnabled = (Preference)findPreference(getString(R.string.pref_enable_ads));
+        advertisementsEnabled = (Preference) findPreference(getString(R.string.pref_enable_ads));
 
-        ipChecker = (Preference)findPreference(getString(R.string.pref_ip_checker));
+        ipChecker = (Preference) findPreference(getString(R.string.pref_ip_checker));
 
         ipChecker.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -46,7 +46,7 @@ public class AdvancedSettingsFragment extends PreferenceFragment {
     public void onDestroy() {
         super.onDestroy();
 
-        //Ensure we unregister our previous listener - as it now points to a null activity
+        // Ensure we unregister our previous listener - as it now points to a null activity
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(sharedPreferencesListener);
     }
 

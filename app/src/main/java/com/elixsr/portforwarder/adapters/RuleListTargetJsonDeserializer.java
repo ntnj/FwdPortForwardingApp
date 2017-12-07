@@ -16,18 +16,16 @@ import java.net.InetSocketAddress;
  * Created by Cathan on 14/07/2017.
  */
 
-public class RuleListTargetJsonDeserializer implements JsonDeserializer<InetSocketAddress>
-{
+public class RuleListTargetJsonDeserializer implements JsonDeserializer<InetSocketAddress> {
     @Override
     public InetSocketAddress deserialize(JsonElement je, Type type, JsonDeserializationContext jdc)
-            throws JsonParseException
-    {
+            throws JsonParseException {
 
         JsonObject jsonObject = je.getAsJsonObject();
         IpAddressValidator ipAddressValidator = new IpAddressValidator();
 
         try {
-            if(jsonObject.has("hostname") && jsonObject.has("port")
+            if (jsonObject.has("hostname") && jsonObject.has("port")
                     && ipAddressValidator.validate(jsonObject.get("hostname").getAsString())
                     && RuleModelValidator.validateRuleTargetPort(jsonObject.get("port").getAsInt())) {
                 return new InetSocketAddress(jsonObject.get("hostname").getAsString(), jsonObject.get("port").getAsInt());

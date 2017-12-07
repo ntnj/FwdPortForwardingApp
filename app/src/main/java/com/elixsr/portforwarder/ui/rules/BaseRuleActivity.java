@@ -44,10 +44,10 @@ import com.elixsr.portforwarder.validators.RuleModelValidator;
 /**
  * The BaseRuleActivity class  provides logic for subclasses which utilise the shared Rule detail
  * layout.
- *
+ * <p>
  * This class provides functionality to set up the core GUI components, and provides shared logic
  * for the validation of user input.
- *
+ * <p>
  * This class also provides a function to generate a {@link String} {@link List} of Network
  * Interfaces available on the device.
  *
@@ -71,12 +71,12 @@ public abstract class BaseRuleActivity extends BaseActivity {
     /**
      * Generate a user interface for all shared activities that use the {@link com.elixsr
      * .portforwarder.R.layout.rule_detail_view} layout.
-     *
+     * <p>
      * This will pre-populate the {@link Spinner} Objects.
      */
     protected void constructDetailUi() {
 
-        //set up protocol spinner/dropdown
+        // Set up protocol spinner/dropdown
         protocolSpinner = (Spinner) findViewById(R.id.protocol_spinner);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -89,7 +89,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
         // Apply the protocolAdapter to the spinner
         protocolSpinner.setAdapter(protocolAdapter);
 
-        //generate interfaces
+        // Generate interfaces
         List<String> interfaces = null;
         try {
             interfaces = generateInterfaceList();
@@ -98,7 +98,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
         } catch (SocketException e) {
             Log.i(TAG, "Error generating Interface list", e);
 
-            //show toast and move to main screen
+            // Show toast and move to main screen
             Toast.makeText(this, "Problem locating network interfaces. Please refer to 'help' to " +
                             "assist with troubleshooting.",
                     Toast.LENGTH_LONG).show();
@@ -107,8 +107,8 @@ public abstract class BaseRuleActivity extends BaseActivity {
             return;
         }
 
-        //check to ensure we have some interface to show!
-        if(interfaces == null || interfaces.isEmpty()){
+        // Check to ensure we have some interface to show!
+        if (interfaces == null || interfaces.isEmpty()) {
             Toast.makeText(this, "Could not locate any network interfaces. Please refer to 'help'" +
                             " to assist with troubleshooting.",
                     Toast.LENGTH_LONG).show();
@@ -118,7 +118,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
         }
 
 
-        //set up protocol spinner/dropdown
+        // Set up protocol spinner/dropdown
         fromInterfaceSpinner = (Spinner) findViewById(R.id.from_interface_spinner);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -134,6 +134,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
 
     /**
      * Returns a list of all Network interfaces located on the device.
+     *
      * @return a String list containing the name of the network interfaces on the device.
      * @throws SocketException
      */
@@ -144,14 +145,15 @@ public abstract class BaseRuleActivity extends BaseActivity {
 
     /**
      * Constructs a {@link RuleModel} object based on the data held inside the shared layout.
-     *
+     * <p>
      * This method will also check to ensure that all inputs are valid, and will show the user an
      * error message if the user has not entered valid data.
+     *
      * @return a {@link RuleModel} object as a result of the users input.
      */
     public RuleModel generateNewRule() {
 
-        //create the blank rule object
+        // Create the blank rule object
         RuleModel ruleModel = new RuleModel();
 
 
@@ -161,7 +163,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
         Spinner protocolSpinner = (Spinner) findViewById(R.id.protocol_spinner);
         String selectedProtocol = protocolSpinner.getSelectedItem().toString();
 
-        // determine the protocol
+        // Determine the protocol
         switch (selectedProtocol) {
             case NetworkHelper.TCP:
                 ruleModel.setIsTcp(true);
@@ -169,7 +171,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
             case NetworkHelper.UDP:
                 ruleModel.setIsUdp(true);
                 break;
-            //if BOTH, or default - same thing I assume
+            // If BOTH, or default - same thing I assume
             case NetworkHelper.BOTH:
             default:
                 ruleModel.setIsTcp(true);
@@ -184,15 +186,15 @@ public abstract class BaseRuleActivity extends BaseActivity {
         TextInputLayout ruleNameTextInputLayout = (TextInputLayout) findViewById(R.id.new_rule_name_input_layout);
 
         try {
-            if(RuleModelValidator.validateRuleName(ruleNameText.getText().toString())){
-                //if everything is correct, set the name
+            if (RuleModelValidator.validateRuleName(ruleNameText.getText().toString())) {
+                // If everything is correct, set the name
                 ruleModel.setName(ruleNameText.getText().toString());
                 ruleNameTextInputLayout.setErrorEnabled(false);
             }
-        } catch (RuleValidationException e){
+        } catch (RuleValidationException e) {
             ruleNameTextInputLayout.setErrorEnabled(true);
-            //Alternate error style above line
-            //ruleNameText.setError(e.getMessage());
+            // Alternate error style above line
+            // ruleNameText.setError(e.getMessage());
             ruleNameTextInputLayout.setError(getString(R.string.text_input_error_enter_name_text));
             Log.w(TAG, "No rule name was included");
         }
@@ -202,12 +204,12 @@ public abstract class BaseRuleActivity extends BaseActivity {
          */
         TextInputEditText fromPortText = (TextInputEditText) findViewById(R.id.new_rule_from_port);
 
-        // validate the input, and show error message if wrong
+        // Validate the input, and show error message if wrong
         try {
-            if(RuleModelValidator.validateRuleFromPort(fromPortText.getText().toString())) {
+            if (RuleModelValidator.validateRuleFromPort(fromPortText.getText().toString())) {
                 ruleModel.setFromPort(Integer.valueOf(fromPortText.getText().toString()));
             }
-        } catch( RuleValidationException e ) {
+        } catch (RuleValidationException e) {
             fromPortText.setError(e.getMessage());
         }
 
@@ -222,12 +224,12 @@ public abstract class BaseRuleActivity extends BaseActivity {
          */
         TextInputEditText targetIpAddressText = (TextInputEditText) findViewById(R.id.new_rule_target_ip_address);
 
-        // validate the input, and show error message if wrong
+        // Validate the input, and show error message if wrong
         try {
-            if(RuleModelValidator.validateRuleTargetIpAddress(targetIpAddressText.getText().toString())){
+            if (RuleModelValidator.validateRuleTargetIpAddress(targetIpAddressText.getText().toString())) {
                 targetIpAddress = targetIpAddressText.getText().toString();
             }
-        } catch (RuleValidationException e){
+        } catch (RuleValidationException e) {
             targetIpAddressText.setError(e.getMessage());
         }
 
@@ -236,17 +238,17 @@ public abstract class BaseRuleActivity extends BaseActivity {
          */
         TextInputEditText targetPortText = (TextInputEditText) findViewById(R.id.new_rule_target_port);
 
-        // validate the input, and show error message if wrong
+        // Validate the input, and show error message if wrong
         try {
-            if (RuleModelValidator.validateRuleTargetPort(targetPortText.getText().toString())){
+            if (RuleModelValidator.validateRuleTargetPort(targetPortText.getText().toString())) {
                 targetPort = Integer.valueOf(targetPortText.getText().toString());
             }
-        }catch ( RuleValidationException e ){
+        } catch (RuleValidationException e) {
             targetPortText.setError(e.getMessage());
         }
 
         if (targetIpAddress != null && targetIpAddress.length() > 0 && targetPort >= 0) {
-            //create a InetSocketAddress object using data
+            // Create a InetSocketAddress object using data
             InetSocketAddress target = new InetSocketAddress(targetIpAddress, targetPort);
             ruleModel.setTarget(target);
         } else {

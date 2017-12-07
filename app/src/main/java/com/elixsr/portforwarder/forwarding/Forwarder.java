@@ -58,7 +58,7 @@ public abstract class Forwarder implements Callable<Void> {
      */
     protected final String protocol;
 
-    public Forwarder(String protocol, InetSocketAddress form, InetSocketAddress to, String ruleName){
+    public Forwarder(String protocol, InetSocketAddress form, InetSocketAddress to, String ruleName) {
         this.protocol = protocol;
         this.from = form;
         this.to = to;

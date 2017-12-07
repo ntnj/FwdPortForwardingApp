@@ -26,15 +26,15 @@ import com.elixsr.portforwarder.models.RuleModel;
 public class RuleService {
 
     // TODO: will implement later...
-    public void saveNewRule(RuleModel ruleModel){
+    public void saveNewRule(RuleModel ruleModel) {
 
     }
 
-    public void editRule(RuleModel ruleModel){
+    public void editRule(RuleModel ruleModel) {
 
     }
 
-    public void deleteRule(RuleModel ruleModel){
+    public void deleteRule(RuleModel ruleModel) {
 
     }
 }

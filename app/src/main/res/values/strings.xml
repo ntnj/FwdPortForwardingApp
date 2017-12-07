@@ -17,6 +17,7 @@
 
     <string name="settings_title">Settings</string>
     <string name="action_settings">Settings</string>
+    <string name="accessibility_main_activity_rule_list">Rule List</string>
 
 
     <!-- Viewing or Editing a Rule -->
@@ -36,17 +37,37 @@
     <string name="new_rule_target">Target</string>
     <string name="new_rule_target_ip_address">Target IP Address</string>
 
+    <string-array name="rule_protocol_array">
+        <item>TCP</item>
+        <item>UDP</item>
+        <item>BOTH</item>
+    </string-array>
+
     <!-- Settings -->
     <string name="pref_general_category_title">General</string>
     <string name="pref_clear_rules_text">Clear Rules</string>
     <string name="pref_dark_theme_text">Dark Theme</string>
     <string name="pref_start_on_boot_text">Start Forwarding on Startup</string>
     <string name="pref_about_category_title">About</string>
-
+    <string name="pref_import_export_category_title">Manage Rules</string>
+    <string name="pref_import_export_button">Import Rules</string>
+    <string name="pref_export_button">Export Rules</string>
+    <string name="ip_checker_title">IP Checker</string>
+    <string name="start_rule_error_message">Error while trying to start rule</string>
+    <string name="import_rules_button_text">Import Rules</string>
+    <string name="export_rules_button_text">Export Rules</string>
+    <string name="export_rules_action_title">Export Rules</string>
+    <string name="pref_ip_checker_title">IP Checker</string>
+    <string name="pref_import_export" />
+    <string name="pref_import_export_title">Import/Export Rules</string>
+    <string name="advanced_settings_title">Advanced Settings</string>
+    <string name="pref_advanced_category_title">Advanced</string>
 
     <!-- Advanced Settings -->
     <string name="pref_enable_ads">Disable Advertisements</string>
     <string name="pref_enable_ads_summary">Ads help support the development of Fwd</string>
+    <string name="ip_checker_tool_public_text">Public</string>
+    <string name="ip_checker_tool_private_text">Private</string>
 
     <!-- App Intros -->
     <string name="app_intro_1_title">Add Rules</string>
@@ -77,20 +98,11 @@
     <string name="notification_forwarding_active_title">Port Forwarding Active</string>
     <string name="notification_forwarding_touch_disable_text">Touch to disable</string>
 
-
     <!-- TO ADD -->
 
     <!-- Error Messages -->
     <!--<string name="p">Please enter a value greater than or equal to 1024 and less than or equal to 65535</string>-->
-
     <!--<string name="port_eroolor">Could not bind port 6000 for TCP Rule 'fgh'</string>-->
-
-
-    <string-array name="rule_protocol_array">
-        <item>TCP</item>
-        <item>UDP</item>
-        <item>BOTH</item>
-    </string-array>
 
     <string-array name="sample_from_interfaces">
         <item>Rmte0</item>
@@ -106,22 +118,10 @@
     <string name="pref_dark_theme" translatable="false">pref_dark_theme</string>
     <string name="pref_start_on_boot" translatable="false">pref_start_on_boot</string>
     <string name="title_activity_advanced_settings" translatable="false">AdvancedSettingsActivity</string>
-    <string name="advanced_settings_title">Advanced Settings</string>
-    <string name="pref_advanced_category_title">Advanced</string>
     <string name="pref_disable_ads_key" translatable="false">disable_ads_key</string>
     <string name="pref_ip_checker" translatable="false">pref_ip_checker</string>
-    <string name="pref_ip_checker_title">IP Checker</string>
-    <string name="ip_checker_title">IP Checker</string>
-    <string name="start_rule_error_message">Error while trying to start rule</string>
-    <string name="pref_import_export" />
-    <string name="pref_import_export_title">Import/Export Rules</string>
-    <string name="import_rules_button_text">Import Rules</string>
-    <string name="export_rules_button_text">Export Rules</string>
-    <string name="export_rules_action_title">Export Rules</string>
-    <string name="pref_import_export_category_title">Manage Rules</string>
-    <string name="pref_import_export_button">Import Rules</string>
-    <string name="pref_export_button">Export Rules</string>
-    <string name="pref_import">pref_import</string>
-    <string name="pref_export">pref_export</string>
+    <string name="pref_import" translatable="false">pref_import</string>
+    <string name="pref_export" translatable="false">pref_export</string>
+
 
 </resources>

@@ -22,22 +22,23 @@ public class InterfaceHelper {
 
     /**
      * Returns a list of all Network interfaces located on the device.
+     *
      * @return a String list containing the name of the network interfaces on the device.
      * @throws SocketException
      */
     public static List<String> generateInterfaceNamesList() throws SocketException {
 
-        //create an empty list
+        // Create an empty list
         List<String> interfaces = new ArrayList<String>();
 
         String address = null;
         for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
             NetworkInterface intf = en.nextElement();
 
-            //while we have more elements
+            // While we have more elements
             for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
 
-                //get the next address in from the iterator
+                // Get the next address in from the iterator
                 InetAddress inetAddress = enumIpAddr.nextElement();
 
                 address = new String(inetAddress.getHostAddress().toString());
@@ -54,17 +55,17 @@ public class InterfaceHelper {
 
     public static List<InterfaceModel> generateInterfaceModelList() throws SocketException {
 
-        //create an empty list
+        // Create an empty list
         List<InterfaceModel> interfaces = new ArrayList<>();
 
         String address = null;
         for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
             NetworkInterface intf = en.nextElement();
 
-            //while we have more elements
+            // While we have more elements
             for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
 
-                //get the next address in from the iterator
+                // Get the next address in from the iterator
                 InetAddress inetAddress = enumIpAddr.nextElement();
 
                 address = new String(inetAddress.getHostAddress().toString());

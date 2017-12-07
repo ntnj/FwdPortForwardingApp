@@ -86,8 +86,6 @@ public class SettingsFragment extends PreferenceFragment {
     private ForwardingManager forwardingManager;
     private Preference clearRulesButton, versionNamePreference, exportRulesPreference, importRulesPreference, changeThemeToggle;
 
-
-
     private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferencesListener;
 
     private Tracker tracker;
@@ -117,12 +115,12 @@ public class SettingsFragment extends PreferenceFragment {
         // Get tracker.
         tracker = ((FwdApplication) getActivity().getApplication()).getDefaultTracker();
 
-        clearRulesButton = (Preference)findPreference(getString(R.string.pref_clear_rules));
+        clearRulesButton = (Preference) findPreference(getString(R.string.pref_clear_rules));
 
         clearRulesButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                //code for what you want it to do
+                // Code for what you want it to do
 
                 new AlertDialog.Builder(getActivity())
                         .setTitle(R.string.alert_dialog_delete_all_rules_title)
@@ -130,7 +128,7 @@ public class SettingsFragment extends PreferenceFragment {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
 
-                                // set up the database
+                                // Set up the database
                                 SQLiteDatabase db = new RuleDbHelper(getActivity()).getReadableDatabase();
 
 
@@ -153,7 +151,7 @@ public class SettingsFragment extends PreferenceFragment {
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                // do nothing
+                                // Do nothing
                             }
                         })
                         .show();
@@ -161,7 +159,7 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
-        versionNamePreference = (Preference)findPreference(getString(R.string.pref_version));
+        versionNamePreference = (Preference) findPreference(getString(R.string.pref_version));
 
         versionNamePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
@@ -170,11 +168,11 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
 
-                if(versionPrefClicks >= 2 && versionPrefClicks <= 3 ) {
+                if (versionPrefClicks >= 2 && versionPrefClicks <= 3) {
                     toast.setText(4 - versionPrefClicks + " more...");
                     toast.show();
                 }
-                if(++versionPrefClicks == 5) {
+                if (++versionPrefClicks == 5) {
                     versionPrefClicks = 0;
                     toast.setText("...");
                     toast.show();
@@ -187,7 +185,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         });
 
-        importRulesPreference = (Preference)findPreference(getString(R.string.pref_import));
+        importRulesPreference = (Preference) findPreference(getString(R.string.pref_import));
 
         importRulesPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
@@ -199,7 +197,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         });
 
-        exportRulesPreference = (Preference)findPreference(getString(R.string.pref_export));
+        exportRulesPreference = (Preference) findPreference(getString(R.string.pref_export));
 
         exportRulesPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
@@ -212,7 +210,7 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
 
-        // set up click of about elixsr button - show webview
+        // Set up click of about elixsr button - show webview
         Preference aboutElixsrButton = (Preference) findPreference(getString(R.string.pref_about_link));
         aboutElixsrButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -233,7 +231,7 @@ public class SettingsFragment extends PreferenceFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        //Recreate our activity if we changed to dark theme
+        // Recreate our activity if we changed to dark theme
         sharedPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -256,17 +254,17 @@ public class SettingsFragment extends PreferenceFragment {
             }
         };
 
-        //prevent garbage collection
+        // Prevent garbage collection
         getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(sharedPreferencesListener);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if(forwardingManager.isEnabled()){
+        if (forwardingManager.isEnabled()) {
             clearRulesButton.setEnabled(false);
             importRulesPreference.setEnabled(false);
-        }else{
+        } else {
             clearRulesButton.setEnabled(true);
             importRulesPreference.setEnabled(true);
         }
@@ -286,7 +284,7 @@ public class SettingsFragment extends PreferenceFragment {
     public void onDestroy() {
         super.onDestroy();
 
-        //Ensure we unregister our previous listener - as it now points to a null activity
+        // Ensure we unregister our previous listener - as it now points to a null activity
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(sharedPreferencesListener);
     }
 
@@ -303,8 +301,8 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     private void exportRules() {
-        if(ruleDao.getAllRuleModels().size() > 0) {
-            //lets create out file to store our data
+        if (ruleDao.getAllRuleModels().size() > 0) {
+            // Lets create out file to store our data
             File outputDir = getActivity().getExternalCacheDir();
             String ruleList = ruleListToJsonString();
             try {
@@ -315,10 +313,10 @@ public class SettingsFragment extends PreferenceFragment {
 
                 writer.append(ruleList);
 
-                //ensure the writer is closed - assuming its blocking
+                // Ensure the writer is closed - assuming its blocking
                 writer.close();
 
-                //everything good, lets send an intent
+                // Everything good, lets send an intent
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("application/json");
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Fwd Rule List");
@@ -332,7 +330,7 @@ public class SettingsFragment extends PreferenceFragment {
                 Log.e(TAG, "onDataChange: error trying to create file to store exported data", e);
                 Toast.makeText(getActivity().getBaseContext(), "Error when trying to export dreams.", Toast.LENGTH_SHORT).show();
             }
-        }else{
+        } else {
             Toast.makeText(getActivity().getBaseContext(), "No rules to export.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -340,25 +338,24 @@ public class SettingsFragment extends PreferenceFragment {
     private String ruleListToJsonString() {
         List<RuleModel> ruleModels = ruleDao.getAllRuleModels();
 
-        String json = gson.toJson(ruleModels);
-
-        return json;
+        return gson.toJson(ruleModels);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode != RESULT_CANCELED && requestCode == RULE_LIST_CODE && data.getData() != null) {
+        if (resultCode != RESULT_CANCELED && requestCode == RULE_LIST_CODE && data.getData() != null) {
             boolean ruleFailedValidation = false;
             int successfulRuleAdditions = 0;
             JsonReader reader;
-            Type collectionType = new TypeToken<Collection<RuleModel>>(){}.getType();
+            Type collectionType = new TypeToken<Collection<RuleModel>>() {
+            }.getType();
             try {
                 InputStream fileContentStream = getActivity().getContentResolver().openInputStream(data.getData());
                 reader = new JsonReader(new InputStreamReader(fileContentStream));
                 List<RuleModel> ruleModels = gson.fromJson(reader, collectionType);
                 for (RuleModel ruleModel : ruleModels) {
                     try {
-                        if(RuleModelValidator.validateRule(ruleModel)) {
+                        if (RuleModelValidator.validateRule(ruleModel)) {
                             ruleDao.insertRule(ruleModel);
                             successfulRuleAdditions++;
                         }
@@ -367,14 +364,14 @@ public class SettingsFragment extends PreferenceFragment {
                     }
                 }
 
-                if(ruleFailedValidation) {
+                if (ruleFailedValidation) {
                     Toast.makeText(getActivity().getApplicationContext(), "Some rules failed validation. Imported " + successfulRuleAdditions + " rules.", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Successfully imported " + successfulRuleAdditions + " rules.", Toast.LENGTH_LONG).show();
                 }
-                // move to main activity
+                // Move to main activity
                 Intent mainActivityIntent = new Intent(getActivity(), MainActivity.class);
-                mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );
+                mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(mainActivityIntent);
                 getActivity().finish();
             } catch (FileNotFoundException e) {

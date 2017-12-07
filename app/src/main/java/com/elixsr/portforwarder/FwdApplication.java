@@ -37,6 +37,7 @@ public class FwdApplication extends Application {
 
     /**
      * Gets the default {@link Tracker} for this {@link Application}.
+     *
      * @return tracker
      */
     synchronized public Tracker getDefaultTracker() {
@@ -46,7 +47,7 @@ public class FwdApplication extends Application {
 
             if (BuildConfig.DEBUG) {
                 mTracker = analytics.newTracker(R.xml.analytics_debug);
-            }else{
+            } else {
                 mTracker = analytics.newTracker(R.xml.analytics);
             }
             mTracker.enableAutoActivityTracking(true);
