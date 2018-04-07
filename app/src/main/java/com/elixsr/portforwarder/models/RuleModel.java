@@ -22,6 +22,8 @@ import android.util.Log;
 
 import java.io.Serializable;
 import java.net.InetSocketAddress;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 
 import com.elixsr.portforwarder.util.RuleHelper;
 
@@ -34,19 +36,26 @@ public class RuleModel implements Serializable {
 
     private static final String TAG = "RuleModel";
 
+    @Expose(serialize = false, deserialize = false)
     private long id;
 
+    @Expose
     private boolean isTcp;
 
+    @Expose
     private boolean isUdp;
 
+    @Expose
     private String name;
 
     //TODO: create a class? - worth the effort?
+    @Expose
     private String fromInterfaceName;
 
+    @Expose
     private int fromPort;
 
+    @Expose
     private InetSocketAddress target;
 
     private boolean isEnabled = true;

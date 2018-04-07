@@ -39,7 +39,7 @@ import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.ui.rules.EditRuleActivity;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.NativeExpressAdView;
+import com.google.android.gms.ads.AdView;
 
 /**
  * Created by Niall McShane on 01/03/2016.
@@ -56,8 +56,8 @@ public class RuleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public static class AdViewHolder extends RecyclerView.ViewHolder {
 
-        public static final String DARK_AD_ID = "ca-app-pub-9546697987163387/2461888950";
-        public static final String LIGHT_AD_ID = "ca-app-pub-9546697987163387/6696735750";
+        public static final String DARK_AD_ID = "ca-app-pub-9546697987163387/1828769767";
+        public static final String LIGHT_AD_ID = "ca-app-pub-9546697987163387/1828769767";
         public static final String PREF_DARK_THEME = "pref_dark_theme";
 
         public AdViewHolder(View v) {
@@ -66,8 +66,8 @@ public class RuleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             AdRequest request = new AdRequest.Builder()
                     .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                     .build();
-            NativeExpressAdView adView = new NativeExpressAdView(v.getContext());
-            adView.setAdSize(new AdSize(AdSize.FULL_WIDTH, 80));
+            AdView adView = new AdView(v.getContext());
+            adView.setAdSize(AdSize.SMART_BANNER);
 
             // Load ad type based on theme - dark or light
             if (PreferenceManager.getDefaultSharedPreferences(v.getContext())

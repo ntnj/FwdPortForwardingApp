@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <Preference
-        android:key="@string/pref_ip_checker"
-        android:title="@string/pref_ip_checker_title" />
-    <CheckBoxPreference
-        android:key="@string/pref_disable_ads_key"
-        android:summary="@string/pref_enable_ads_summary"
-        android:title="@string/pref_enable_ads" />
+    <PreferenceCategory
+        android:key="pref_advanced_category"
+        android:title="@string/pref_advanced_category_title">
+        <Preference
+            android:key="@string/pref_ip_checker"
+            android:title="@string/pref_ip_checker_title" />
+        <CheckBoxPreference
+            android:key="@string/pref_disable_ads_key"
+            android:summary="@string/pref_enable_ads_summary"
+            android:title="@string/pref_enable_ads" />
+    </PreferenceCategory>
 </PreferenceScreen>

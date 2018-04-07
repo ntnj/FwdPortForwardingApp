@@ -53,6 +53,7 @@ import com.elixsr.portforwarder.ui.preferences.HelpActivity;
 import com.elixsr.portforwarder.ui.preferences.SettingsActivity;
 import com.elixsr.portforwarder.ui.rules.NewRuleActivity;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 
 public class MainActivity extends BaseActivity {
@@ -78,13 +79,13 @@ public class MainActivity extends BaseActivity {
     private PercentRelativeLayout mRuleListEmptyView;
     private Tracker tracker;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         this.forwardingManager = ForwardingManager.getInstance();
-
 
         setContentView(R.layout.activity_main);
         setSupportActionBar(getActionBarToolbar());
@@ -92,6 +93,9 @@ public class MainActivity extends BaseActivity {
         getActionBarToolbar().setTitle("");
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_nav_logo);
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         // Determine if this is first start - and whether to show app intro
         onFirstStart();

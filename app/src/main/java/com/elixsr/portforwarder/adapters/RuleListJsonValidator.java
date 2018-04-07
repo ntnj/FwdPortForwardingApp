@@ -32,7 +32,6 @@ public class RuleListJsonValidator implements JsonDeserializer<RuleModel> {
 
         if (jsonObject.has("fromInterfaceName") &&
                 jsonObject.has("fromPort") &&
-                jsonObject.has("id") &&
                 jsonObject.has("isEnabled") &&
                 jsonObject.has("isTcp") &&
                 jsonObject.has("isUdp") &&
