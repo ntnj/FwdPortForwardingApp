@@ -124,6 +124,18 @@
             android:label="@string/title_activity_advanced_settings"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.preferences.IpAddressCheckerActivity" />
+
+        <provider
+            android:name=".util.GenericFileProvider"
+            android:authorities="${applicationId}.util.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+        <activity android:name=".ui.preferences.ImportRulesActivity"></activity>
     </application>
 
 </manifest>

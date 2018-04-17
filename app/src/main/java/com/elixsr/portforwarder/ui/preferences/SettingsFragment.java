@@ -27,6 +27,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -321,7 +322,8 @@ public class SettingsFragment extends PreferenceFragment {
                 intent.setType("application/json");
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Fwd Rule List");
                 intent.putExtra(Intent.EXTRA_TEXT, "Your fwd rules have been attached with the name '" + outputFile.getName() + "'.");
-                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(outputFile));
+                intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".util.provider", outputFile));
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 startActivity(Intent.createChooser(intent, getString(R.string.export_rules_action_title)));
 
                 Log.i(TAG, "onDataChange: URI " + Uri.fromFile(outputFile).toString());
@@ -344,43 +346,9 @@ public class SettingsFragment extends PreferenceFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_CANCELED && requestCode == RULE_LIST_CODE && data.getData() != null) {
-            boolean ruleFailedValidation = false;
-            int successfulRuleAdditions = 0;
-            JsonReader reader;
-            Type collectionType = new TypeToken<Collection<RuleModel>>() {
-            }.getType();
-            try {
-                InputStream fileContentStream = getActivity().getContentResolver().openInputStream(data.getData());
-                reader = new JsonReader(new InputStreamReader(fileContentStream));
-                List<RuleModel> ruleModels = gson.fromJson(reader, collectionType);
-                for (RuleModel ruleModel : ruleModels) {
-                    try {
-                        if (RuleModelValidator.validateRule(ruleModel)) {
-                            ruleDao.insertRule(ruleModel);
-                            successfulRuleAdditions++;
-                        }
-                    } catch (RuleValidationException e) {
-                        ruleFailedValidation = true;
-                    }
-                }
-
-                if (ruleFailedValidation) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Some rules failed validation. Imported " + successfulRuleAdditions + " rules.", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Successfully imported " + successfulRuleAdditions + " rules.", Toast.LENGTH_LONG).show();
-                }
-                // Move to main activity
-                Intent mainActivityIntent = new Intent(getActivity(), MainActivity.class);
-                mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(mainActivityIntent);
-                getActivity().finish();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (JsonSyntaxException e) {
-                Toast.makeText(getActivity().getApplicationContext(), "Error importing rules - JSON file is malformed.", Toast.LENGTH_LONG).show();
-            } catch (JsonParseException e) {
-                Toast.makeText(getActivity().getApplicationContext(), "Error importing rules - Rule is invalid.", Toast.LENGTH_LONG).show();
-            }
+            Intent importRulesActivityIntent = new Intent(getActivity(), ImportRulesActivity.class);
+            importRulesActivityIntent.putExtra(ImportRulesActivity.IMPORTED_RULE_DATA, data.getData().toString());
+            startActivity(importRulesActivityIntent);
         }
 
     }
