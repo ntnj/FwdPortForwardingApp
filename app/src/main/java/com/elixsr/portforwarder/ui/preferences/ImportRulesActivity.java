@@ -40,6 +40,7 @@ import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ImportRulesActivity extends BaseActivity {
@@ -78,6 +79,8 @@ public class ImportRulesActivity extends BaseActivity {
         importRulesButton = (Button) findViewById(R.id.import_rules_button);
         helpButton = (ImageView) findViewById(R.id.help_button);
 
+        ruleModels = new LinkedList<>();
+
         constructDetailUi();
 
         ruleDao = new RuleDao(new RuleDbHelper(this));
@@ -92,6 +95,14 @@ public class ImportRulesActivity extends BaseActivity {
             parseRules(data);
         }
 
+        // We shouldn't continue if we don't have any rules.
+        if(ruleModels.size() == 0) {
+            Intent mainActivityIntent = new Intent(this, MainActivity.class);
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(mainActivityIntent);
+            finish();
+            return;
+        }
 
         // TODO: Expose as localised strings
         String importText = "You are about to import <b>" + ruleModels.size() + "</b> rule, configure the interface and target address below";
@@ -131,11 +142,12 @@ public class ImportRulesActivity extends BaseActivity {
         try {
             InputStream fileContentStream = getContentResolver().openInputStream(data);
             reader = new JsonReader(new InputStreamReader(fileContentStream));
-            ruleModels = gson.fromJson(reader, collectionType);
-            for (RuleModel ruleModel : ruleModels) {
+            List<RuleModel> allRuleModels = gson.fromJson(reader, collectionType);
+            for (RuleModel ruleModel : allRuleModels) {
                 try {
                     if (RuleModelValidator.validateRule(ruleModel)) {
                         successfulRuleAdditions++;
+                        ruleModels.add(ruleModel);
                     }
                 } catch (RuleValidationException e) {
                     ruleFailedValidation = true;
@@ -146,20 +158,13 @@ public class ImportRulesActivity extends BaseActivity {
                 Toast.makeText(getApplicationContext(), "Some rules failed validation. Imported " + successfulRuleAdditions + " rules.", Toast.LENGTH_LONG).show();
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Error importing rules - No valid file found.", Toast.LENGTH_LONG).show();
         } catch (JsonSyntaxException e) {
-            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(mainActivityIntent);
             Toast.makeText(getApplicationContext(), "Error importing rules - JSON file is malformed.", Toast.LENGTH_LONG).show();
-            finish();
         } catch (JsonParseException e) {
-            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(mainActivityIntent);
-            Toast.makeText(getApplicationContext(), "Error importing rules - Rule is invalid.", Toast.LENGTH_LONG).show();
-            finish();
-
+            Toast.makeText(getApplicationContext(), "Error importing rules - Rule list is invalid.", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
