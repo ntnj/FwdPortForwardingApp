@@ -122,7 +122,7 @@ public class ImportRulesActivity extends BaseActivity {
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent mainActivityIntent = new Intent(v.getContext(), HelpActivity.class);
+                Intent mainActivityIntent = new Intent(v.getContext(), SupportSiteActivity.class);
                 startActivity(mainActivityIntent);
             }
         });

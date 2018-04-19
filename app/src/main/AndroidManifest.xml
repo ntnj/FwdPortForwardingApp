@@ -135,7 +135,18 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".ui.preferences.ImportRulesActivity"></activity>
+        <activity
+            android:name=".ui.preferences.ImportRulesActivity"
+            android:label="@string/title_activity_import_export_rules">
+        </activity>
+        <activity
+            android:name=".ui.preferences.SupportSiteActivity"
+            android:label="@string/import_export_support_site_title"
+            android:parentActivityName=".ui.preferences.ImportRulesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.preferences.ImportRulesActivity" />
+        </activity>
     </application>
 
 </manifest>
