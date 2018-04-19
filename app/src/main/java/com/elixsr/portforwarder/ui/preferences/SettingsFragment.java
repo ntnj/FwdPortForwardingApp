@@ -304,7 +304,7 @@ public class SettingsFragment extends PreferenceFragment {
     private void exportRules() {
         if (ruleDao.getAllRuleModels().size() > 0) {
             // Lets create out file to store our data
-            File outputDir = getActivity().getExternalCacheDir();
+            File outputDir = getActivity().getCacheDir();
             String ruleList = ruleListToJsonString();
             try {
                 File outputFile = File.createTempFile("fwd_rule_list", ".json", outputDir);
