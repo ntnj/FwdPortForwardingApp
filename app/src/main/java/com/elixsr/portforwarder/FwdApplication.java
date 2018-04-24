@@ -20,6 +20,7 @@ package com.elixsr.portforwarder;
 
 import android.app.Application;
 import android.content.Intent;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.elixsr.portforwarder.forwarding.ForwardingService;
@@ -30,13 +31,14 @@ import com.google.android.gms.analytics.Tracker;
 /**
  * Created by Niall McShane on 13/03/2016.
  */
-public class FwdApplication extends Application {
+public class FwdApplication extends MultiDexApplication {
 
     private static final String TAG = "FwdApplication";
     private Tracker mTracker;
 
     /**
      * Gets the default {@link Tracker} for this {@link Application}.
+     *
      * @return tracker
      */
     synchronized public Tracker getDefaultTracker() {
@@ -46,7 +48,7 @@ public class FwdApplication extends Application {
 
             if (BuildConfig.DEBUG) {
                 mTracker = analytics.newTracker(R.xml.analytics_debug);
-            }else{
+            } else {
                 mTracker = analytics.newTracker(R.xml.analytics);
             }
             mTracker.enableAutoActivityTracking(true);

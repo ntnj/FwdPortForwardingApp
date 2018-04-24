@@ -44,6 +44,7 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import com.elixsr.portforwarder.FwdApplication;
 import com.elixsr.portforwarder.ui.MainActivity;
@@ -57,9 +58,9 @@ import com.google.android.gms.analytics.Tracker;
 
 /**
  * The {@link ForwardingService} class acts as a controller of all all forwarding.
- *
+ * <p>
  * The class is responsible for starting forwarding for all rules found within the SQLite database.
- *
+ * <p>
  * The class creates a new thread for each Forwarding rule.
  */
 public class ForwardingService extends IntentService {
@@ -94,7 +95,7 @@ public class ForwardingService extends IntentService {
     private boolean runService = false;
 
     //change the magic number
-    private final ExecutorService executorService;
+    private ExecutorService executorService;
 
     //wake lock
     private PowerManager.WakeLock wakeLock;
@@ -102,7 +103,7 @@ public class ForwardingService extends IntentService {
 
     /**
      * Default constructor for {@link ForwardingService}.#
-     *
+     * <p>
      * Creates a new instance of ForwardingService and initialises an {@link ExecutorService}
      * with a fixed thread pool of 30 threads.
      */
@@ -133,11 +134,11 @@ public class ForwardingService extends IntentService {
 
     /**
      * Starts forwarding based on rules found in database.
-     *
+     * <p>
      * Acquires an instance of the Forwarding Manager to turn forwarding flag on.
-     *
+     * <p>
      * Creates a list off callbacks for each forward thread, and handle exceptions as they come.
-     *
+     * <p>
      * If an exception is thrown, the service immediately stops, and the #onDestroy method is
      * called.
      *
@@ -152,7 +153,6 @@ public class ForwardingService extends IntentService {
         Log.i(TAG, "Ran the service");
 
         ForwardingManager.getInstance().enableForwarding();
-
 
 
         runService = true;
@@ -175,6 +175,8 @@ public class ForwardingService extends IntentService {
         RuleDao ruleDao = new RuleDao(new RuleDbHelper(this));
         List<RuleModel> ruleModels = ruleDao.getAllEnabledRuleModels();
 
+        executorService = Executors.newFixedThreadPool(ruleModels.size());
+
         InetSocketAddress from;
 
         Forwarder forwarder = null;
@@ -188,23 +190,27 @@ public class ForwardingService extends IntentService {
         // how many futures there are to check
         int remainingFutures = 0;
 
-        for (RuleModel ruleModel : ruleModels){
+        for (RuleModel ruleModel : ruleModels) {
 
+            // Something has killed the runService, no point in looping anymore
+            if (!runService) {
+                break;
+            }
 
             try {
                 from = generateFromIpUsingInterface(ruleModel.getFromInterfaceName(), ruleModel.getFromPort());
 
-                if (ruleModel.isTcp()) {
+                if (ruleModel.isTcp() && runService) {
                     completionService.submit(new TcpForwarder(from, ruleModel.getTarget(), ruleModel.getName()));
                     remainingFutures++;
                 }
 
-                if (ruleModel.isUdp()) {
+                if (ruleModel.isUdp() && runService) {
                     completionService.submit(new UdpForwarder(from, ruleModel.getTarget(), ruleModel.getName()));
                     remainingFutures++;
                 }
 
-            }catch(SocketException | ObjectNotFoundException  e){
+            } catch (SocketException | ObjectNotFoundException e) {
                 Log.e(TAG, "Error generating IP Address for FROM interface with rule '" + ruleModel.getName() + "'", e);
 
                 // graceful UI Exception handling - broadcast this to ui - it will deal with display something to the user e.g. a Toast
@@ -225,11 +231,10 @@ public class ForwardingService extends IntentService {
                 .build());
 
 
-
         Future<?> completedFuture;
 
         // loop through each callback, and handle an exception
-        while (remainingFutures > 0) {
+        while (remainingFutures > 0 && runService) {
 
             // block until a callable completes
             try {
@@ -257,24 +262,24 @@ public class ForwardingService extends IntentService {
 
     private InetSocketAddress generateFromIpUsingInterface(String interfaceName, int port) throws SocketException, ObjectNotFoundException {
 
-        String address= null;
+        String address = null;
         InetSocketAddress inetSocketAddress;
 
-        for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+        for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
             NetworkInterface intf = en.nextElement();
 
             Log.d(TAG, intf.getDisplayName() + " vs " + interfaceName);
-            if(intf.getDisplayName().equals(interfaceName)){
+            if (intf.getDisplayName().equals(interfaceName)) {
 
                 Log.i(TAG, "Found the relevant Interface. Will attempt to fetch IP Address");
 
-                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
 
                     InetAddress inetAddress = enumIpAddr.nextElement();
 
                     address = new String(inetAddress.getHostAddress().toString());
 
-                    if(address != null & address.length() > 0 && inetAddress instanceof Inet4Address){
+                    if (address != null & address.length() > 0 && inetAddress instanceof Inet4Address) {
 
                         inetSocketAddress = new InetSocketAddress(address, port);
                         return inetSocketAddress;
@@ -310,7 +315,21 @@ public class ForwardingService extends IntentService {
         super.onDestroy();
         runService = false;
 
-        executorService.shutdownNow();
+        // Reject any new tasks
+        executorService.shutdown();
+
+        try {
+            // Shutdown any existing tasks
+            executorService.shutdownNow();
+            if (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
+                Log.e(TAG, "onDestroy: Pool did not terminate");
+            }
+        } catch (InterruptedException ie) {
+            // (Re-)Cancel if current thread also interrupted
+            executorService.shutdownNow();
+            // Preserve interrupt status
+            Thread.currentThread().interrupt();
+        }
 
         ForwardingManager.getInstance().disableForwarding();
 

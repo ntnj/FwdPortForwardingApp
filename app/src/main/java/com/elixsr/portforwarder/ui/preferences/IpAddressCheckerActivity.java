@@ -56,7 +56,7 @@ public class IpAddressCheckerActivity extends BaseActivity {
 
         for (InterfaceHelper.InterfaceModel interfaceModel : interfaces) {
 
-            //set up the view
+            // Set up the view
             LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view = layoutInflater.inflate(R.layout.ip_address_status, containerLayout, false);
             containerLayout.addView(view);
@@ -67,10 +67,10 @@ public class IpAddressCheckerActivity extends BaseActivity {
 
             interfaceNameView.setText(interfaceModel.getName());
             interfaceIpAddressView.setText(interfaceModel.getInetAddress().getHostAddress());
-            if(interfaceModel.getInetAddress().isSiteLocalAddress() || interfaceModel.getInetAddress().isLoopbackAddress()) {
-                interfaceStatusView.setText("Private");
+            if (interfaceModel.getInetAddress().isSiteLocalAddress() || interfaceModel.getInetAddress().isLoopbackAddress()) {
+                interfaceStatusView.setText(R.string.ip_checker_tool_private_text);
             } else {
-                interfaceStatusView.setText("Public");
+                interfaceStatusView.setText(R.string.ip_checker_tool_public_text);
             }
 
         }

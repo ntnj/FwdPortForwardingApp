@@ -22,7 +22,7 @@ import android.provider.BaseColumns;
 
 /**
  * Created by Niall McShane on 07/03/2016.
- *
+ * <p>
  * Sourced from: http://developer.android.com/training/basics/data-storage/databases.html#DefineContract
  */
 public class RuleContract {

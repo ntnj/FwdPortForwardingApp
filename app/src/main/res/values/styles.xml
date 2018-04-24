@@ -36,18 +36,17 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"></style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="spinnerItemStyle">
-        <item name="android:padding">10dp</item>    
+        <item name="android:padding">10dp</item>
         <item name="android:textSize">50sp</item>
         <item name="android:textColor">?attr/editRuleTextInputColour</item>
     </style>
 
-    <style name="tempSpinnerOverride">
-    </style>
+    <style name="tempSpinnerOverride" />
 
     <style name="EditRuleSwitchBar" parent="Theme.AppCompat">
         <item name="android:textColor">#FFFFFF</item>

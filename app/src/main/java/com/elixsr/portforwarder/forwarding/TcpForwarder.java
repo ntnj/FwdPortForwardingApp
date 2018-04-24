@@ -35,7 +35,7 @@ import com.elixsr.portforwarder.exceptions.BindException;
 
 /**
  * Created by Niall McShane on 21/02/2016.
- *
+ * <p>
  * Credit: https://alexapps.net/single-threaded-port-forwarding-utility-/
  */
 public class TcpForwarder extends Forwarder implements Callable<Void> {
@@ -61,10 +61,10 @@ public class TcpForwarder extends Forwarder implements Callable<Void> {
 
             try {
                 listening.socket().bind(this.from, 0);
-            }catch(java.net.BindException e){
+            } catch (java.net.BindException e) {
                 Log.e(TAG, String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
                 throw new BindException(String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
-            }catch(java.net.SocketException e){
+            } catch (java.net.SocketException e) {
                 Log.e(TAG, String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
                 throw new BindException(String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
             }
@@ -73,7 +73,7 @@ public class TcpForwarder extends Forwarder implements Callable<Void> {
 
             while (true) {
 
-                if (Thread.currentThread().isInterrupted()){
+                if (Thread.currentThread().isInterrupted()) {
                     Log.i(TAG, String.format(super.THREAD_INTERRUPT_CLEANUP_MESSAGE, protocol));
                     listening.close();
                     break;
@@ -105,7 +105,7 @@ public class TcpForwarder extends Forwarder implements Callable<Void> {
                     }
                 }
             }
-        }catch(IOException e) {
+        } catch (IOException e) {
             Log.e(TAG, "Problem opening Selector", e);
             throw e;
         }
@@ -154,8 +154,7 @@ public class TcpForwarder extends Forwarder implements Callable<Void> {
         int r = 0;
         try {
             r = pair.from.read(readBuffer);
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             key.cancel();
             System.out.println("Connection closed: " + key.channel());
         }
@@ -188,7 +187,7 @@ public class TcpForwarder extends Forwarder implements Callable<Void> {
     private static void processAcceptable(
             SelectionKey key,
             InetSocketAddress forwardToAddress) throws IOException {
-        SocketChannel from = ((ServerSocketChannel)key.attachment()).accept();
+        SocketChannel from = ((ServerSocketChannel) key.attachment()).accept();
         System.out.println("Accepted " + from.socket());
         from.socket().setTcpNoDelay(true);
         from.configureBlocking(false);

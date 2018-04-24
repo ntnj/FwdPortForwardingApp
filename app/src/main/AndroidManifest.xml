@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme.NoActionBar">
         <activity
             android:name=".ui.MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_tag">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -123,7 +123,30 @@
             android:name=".ui.preferences.AdvancedSettingsActivity"
             android:label="@string/title_activity_advanced_settings"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.preferences.IpAddressCheckerActivity"></activity>
+        <activity android:name=".ui.preferences.IpAddressCheckerActivity" />
+
+        <provider
+            android:name=".util.GenericFileProvider"
+            android:authorities="${applicationId}.util.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+        <activity
+            android:name=".ui.preferences.ImportRulesActivity"
+            android:label="@string/title_activity_import_export_rules">
+        </activity>
+        <activity
+            android:name=".ui.preferences.SupportSiteActivity"
+            android:label="@string/import_export_support_site_title"
+            android:parentActivityName=".ui.preferences.ImportRulesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.preferences.ImportRulesActivity" />
+        </activity>
     </application>
 
 </manifest>

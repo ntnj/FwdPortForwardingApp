@@ -1,81 +1,57 @@
 {
   "project_info": {
-    "project_id": "fwd-port-forwarder",
     "project_number": "177686881545",
-    "name": "Fwd port forwarder"
+    "firebase_url": "https://fwd-port-forwarder.firebaseio.com",
+    "project_id": "fwd-port-forwarder"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:177686881545:android:d25479679e9e1ab2",
-        "client_id": "android:com.elixsr.portforwader",
-        "client_type": 1,
-        "android_client_info": {
-          "package_name": "com.elixsr.portforwader",
-          "certificate_hash": []
-        }
-      },
-      "oauth_client": [],
-      "api_key": [{ "current_key": "" }],
-      "services": {
-        "analytics_service": {
-          "status": 2,
-          "analytics_property": {
-            "tracking_id": "UA-75043752-1"
-          }
-        },
-        "cloud_messaging_service": {
-          "status": 1,
-          "apns_config": []
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "google_signin_service": {
-          "status": 1
-        },
-        "ads_service": {
-          "status": 1
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:177686881545:android:cc9b799a818c5fec",
-        "client_id": "android:com.elixsr.portforwarder",
-        "client_type": 1,
         "android_client_info": {
-          "package_name": "com.elixsr.portforwarder",
-          "certificate_hash": []
+          "package_name": "com.elixsr.portforwarder"
         }
       },
-      "oauth_client": [],
-      "api_key": [{ "current_key": "" }],
-      "services": {
-        "analytics_service": {
-          "status": 2,
-          "analytics_property": {
-            "tracking_id": "UA-75043752-1"
+      "oauth_client": [
+        {
+          "client_id": "177686881545-heeotnndjm1vhm7vm1nm8oas6812mgag.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elixsr.portforwarder",
+            "certificate_hash": "ec1ff0f5d9600a01cedd9ad8b4888b825be81c78"
           }
         },
-        "cloud_messaging_service": {
-          "status": 1,
-          "apns_config": []
+        {
+          "client_id": "177686881545-virr50m79mghc8pdehh2uqias7dblplr.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "177686881545-rs17qspd04hptbmd5em5kmfe045le7q7.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "177686881545-h49hkok4c3422bohm28vlvq0mn246fdc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5olgAz52zJEsLRb6n6Jv7qIP_xCmbeOQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
         },
         "appinvite_service": {
           "status": 1,
           "other_platform_oauth_client": []
         },
-        "google_signin_service": {
-          "status": 1
-        },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
   ],
-  "client_info": [],
-  "ARTIFACT_VERSION": "1"
+  "configuration_version": "1"
 }

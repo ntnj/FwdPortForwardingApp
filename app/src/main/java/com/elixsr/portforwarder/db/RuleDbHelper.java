@@ -25,7 +25,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Created by Niall McShane on 07/03/2016.
- *
+ * <p>
  * Sourced from http://developer.android.com/training/basics/data-storage/databases.html#DbHelper
  */
 public class RuleDbHelper extends SQLiteOpenHelper {
@@ -47,7 +47,7 @@ public class RuleDbHelper extends SQLiteOpenHelper {
                     RuleContract.RuleEntry.COLUMN_NAME_TARGET_IP_ADDRESS + TEXT_TYPE + COMMA_SEP +
                     RuleContract.RuleEntry.COLUMN_NAME_TARGET_PORT + INTEGER_TYPE + COMMA_SEP +
                     RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED + INTEGER_TYPE +
-            " )";
+                    " )";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + RuleContract.RuleEntry.TABLE_NAME;
@@ -72,17 +72,17 @@ public class RuleDbHelper extends SQLiteOpenHelper {
 
     }
 
-    public static String[] generateAllRowsSelection(){
+    public static String[] generateAllRowsSelection() {
         String[] projection = {
-            RuleContract.RuleEntry.COLUMN_NAME_RULE_ID,
-            RuleContract.RuleEntry.COLUMN_NAME_NAME,
-            RuleContract.RuleEntry.COLUMN_NAME_IS_TCP,
-            RuleContract.RuleEntry.COLUMN_NAME_IS_UDP,
-            RuleContract.RuleEntry.COLUMN_NAME_FROM_INTERFACE_NAME,
-            RuleContract.RuleEntry.COLUMN_NAME_FROM_PORT + TEXT_TYPE,
-            RuleContract.RuleEntry.COLUMN_NAME_TARGET_IP_ADDRESS,
-            RuleContract.RuleEntry.COLUMN_NAME_TARGET_PORT,
-            RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED
+                RuleContract.RuleEntry.COLUMN_NAME_RULE_ID,
+                RuleContract.RuleEntry.COLUMN_NAME_NAME,
+                RuleContract.RuleEntry.COLUMN_NAME_IS_TCP,
+                RuleContract.RuleEntry.COLUMN_NAME_IS_UDP,
+                RuleContract.RuleEntry.COLUMN_NAME_FROM_INTERFACE_NAME,
+                RuleContract.RuleEntry.COLUMN_NAME_FROM_PORT + TEXT_TYPE,
+                RuleContract.RuleEntry.COLUMN_NAME_TARGET_IP_ADDRESS,
+                RuleContract.RuleEntry.COLUMN_NAME_TARGET_PORT,
+                RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED
         };
 
         return projection;

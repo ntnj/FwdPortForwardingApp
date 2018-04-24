@@ -22,6 +22,8 @@ import android.util.Log;
 
 import java.io.Serializable;
 import java.net.InetSocketAddress;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 
 import com.elixsr.portforwarder.util.RuleHelper;
 
@@ -34,24 +36,31 @@ public class RuleModel implements Serializable {
 
     private static final String TAG = "RuleModel";
 
+    @Expose(serialize = false, deserialize = false)
     private long id;
 
+    @Expose
     private boolean isTcp;
 
+    @Expose
     private boolean isUdp;
 
+    @Expose
     private String name;
 
     //TODO: create a class? - worth the effort?
+    @Expose
     private String fromInterfaceName;
 
+    @Expose
     private int fromPort;
 
+    @Expose
     private InetSocketAddress target;
 
     private boolean isEnabled = true;
 
-    //Null constructor - for object building
+    // Null constructor - for object building
     public RuleModel() {
 
     }
@@ -131,6 +140,7 @@ public class RuleModel implements Serializable {
 
     /**
      * Return a string of the target IPv4 address
+     *
      * @return the IPv4 address as a String
      */
     public String getTargetIpAddress() {
@@ -139,6 +149,7 @@ public class RuleModel implements Serializable {
 
     /**
      * Return the target port as an integer
+     *
      * @return the target port integer.
      */
     public int getTargetPort() {
@@ -158,12 +169,12 @@ public class RuleModel implements Serializable {
      */
     public boolean isValid() {
 
-        //ensure the rule has a name
+        // Ensure the rule has a name
         if (name == null || name.length() <= 0) {
             return false;
         }
 
-        // it must either be one or the other, or even both
+        // It must either be one or the other, or even both
         if (!isTcp && !isUdp) {
             return false;
         }
@@ -177,7 +188,7 @@ public class RuleModel implements Serializable {
         }
 
         try {
-            //ensure that the value is greater than the minimum, and smaller than max
+            // Ensure that the value is greater than the minimum, and smaller than max
             if (getTargetPort() <= 0 || getTargetPort() < RuleHelper.TARGET_MIN_PORT || getTargetPort() > RuleHelper.MAX_PORT_VALUE) {
                 return false;
             }
@@ -187,7 +198,7 @@ public class RuleModel implements Serializable {
         }
 
 
-        //the new rule activity should take care of IP address validation
+        // The new rule activity should take care of IP address validation
         if (getTargetIpAddress() == null || name.length() <= 0) {
             return false;
         }

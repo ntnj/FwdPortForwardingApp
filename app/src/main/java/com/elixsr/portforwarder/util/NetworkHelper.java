@@ -42,12 +42,13 @@ public class NetworkHelper {
 
     /**
      * Return whether or not an IPv4 Address is valid.
+     *
      * @param address The IPv4 Address
      * @return true if valid, false if not valid.
      */
     @Deprecated
-    public static boolean isValidIpv4Address(String address){
-        if(address != null & address.length() > 0){
+    public static boolean isValidIpv4Address(String address) {
+        if (address != null & address.length() > 0) {
             return true;
         }
 

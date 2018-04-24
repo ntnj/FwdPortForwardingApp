@@ -24,7 +24,6 @@ public class AdvancedSettingsActivity extends BaseActivity {
             }
         });
 
-
         getFragmentManager().beginTransaction().replace(R.id.advanced_settings_container, new AdvancedSettingsFragment()).commit();
     }
 
