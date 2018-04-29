@@ -105,6 +105,7 @@ public class SettingsFragment extends PreferenceFragment {
         gson = new GsonBuilder()
                 .registerTypeAdapter(InetSocketAddress.class, new RuleListTargetJsonSerializer())
                 .registerTypeAdapter(RuleModel.class, new RuleListJsonValidator())
+                .excludeFieldsWithoutExposeAnnotation()
                 .create();
 
         forwardingManager = ForwardingManager.getInstance();

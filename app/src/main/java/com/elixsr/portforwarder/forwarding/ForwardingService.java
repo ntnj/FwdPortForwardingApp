@@ -37,6 +37,7 @@ import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -175,17 +176,11 @@ public class ForwardingService extends IntentService {
         RuleDao ruleDao = new RuleDao(new RuleDbHelper(this));
         List<RuleModel> ruleModels = ruleDao.getAllEnabledRuleModels();
 
-        executorService = Executors.newFixedThreadPool(ruleModels.size());
+        List<Forwarder> ruleModelForwarders = new LinkedList<>();
 
         InetSocketAddress from;
 
         Forwarder forwarder = null;
-
-        /*
-         Sourced from: http://stackoverflow.com/questions/19348248/waiting-on-a-list-of-future
-         */
-        CompletionService<Void> completionService =
-                new ExecutorCompletionService<>(executorService);
 
         // how many futures there are to check
         int remainingFutures = 0;
@@ -201,12 +196,12 @@ public class ForwardingService extends IntentService {
                 from = generateFromIpUsingInterface(ruleModel.getFromInterfaceName(), ruleModel.getFromPort());
 
                 if (ruleModel.isTcp() && runService) {
-                    completionService.submit(new TcpForwarder(from, ruleModel.getTarget(), ruleModel.getName()));
+                    ruleModelForwarders.add(new TcpForwarder(from, ruleModel.getTarget(), ruleModel.getName()));
                     remainingFutures++;
                 }
 
                 if (ruleModel.isUdp() && runService) {
-                    completionService.submit(new UdpForwarder(from, ruleModel.getTarget(), ruleModel.getName()));
+                    ruleModelForwarders.add(new UdpForwarder(from, ruleModel.getTarget(), ruleModel.getName()));
                     remainingFutures++;
                 }
 
@@ -223,7 +218,19 @@ public class ForwardingService extends IntentService {
             }
         }
 
-        // Build and send an Event.
+        executorService = Executors.newFixedThreadPool(ruleModelForwarders.size());
+
+        /*
+         Sourced from: http://stackoverflow.com/questions/19348248/waiting-on-a-list-of-future
+         */
+        CompletionService<Void> completionService =
+                new ExecutorCompletionService<>(executorService);
+
+        for (Forwarder ruleForwarder: ruleModelForwarders) {
+            completionService.submit(ruleForwarder);
+        }
+
+            // Build and send an Event.
         tracker.send(new HitBuilders.EventBuilder()
                 .setCategory(CATEGORY_FORWARDING)
                 .setAction(ACTION_START_FORWARDING)
