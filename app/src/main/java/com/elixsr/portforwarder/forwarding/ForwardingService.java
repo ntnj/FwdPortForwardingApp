@@ -36,6 +36,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -176,7 +177,7 @@ public class ForwardingService extends IntentService {
         RuleDao ruleDao = new RuleDao(new RuleDbHelper(this));
         List<RuleModel> ruleModels = ruleDao.getAllEnabledRuleModels();
 
-        List<Forwarder> ruleModelForwarders = new LinkedList<>();
+        List<Forwarder> ruleModelForwarders = new ArrayList<>();
 
         InetSocketAddress from;
 
