@@ -49,7 +49,6 @@ public class RuleModel implements Serializable {
     private String name;
 
     //TODO: create a class? - worth the effort?
-    @Expose
     private String fromInterfaceName;
 
     @Expose
