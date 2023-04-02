@@ -34,18 +34,8 @@ import java.util.LinkedList
  * @author Niall McShane
  * @see [](http://developer.android.com/training/basics/data-storage/databases.html.ReadDbRow)
  */
-class RuleDao {
+class RuleDao(private val ruleDbHelper: RuleDbHelper) {
     private lateinit var db: SQLiteDatabase
-    private val ruleDbHelper: RuleDbHelper
-
-    constructor(ruleDbHelper: RuleDbHelper) {
-        this.ruleDbHelper = ruleDbHelper
-    }
-
-    constructor(sqLiteDatabase: SQLiteDatabase, ruleDbHelper: RuleDbHelper) {
-        db = sqLiteDatabase
-        this.ruleDbHelper = ruleDbHelper
-    }
 
     /**
      * Inserts a valid rule into the SQLite database.
@@ -53,10 +43,10 @@ class RuleDao {
      * @param ruleModel The source [RuleModel].
      * @return the id of the inserted rule.
      */
-    fun insertRule(ruleModel: RuleModel?): Long {
+    fun insertRule(ruleModel: RuleModel): Long {
         // Gets the data repository in write mode
         db = ruleDbHelper.writableDatabase
-        val constantValues = ruleModelToContentValues(ruleModel!!)
+        val constantValues = ruleModelToContentValues(ruleModel)
         return db.insert(
                 RuleContract.RuleEntry.TABLE_NAME,
                 null,

@@ -172,7 +172,7 @@ class SwitchBar @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         companion object {
             @JvmField
             val CREATOR: Parcelable.Creator<SavedState?> = object : Parcelable.Creator<SavedState?> {
-                override fun createFromParcel(`in`: Parcel): SavedState? {
+                override fun createFromParcel(`in`: Parcel): SavedState {
                     return SavedState(`in`)
                 }
 
@@ -183,7 +183,7 @@ class SwitchBar @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         }
     }
 
-    public override fun onSaveInstanceState(): Parcelable? {
+    public override fun onSaveInstanceState(): Parcelable {
         val superState = super.onSaveInstanceState()
         val ss = SavedState(superState)
         ss.checked = switch.isChecked

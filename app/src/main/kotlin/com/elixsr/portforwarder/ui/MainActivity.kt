@@ -38,7 +38,6 @@ import com.elixsr.portforwarder.adapters.RuleListAdapter
 import com.elixsr.portforwarder.dao.RuleDao
 import com.elixsr.portforwarder.db.RuleDbHelper
 import com.elixsr.portforwarder.forwarding.ForwardingManager
-import com.elixsr.portforwarder.forwarding.ForwardingManager.Companion.instance
 import com.elixsr.portforwarder.forwarding.ForwardingService
 import com.elixsr.portforwarder.models.RuleModel
 import com.elixsr.portforwarder.ui.intro.MainIntro
@@ -49,17 +48,17 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : BaseActivity() {
-    private var ruleModels: MutableList<RuleModel>? = null
+    private lateinit var ruleModels: MutableList<RuleModel>
     private lateinit var mRecyclerView: RecyclerView
-    private var forwardingManager: ForwardingManager? = null
-    private var coordinatorLayout: CoordinatorLayout? = null
+    private lateinit var forwardingManager: ForwardingManager
+    private lateinit var coordinatorLayout: CoordinatorLayout
     private lateinit var fab: FloatingActionButton
-    private var forwardingServiceIntent: Intent? = null
-    private var ruleDao: RuleDao? = null
-    private var mRuleListEmptyView: PercentRelativeLayout? = null
+    private lateinit var forwardingServiceIntent: Intent
+    private lateinit var ruleDao: RuleDao
+    private lateinit var mRuleListEmptyView: PercentRelativeLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        forwardingManager = instance
+        forwardingManager = ForwardingManager.instance
         setContentView(R.layout.activity_main)
         setSupportActionBar(actionBarToolbar)
         // getActionBarToolbar().setTitle(R.string.app_tag);
@@ -73,11 +72,11 @@ class MainActivity : BaseActivity() {
 
         // Move to the new rule activity
         fab = findViewById(R.id.fab)
-        fab.setOnClickListener(View.OnClickListener { view: View? -> startActivity(newRuleIntent) })
+        fab.setOnClickListener { startActivity(newRuleIntent) }
 
         // Hide the fab if forwarding is enabled
         // the user should not be able to add/delete rules
-        if (forwardingManager!!.isEnabled) {
+        if (forwardingManager.isEnabled) {
             //if the forwarding service is enabled, then we should ensure not to show the fab
             fab.hide()
         } else {
@@ -86,7 +85,7 @@ class MainActivity : BaseActivity() {
 
         // Get all models from the data store
         ruleDao = RuleDao(RuleDbHelper(this))
-        ruleModels = ruleDao!!.allRuleModels
+        ruleModels = ruleDao.allRuleModels
 
         // Set up rule list and empty view
         mRecyclerView = findViewById(R.id.rule_recycler_view)
@@ -98,11 +97,11 @@ class MainActivity : BaseActivity() {
 
         // Use a linear layout manager
         val mLayoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
-        mRecyclerView.setLayoutManager(mLayoutManager)
+        mRecyclerView.layoutManager = mLayoutManager
 
         // Specify an adapter (see also next example)
-        ruleListAdapter = RuleListAdapter(ruleModels!!, forwardingManager!!)
-        mRecyclerView.setAdapter(ruleListAdapter)
+        ruleListAdapter = RuleListAdapter(ruleModels, forwardingManager)
+        mRecyclerView.adapter = ruleListAdapter
 
         // Store the coordinator layout for snackbar
         coordinatorLayout = findViewById(R.id.main_coordinator_layout)
@@ -129,34 +128,30 @@ class MainActivity : BaseActivity() {
 
     public override fun onResume() {
         super.onResume()
-        ruleModels!!.clear()
-        ruleModels!!.addAll(ruleDao!!.allRuleModels)
+        ruleModels.clear()
+        ruleModels.addAll(ruleDao.allRuleModels)
         ruleListAdapter!!.notifyDataSetChanged()
         invalidateOptionsMenu()
 
         // Decide whether to show the rule list or the empty view
-        if (ruleModels!!.isEmpty()) {
-            mRecyclerView!!.visibility = View.GONE
-            mRuleListEmptyView!!.visibility = View.VISIBLE
+        if (ruleModels.isEmpty()) {
+            mRecyclerView.visibility = View.GONE
+            mRuleListEmptyView.visibility = View.VISIBLE
         } else {
-            mRecyclerView!!.visibility = View.VISIBLE
-            mRuleListEmptyView!!.visibility = View.GONE
+            mRecyclerView.visibility = View.VISIBLE
+            mRuleListEmptyView.visibility = View.GONE
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
-        menu.findItem(R.id.action_toggle_forwarding).title = generateForwardingActionMenuText(forwardingManager!!.isEnabled)
+        menu.findItem(R.id.action_toggle_forwarding).title = generateForwardingActionMenuText(forwardingManager.isEnabled)
 
         // Setup the start forwarding button
         val toggleForwarding = menu.findItem(R.id.action_toggle_forwarding)
         var enabledRuleModels = 0
-        for (ruleModel in ruleModels!!) {
+        for (ruleModel in ruleModels) {
             if (ruleModel.isEnabled) {
                 ++enabledRuleModels
             }
@@ -171,8 +166,7 @@ class MainActivity : BaseActivity() {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
-        when (id) {
+        when (item.itemId) {
             R.id.action_settings -> {
                 val prefIntent = Intent(this, SettingsActivity::class.java)
                 startActivity(prefIntent)
@@ -188,20 +182,20 @@ class MainActivity : BaseActivity() {
     }
 
     private fun handleForwardingButton(item: MenuItem) {
-        if (!forwardingManager!!.isEnabled) {
+        if (!forwardingManager.isEnabled) {
             // startPortForwarding();
-            Snackbar.make(coordinatorLayout!!, R.string.snackbar_port_forwarding_started_text, Snackbar.LENGTH_LONG)
+            Snackbar.make(coordinatorLayout, R.string.snackbar_port_forwarding_started_text, Snackbar.LENGTH_LONG)
                     .setAction("Stop", null).show()
-            fab!!.hide()
+            fab.hide()
             startService(forwardingServiceIntent)
         } else {
             // Stop forwarding
-            fab!!.show()
-            Snackbar.make(coordinatorLayout!!, R.string.snackbar_port_forwarding_stopped_text, Snackbar.LENGTH_LONG).show()
+            fab.show()
+            Snackbar.make(coordinatorLayout, R.string.snackbar_port_forwarding_stopped_text, Snackbar.LENGTH_LONG).show()
             stopService(forwardingServiceIntent)
         }
-        Log.i(TAG, "Forwarding Enabled: " + forwardingManager!!.isEnabled)
-        item.title = generateForwardingActionMenuText(forwardingManager!!.isEnabled)
+        Log.i(TAG, "Forwarding Enabled: " + forwardingManager.isEnabled)
+        item.title = generateForwardingActionMenuText(forwardingManager.isEnabled)
     }
 
     private fun generateForwardingActionMenuText(forwardingFlag: Boolean): String {
@@ -238,8 +232,8 @@ class MainActivity : BaseActivity() {
             if (intent.extras!!.containsKey(ForwardingService.PORT_FORWARD_SERVICE_ERROR_MESSAGE)) {
                 Toast.makeText(context, intent.extras!!.getString(ForwardingService.PORT_FORWARD_SERVICE_ERROR_MESSAGE),
                         Toast.LENGTH_SHORT).show()
-                Snackbar.make(coordinatorLayout!!, R.string.snackbar_port_forwarding_stopped_text, Snackbar.LENGTH_SHORT).show()
-                fab!!.show()
+                Snackbar.make(coordinatorLayout, R.string.snackbar_port_forwarding_stopped_text, Snackbar.LENGTH_SHORT).show()
+                fab.show()
             }
         }
     }

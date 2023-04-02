@@ -112,17 +112,17 @@ class ForwardingService : IntentService {
         // Gets data from the incoming Intent
 //        String dataString = intent.getDataString();
         Log.i(TAG, "Ran the service")
-        ForwardingManager.instance!!.enableForwarding()
+        ForwardingManager.instance.enableForwarding()
         runService = true
 
         /*
          * Creates a new Intent containing a Uri object
          * BROADCAST_ACTION is a custom Intent action
          */
-        var localIntent: Intent? = Intent(BROADCAST_ACTION) // Puts the status into the Intent
-                .putExtra(PORT_FORWARD_SERVICE_STATE, ForwardingManager.instance!!.isEnabled)
+        var localIntent: Intent = Intent(BROADCAST_ACTION) // Puts the status into the Intent
+                .putExtra(PORT_FORWARD_SERVICE_STATE, ForwardingManager.instance.isEnabled)
         // Broadcasts the Intent to receivers in this app.
-        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent!!)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent)
         showForwardingEnabledNotification()
 
         //load the rules from the datastore
@@ -199,7 +199,7 @@ class ForwardingService : IntentService {
 
     @Throws(SocketException::class, ObjectNotFoundException::class)
     private fun generateFromIpUsingInterface(interfaceName: String?, port: Int): InetSocketAddress {
-        var address: String
+        var address: String?
         val inetSocketAddress: InetSocketAddress
         val en = NetworkInterface.getNetworkInterfaces()
         while (en.hasMoreElements()) {
@@ -211,7 +211,7 @@ class ForwardingService : IntentService {
                 while (enumIpAddr.hasMoreElements()) {
                     val inetAddress = enumIpAddr.nextElement()
                     address = inetAddress.hostAddress
-                    if (address != null && address.length > 0 && inetAddress is Inet4Address) {
+                    if (!address.isNullOrEmpty() && inetAddress is Inet4Address) {
                         inetSocketAddress = InetSocketAddress(address, port)
                         return inetSocketAddress
                     }
@@ -245,15 +245,15 @@ class ForwardingService : IntentService {
             // Preserve interrupt status
             Thread.currentThread().interrupt()
         }
-        ForwardingManager.instance!!.disableForwarding()
+        ForwardingManager.instance.disableForwarding()
         hideForwardingEnabledNotification()
 
         //update the main activity
         val localIntent: Intent = Intent(BROADCAST_ACTION) // Puts the status into the Intent
-                .putExtra(PORT_FORWARD_SERVICE_STATE, ForwardingManager.instance!!.isEnabled)
+                .putExtra(PORT_FORWARD_SERVICE_STATE, ForwardingManager.instance.isEnabled)
         // Broadcasts the Intent to receivers in this app.
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent)
-        wakeLock!!.release()
+        wakeLock.release()
         Log.i(TAG, "Ended the ForwardingService. Cleanup finished.")
     }
 

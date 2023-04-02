@@ -46,6 +46,6 @@ object NetworkHelper {
      */
     @Deprecated("")
     fun isValidIpv4Address(address: String?): Boolean {
-        return (address != null) and (address!!.length > 0)
+        return !address.isNullOrEmpty()
     }
 }

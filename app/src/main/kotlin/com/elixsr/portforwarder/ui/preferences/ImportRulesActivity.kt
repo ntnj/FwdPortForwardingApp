@@ -40,8 +40,8 @@ class ImportRulesActivity : BaseActivity() {
     private val TAG = "ImportRulesActivity"
     protected lateinit var fromInterfaceSpinner: Spinner
     protected var fromSpinnerAdapter: ArrayAdapter<String>? = null
-    private var ruleDao: RuleDao? = null
-    private var gson: Gson? = null
+    private lateinit var ruleDao: RuleDao
+    private lateinit var gson: Gson
     private lateinit var ruleModels: MutableList<RuleModel>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,31 +83,27 @@ class ImportRulesActivity : BaseActivity() {
         }
         importRulesText.text = Html.fromHtml(importText)
         importRulesButton.text = "IMPORT " + ruleModels.size + " RULES"
-        importRulesButton.setOnClickListener { v: View? -> importRules() }
+        importRulesButton.setOnClickListener { importRules() }
         helpButton.setOnClickListener { v: View ->
             val mainActivityIntent = Intent(v.context, SupportSiteActivity::class.java)
             startActivity(mainActivityIntent)
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
-
-    fun parseRules(data: Uri?) {
+    fun parseRules(data: Uri) {
         var ruleFailedValidation = false
         var successfulRuleAdditions = 0
         val reader: JsonReader
         val collectionType = object : TypeToken<Collection<RuleModel?>?>() {}.type
         try {
-            val fileContentStream = contentResolver.openInputStream(data!!)
+            val fileContentStream = contentResolver.openInputStream(data)
             reader = JsonReader(InputStreamReader(fileContentStream))
-            val allRuleModels = gson!!.fromJson<List<RuleModel>>(reader, collectionType)
+            val allRuleModels = gson.fromJson<List<RuleModel>>(reader, collectionType)
             for (ruleModel in allRuleModels) {
                 try {
                     if (RuleModelValidator.validateRule(ruleModel)) {
                         successfulRuleAdditions++
-                        ruleModels!!.add(ruleModel)
+                        ruleModels.add(ruleModel)
                     }
                 } catch (e: RuleValidationException) {
                     ruleFailedValidation = true
@@ -144,7 +140,7 @@ class ImportRulesActivity : BaseActivity() {
         if (validationError) {
             return
         }
-        for (ruleModel in ruleModels!!) {
+        for (ruleModel in ruleModels) {
 
             // Create an InetSocketAddress object using data
             val target = InetSocketAddress(targetIpAddress, ruleModel.targetPort)
@@ -152,9 +148,9 @@ class ImportRulesActivity : BaseActivity() {
             val fromInterfaceSpinner = findViewById<Spinner>(R.id.from_interface_spinner)
             val selectedFromInterface = fromInterfaceSpinner.selectedItem.toString()
             ruleModel.fromInterfaceName = selectedFromInterface
-            ruleDao!!.insertRule(ruleModel)
+            ruleDao.insertRule(ruleModel)
         }
-        Toast.makeText(applicationContext, "Imported " + ruleModels!!.size + " rules.", Toast.LENGTH_LONG).show()
+        Toast.makeText(applicationContext, "Imported " + ruleModels.size + " rules.", Toast.LENGTH_LONG).show()
         val mainActivityIntent = Intent(this, MainActivity::class.java)
         mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(mainActivityIntent)
@@ -164,8 +160,7 @@ class ImportRulesActivity : BaseActivity() {
     protected fun constructDetailUi() {
 
         // Generate interfaces
-        val interfaces: List<String>
-        interfaces = try {
+        val interfaces: List<String> = try {
             generateInterfaceNamesList()
         } catch (e: SocketException) {
             Log.i(TAG, "Error generating Interface list", e)
@@ -202,7 +197,7 @@ class ImportRulesActivity : BaseActivity() {
         fromSpinnerAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         // Apply the protocolAdapter to the spinner
-        fromInterfaceSpinner.setAdapter(fromSpinnerAdapter)
+        fromInterfaceSpinner.adapter = fromSpinnerAdapter
     }
 
     companion object {

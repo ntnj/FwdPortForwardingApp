@@ -53,14 +53,14 @@ import java.net.InetSocketAddress
  * Created by Niall McShane on 29/02/2016.
  */
 class SettingsFragment : PreferenceFragment() {
-    private var localBroadcastManager: LocalBroadcastManager? = null
-    private var forwardingManager: ForwardingManager? = null
+    private lateinit var localBroadcastManager: LocalBroadcastManager
+    private lateinit var forwardingManager: ForwardingManager
     private lateinit var clearRulesButton: Preference
     private lateinit var versionNamePreference: Preference
     private lateinit var importRulesPreference: Preference
-    private var sharedPreferencesListener: OnSharedPreferenceChangeListener? = null
-    private var gson: Gson? = null
-    private var ruleDao: RuleDao? = null
+    private lateinit var sharedPreferencesListener: OnSharedPreferenceChangeListener
+    private lateinit var gson: Gson
+    private lateinit var ruleDao: RuleDao
     private lateinit var toast: Toast
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +75,7 @@ class SettingsFragment : PreferenceFragment() {
         localBroadcastManager = LocalBroadcastManager.getInstance(activity.baseContext)
         toast = Toast.makeText(activity, "", Toast.LENGTH_SHORT)
         clearRulesButton = findPreference(getString(R.string.pref_clear_rules))
-        clearRulesButton.setOnPreferenceClickListener(OnPreferenceClickListener { preference: Preference? ->
+        clearRulesButton.onPreferenceClickListener = OnPreferenceClickListener { preference: Preference? ->
             // Code for what you want it to do
             AlertDialog.Builder(activity)
                     .setTitle(R.string.alert_dialog_delete_all_rules_title)
@@ -86,19 +86,19 @@ class SettingsFragment : PreferenceFragment() {
                         val db = RuleDbHelper(activity).readableDatabase
                         db.delete(RuleContract.RuleEntry.TABLE_NAME, null, null)
                         db.close()
-                        clearRulesButton.setEnabled(false)
+                        clearRulesButton.isEnabled = false
                         Toast.makeText(activity, CLEAR_RULES_COMPLETE_MESSAGE,
                                 Toast.LENGTH_SHORT).show()
                     }
                     .setNegativeButton(android.R.string.no) { dialog: DialogInterface?, which: Int -> }
                     .show()
             true
-        })
+        }
         versionNamePreference = findPreference(getString(R.string.pref_version))
-        versionNamePreference.setOnPreferenceClickListener(object : OnPreferenceClickListener {
+        versionNamePreference.onPreferenceClickListener = object : OnPreferenceClickListener {
             var versionPrefClicks = 0
             override fun onPreferenceClick(preference: Preference): Boolean {
-                if (versionPrefClicks >= 2 && versionPrefClicks <= 3) {
+                if (versionPrefClicks in 2..3) {
                     toast.setText((4 - versionPrefClicks).toString() + " more...")
                     toast.show()
                 }
@@ -112,12 +112,12 @@ class SettingsFragment : PreferenceFragment() {
                 }
                 return false
             }
-        })
+        }
         importRulesPreference = findPreference(getString(R.string.pref_import))
-        importRulesPreference.setOnPreferenceClickListener(OnPreferenceClickListener { preference: Preference? ->
+        importRulesPreference.onPreferenceClickListener = OnPreferenceClickListener { preference: Preference? ->
             importRules()
             false
-        })
+        }
         val exportRulesPreference = findPreference(getString(R.string.pref_export))
         exportRulesPreference.onPreferenceClickListener = OnPreferenceClickListener { preference: Preference? ->
             exportRules()
@@ -145,11 +145,11 @@ class SettingsFragment : PreferenceFragment() {
         super.onActivityCreated(savedInstanceState)
 
         // Recreate our activity if we changed to dark theme
-        sharedPreferencesListener = OnSharedPreferenceChangeListener { sharedPreferences: SharedPreferences?, key: String ->
+        sharedPreferencesListener = OnSharedPreferenceChangeListener { _: SharedPreferences?, key: String ->
             if (key == "pref_dark_theme") {
                 val intent = Intent()
                 intent.action = DARK_MODE_BROADCAST
-                localBroadcastManager!!.sendBroadcast(intent)
+                localBroadcastManager.sendBroadcast(intent)
             }
         }
 
@@ -159,12 +159,12 @@ class SettingsFragment : PreferenceFragment() {
 
     override fun onStart() {
         super.onStart()
-        if (forwardingManager!!.isEnabled) {
-            clearRulesButton!!.isEnabled = false
-            importRulesPreference!!.isEnabled = false
+        if (forwardingManager.isEnabled) {
+            clearRulesButton.isEnabled = false
+            importRulesPreference.isEnabled = false
         } else {
-            clearRulesButton!!.isEnabled = true
-            importRulesPreference!!.isEnabled = true
+            clearRulesButton.isEnabled = true
+            importRulesPreference.isEnabled = true
         }
         var versionName = "Version "
         versionName = try {
@@ -174,7 +174,7 @@ class SettingsFragment : PreferenceFragment() {
             Log.i(TAG, "Application Version could not be found.", e)
             versionName + "not found"
         }
-        versionNamePreference!!.title = versionName
+        versionNamePreference.title = versionName
     }
 
     override fun onDestroy() {
@@ -196,7 +196,7 @@ class SettingsFragment : PreferenceFragment() {
     }
 
     private fun exportRules() {
-        if (ruleDao!!.allRuleModels.size > 0) {
+        if (ruleDao.allRuleModels.size > 0) {
             // Lets create out file to store our data
             val outputDir = activity.cacheDir
             val ruleList = ruleListToJsonString()
@@ -228,14 +228,14 @@ class SettingsFragment : PreferenceFragment() {
     }
 
     private fun ruleListToJsonString(): String {
-        val ruleModels = ruleDao!!.allRuleModels
-        return gson!!.toJson(ruleModels)
+        val ruleModels = ruleDao.allRuleModels
+        return gson.toJson(ruleModels)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         if (resultCode != Activity.RESULT_CANCELED && requestCode == RULE_LIST_CODE && data.data != null) {
             val importRulesActivityIntent = Intent(activity, ImportRulesActivity::class.java)
-            importRulesActivityIntent.putExtra(ImportRulesActivity.Companion.IMPORTED_RULE_DATA, data.data.toString())
+            importRulesActivityIntent.putExtra(ImportRulesActivity.IMPORTED_RULE_DATA, data.data.toString())
             startActivity(importRulesActivityIntent)
         }
     }

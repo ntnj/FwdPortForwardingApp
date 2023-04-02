@@ -37,7 +37,4 @@ class SettingsActivity : BaseActivity() {
         fragmentManager.beginTransaction().replace(R.id.content_frame, SettingsFragment()).commit()
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
 }

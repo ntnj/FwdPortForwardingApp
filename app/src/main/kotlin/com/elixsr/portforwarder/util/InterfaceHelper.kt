@@ -24,7 +24,7 @@ object InterfaceHelper {
 
         // Create an empty list
         val interfaces: MutableList<String> = ArrayList()
-        var address: String
+        var address: String?
         val en = NetworkInterface.getNetworkInterfaces()
         while (en.hasMoreElements()) {
             val intf = en.nextElement()
@@ -37,7 +37,7 @@ object InterfaceHelper {
                 // Get the next address in from the iterator
                 val inetAddress = enumIpAddr.nextElement()
                 address = inetAddress.hostAddress
-                if ((address != null) and (address.length > 0) && inetAddress is Inet4Address) {
+                if (!address.isNullOrEmpty() && inetAddress is Inet4Address) {
                     Log.i(TAG, intf.displayName + " " + address)
                     interfaces.add(intf.displayName)
                 }
@@ -65,7 +65,7 @@ object InterfaceHelper {
                 // Get the next address in from the iterator
                 val inetAddress = enumIpAddr.nextElement()
                 address = inetAddress.hostAddress
-                if ((address != null) and (address.length > 0) && inetAddress is Inet4Address) {
+                if (!address.isNullOrEmpty() && inetAddress is Inet4Address) {
                     interfaces.add(InterfaceModel(intf.displayName, inetAddress))
                 }
             }

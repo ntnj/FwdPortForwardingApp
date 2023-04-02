@@ -35,17 +35,22 @@ import com.elixsr.portforwarder.ui.preferences.SettingsFragment
  * Created by Niall McShane on 28/02/2016.
  */
 abstract class BaseActivity : AppCompatActivity() {
-    private var themeChangeReceiver: ThemeChangeReceiver? = null
-    override fun onCreate(ofJoy: Bundle?) {
+    private lateinit var themeChangeReceiver: BroadcastReceiver
+    override fun onCreate(savedInstanceState: Bundle?) {
 
         // Handle intents
         val themeChangeIntentFilter = IntentFilter(
                 SettingsFragment.DARK_MODE_BROADCAST)
-        themeChangeReceiver = ThemeChangeReceiver()
+        themeChangeReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                Log.i(TAG, "onReceive: style changed")
+                recreate()
+            }
+        }
 
         // Registers the ForwardingServiceResponseReceiver and its intent filters
         LocalBroadcastManager.getInstance(this).registerReceiver(
-                themeChangeReceiver!!,
+                themeChangeReceiver,
                 themeChangeIntentFilter)
 
         // Check preferences to determine which theme is requested
@@ -53,7 +58,7 @@ abstract class BaseActivity : AppCompatActivity() {
                         .getBoolean("pref_dark_theme", false)) {
             setTheme(R.style.DarkTheme_NoActionBar)
         }
-        super.onCreate(ofJoy)
+        super.onCreate(savedInstanceState)
     }
 
     override fun onResume() {
@@ -70,13 +75,13 @@ abstract class BaseActivity : AppCompatActivity() {
         Log.i(TAG, "onDestroy: CALLED")
 
         // Ensure that it is no longer looking out for broadcasts
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(themeChangeReceiver!!)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(themeChangeReceiver)
     }
 
     // Primary toolbar and drawer toggle
     private var mActionBarToolbar: Toolbar? = null
     protected val actionBarToolbar: Toolbar?
-        protected get() {
+        get() {
             if (mActionBarToolbar == null) {
                 mActionBarToolbar = findViewById<View>(R.id.toolbar_actionbar) as Toolbar
                 if (mActionBarToolbar != null) {
@@ -87,16 +92,6 @@ abstract class BaseActivity : AppCompatActivity() {
             }
             return mActionBarToolbar
         }
-
-    // Broadcast receiver for receiving status updates from the IntentService
-    private inner class ThemeChangeReceiver  // Prevents instantiation
-        : BroadcastReceiver() {
-        // Called when the BroadcastReceiver gets an Intent it's registered to receive
-        override fun onReceive(context: Context, intent: Intent) {
-            Log.i(TAG, "onReceive: style changed")
-            recreate()
-        }
-    }
 
     companion object {
         private const val TAG = "BaseActivity"

@@ -30,7 +30,7 @@ class RuleModelValidator {
         @JvmStatic
         @Throws(RuleValidationException::class)
         fun validateRuleName(ruleName: String?): Boolean {
-            if (ruleName == null || ruleName.length == 0) {
+            if (ruleName.isNullOrEmpty()) {
                 throw RuleValidationException("You must enter a name")
             }
             return true
@@ -47,7 +47,7 @@ class RuleModelValidator {
         @JvmStatic
         @Throws(RuleValidationException::class)
         fun validateRuleFromPort(ruleFromPort: String?): Boolean {
-            if (ruleFromPort != null && ruleFromPort.length > 0) {
+            if (!ruleFromPort.isNullOrEmpty()) {
                 return validateRuleFromPort(ruleFromPort.toInt())
             }
             throw RuleValidationException(String.format("From port must be a value greater than or equal to %s and less than or equal to %s ", RuleHelper.MIN_PORT_VALUE, RuleHelper.MAX_PORT_VALUE))
@@ -64,7 +64,7 @@ class RuleModelValidator {
         @JvmStatic
         @Throws(RuleValidationException::class)
         fun validateRuleTargetPort(ruleTargetPort: String?): Boolean {
-            if (ruleTargetPort != null && ruleTargetPort.length > 0) {
+            if (!ruleTargetPort.isNullOrEmpty()) {
                 return validateRuleTargetPort(ruleTargetPort.toInt())
             }
             Log.e(TAG, "No target port was included")
@@ -74,7 +74,7 @@ class RuleModelValidator {
         @JvmStatic
         @Throws(RuleValidationException::class)
         fun validateRuleTargetIpAddress(ruleTargetIpAddress: String?): Boolean {
-            if (ruleTargetIpAddress != null && ruleTargetIpAddress.length > 0) {
+            if (!ruleTargetIpAddress.isNullOrEmpty()) {
                 return validateRuleTargetIpAddressSyntax(ruleTargetIpAddress)
             }
             throw RuleValidationException("You must enter a target address")

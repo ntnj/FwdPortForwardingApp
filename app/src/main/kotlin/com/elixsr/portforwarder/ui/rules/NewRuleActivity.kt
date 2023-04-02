@@ -70,7 +70,7 @@ class NewRuleActivity : BaseRuleActivity() {
 
     private fun saveNewRule() {
         val ruleModel = generateNewRule()
-        if (ruleModel!!.isValid) {
+        if (ruleModel.isValid) {
             Log.i(TAG, "Rule '" + ruleModel.name + "' is valid, time to save.")
 
             // Create a DAO and save the object

@@ -102,7 +102,7 @@ object RuleHelper {
      * @return A String describing the protocol. Can be; "TCP", "UDP" or "BOTH".
      */
     @JvmStatic
-    fun getRuleProtocolFromModel(ruleModel: RuleModel): String? {
+    fun getRuleProtocolFromModel(ruleModel: RuleModel): String {
         var result = ""
         if (ruleModel.isTcp) {
             result = NetworkHelper.TCP

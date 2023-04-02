@@ -29,10 +29,7 @@ import com.elixsr.portforwarder.ui.BaseActivity
 import com.elixsr.portforwarder.ui.MainActivity
 import com.elixsr.portforwarder.util.InterfaceHelper.generateInterfaceNamesList
 import com.elixsr.portforwarder.util.NetworkHelper
-import com.elixsr.portforwarder.validators.RuleModelValidator.Companion.validateRuleFromPort
-import com.elixsr.portforwarder.validators.RuleModelValidator.Companion.validateRuleName
-import com.elixsr.portforwarder.validators.RuleModelValidator.Companion.validateRuleTargetIpAddress
-import com.elixsr.portforwarder.validators.RuleModelValidator.Companion.validateRuleTargetPort
+import com.elixsr.portforwarder.validators.RuleModelValidator
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.net.InetSocketAddress
@@ -77,7 +74,7 @@ abstract class BaseRuleActivity : BaseActivity() {
         protocolAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         // Apply the protocolAdapter to the spinner
-        protocolSpinner.setAdapter(protocolAdapter)
+        protocolSpinner.adapter = protocolAdapter
 
         // Generate interfaces
         var interfaces: List<String?>? = null
@@ -96,7 +93,7 @@ abstract class BaseRuleActivity : BaseActivity() {
         }
 
         // Check to ensure we have some interface to show!
-        if (interfaces == null || interfaces.isEmpty()) {
+        if (interfaces.isNullOrEmpty()) {
             Toast.makeText(this, "Could not locate any network interfaces. Please refer to 'help'" +
                     " to assist with troubleshooting.",
                     Toast.LENGTH_LONG).show()
@@ -116,7 +113,7 @@ abstract class BaseRuleActivity : BaseActivity() {
         fromSpinnerAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         // Apply the protocolAdapter to the spinner
-        fromInterfaceSpinner.setAdapter(fromSpinnerAdapter)
+        fromInterfaceSpinner.adapter = fromSpinnerAdapter
     }
 
     /**
@@ -149,8 +146,7 @@ abstract class BaseRuleActivity : BaseActivity() {
             Protocol
          */
         val protocolSpinner = findViewById<Spinner>(R.id.protocol_spinner)
-        val selectedProtocol = protocolSpinner.selectedItem.toString()
-        when (selectedProtocol) {
+        when (protocolSpinner.selectedItem.toString()) {
             NetworkHelper.TCP -> ruleModel.isTcp = true
             NetworkHelper.UDP -> ruleModel.isUdp = true
             NetworkHelper.BOTH -> {
@@ -170,7 +166,7 @@ abstract class BaseRuleActivity : BaseActivity() {
         val ruleNameText = findViewById<TextInputEditText>(R.id.new_rule_name)
         val ruleNameTextInputLayout = findViewById<TextInputLayout>(R.id.new_rule_name_input_layout)
         try {
-            if (validateRuleName(ruleNameText.text.toString())) {
+            if (RuleModelValidator.validateRuleName(ruleNameText.text.toString())) {
                 // If everything is correct, set the name
                 ruleModel.name = ruleNameText.text.toString()
                 ruleNameTextInputLayout.isErrorEnabled = false
@@ -190,7 +186,7 @@ abstract class BaseRuleActivity : BaseActivity() {
 
         // Validate the input, and show error message if wrong
         try {
-            if (validateRuleFromPort(fromPortText.text.toString())) {
+            if (RuleModelValidator.validateRuleFromPort(fromPortText.text.toString())) {
                 ruleModel.fromPort = fromPortText.text.toString().toInt()
             }
         } catch (e: RuleValidationException) {
@@ -210,7 +206,7 @@ abstract class BaseRuleActivity : BaseActivity() {
 
         // Validate the input, and show error message if wrong
         try {
-            if (validateRuleTargetIpAddress(targetIpAddressText.text.toString())) {
+            if (RuleModelValidator.validateRuleTargetIpAddress(targetIpAddressText.text.toString())) {
                 targetIpAddress = targetIpAddressText.text.toString()
             }
         } catch (e: RuleValidationException) {
@@ -224,13 +220,13 @@ abstract class BaseRuleActivity : BaseActivity() {
 
         // Validate the input, and show error message if wrong
         try {
-            if (validateRuleTargetPort(targetPortText.text.toString())) {
+            if (RuleModelValidator.validateRuleTargetPort(targetPortText.text.toString())) {
                 targetPort = targetPortText.text.toString().toInt()
             }
         } catch (e: RuleValidationException) {
             targetPortText.error = e.message
         }
-        if (targetIpAddress != null && targetIpAddress.length > 0 && targetPort >= 0) {
+        if (!targetIpAddress.isNullOrEmpty() && targetPort >= 0) {
             // Create a InetSocketAddress object using data
             val target = InetSocketAddress(targetIpAddress, targetPort)
             ruleModel.target = target

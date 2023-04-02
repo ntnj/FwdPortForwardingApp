@@ -37,7 +37,7 @@ abstract class BaseWebActivity(private val url: String) : BaseActivity() {
         val toolbar = actionBarToolbar
         setSupportActionBar(toolbar)
         toolbar!!.setNavigationIcon(R.drawable.ic_close_24dp)
-        toolbar!!.setNavigationOnClickListener { v: View? -> onBackPressed() }
+        toolbar.setNavigationOnClickListener { v: View? -> onBackPressed() }
         val webView = findViewById<WebView>(R.id.help_webview)
         webView.setBackgroundColor(Color.TRANSPARENT)
         webView.webViewClient = MyWebViewClient()

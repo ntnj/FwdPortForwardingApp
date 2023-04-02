@@ -40,24 +40,6 @@ class ForwardingManager private constructor() : Serializable {
     }
 
     companion object {
-        @JvmStatic
-        var instance: ForwardingManager? = null
-            /**
-             * Return an instance of the [ForwardingManager] class.
-             *
-             * @return
-             */
-            get() {
-                if (field == null) {
-                    // Thread Safe. Might be costly operation in some case
-                    synchronized(ForwardingManager::class.java) {
-                        if (field == null) {
-                            field = ForwardingManager()
-                        }
-                    }
-                }
-                return field
-            }
-            private set
+        val instance: ForwardingManager = ForwardingManager()
     }
 }

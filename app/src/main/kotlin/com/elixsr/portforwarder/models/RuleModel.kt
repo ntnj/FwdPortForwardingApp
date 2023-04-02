@@ -73,7 +73,7 @@ class RuleModel : Serializable {
 
     constructor(isTcp: Boolean, isUdp: Boolean, name: String?, fromInterfaceName: String?, fromPort: Int, targetIp: String?, targetPort: Int) : this(isTcp, isUdp, name, fromInterfaceName, fromPort, InetSocketAddress(targetIp, targetPort))
 
-    fun protocolToString(): String? {
+    fun protocolToString(): String {
         return getRuleProtocolFromModel(this)
     }
 
@@ -106,7 +106,7 @@ class RuleModel : Serializable {
         get() {
 
             // Ensure the rule has a name
-            if (name == null || name!!.length == 0) {
+            if (name.isNullOrEmpty()) {
                 return false
             }
 
@@ -114,7 +114,7 @@ class RuleModel : Serializable {
             if (!isTcp && !isUdp) {
                 return false
             }
-            if (fromInterfaceName == null || fromInterfaceName!!.length == 0) {
+            if (fromInterfaceName.isNullOrEmpty()) {
                 return false
             }
             if (fromPort < RuleHelper.MIN_PORT_VALUE || fromPort > RuleHelper.MAX_PORT_VALUE) {
@@ -132,9 +132,7 @@ class RuleModel : Serializable {
 
 
             // The new rule activity should take care of IP address validation
-            return if (targetIpAddress == null || name!!.length == 0) {
-                false
-            } else true
+            return !targetIpAddress.isNullOrEmpty()
         }
 
     companion object {

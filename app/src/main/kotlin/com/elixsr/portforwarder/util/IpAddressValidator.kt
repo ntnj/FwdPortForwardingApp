@@ -26,11 +26,7 @@ import java.util.regex.Pattern
 -regular-expression/)
  */
 class IpAddressValidator {
-    private val pattern: Pattern
-
-    init {
-        pattern = Pattern.compile(IPADDRESS_PATTERN)
-    }
+    private val pattern: Pattern = Pattern.compile(IPADDRESS_PATTERN)
 
     /**
      * Validate ip address with regular expression

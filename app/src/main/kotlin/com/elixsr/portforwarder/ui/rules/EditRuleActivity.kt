@@ -31,7 +31,6 @@ import com.elixsr.core.common.widgets.SwitchBar
 import com.elixsr.portforwarder.R
 import com.elixsr.portforwarder.db.RuleContract
 import com.elixsr.portforwarder.db.RuleDbHelper
-import com.elixsr.portforwarder.db.RuleDbHelper.Companion.generateAllRowsSelection
 import com.elixsr.portforwarder.models.RuleModel
 import com.elixsr.portforwarder.ui.MainActivity
 import com.elixsr.portforwarder.util.RuleHelper
@@ -44,7 +43,7 @@ import com.google.android.material.textfield.TextInputEditText
  * Created by Niall McShane on 02/03/2016.
  */
 class EditRuleActivity : BaseRuleActivity() {
-    private var ruleModel: RuleModel? = null
+    private lateinit var ruleModel: RuleModel
     private var ruleModelId: Long = 0
     private lateinit var db: SQLiteDatabase
     private lateinit var switchBar: SwitchBar
@@ -80,7 +79,7 @@ class EditRuleActivity : BaseRuleActivity() {
         db = RuleDbHelper(this).readableDatabase
         val cursor = db.query(
                 RuleContract.RuleEntry.TABLE_NAME,
-                generateAllRowsSelection(),
+                RuleDbHelper.generateAllRowsSelection(),
                 RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + "=?", arrayOf(ruleModelId.toString()),
                 null,
                 null,
@@ -88,7 +87,7 @@ class EditRuleActivity : BaseRuleActivity() {
         )
         cursor.moveToFirst()
         ruleModel = cursorToRuleModel(cursor)
-        Log.i(TAG, java.lang.Boolean.toString(ruleModel!!.isEnabled))
+        Log.i(TAG, java.lang.Boolean.toString(ruleModel.isEnabled))
         // Close the DB
         cursor.close()
         db.close()
@@ -96,29 +95,29 @@ class EditRuleActivity : BaseRuleActivity() {
         // Set up the switchBar for enabling/disabling
         switchBar = findViewById(R.id.switch_bar)
         switchBar.show()
-        switchBar.isChecked = ruleModel!!.isEnabled
+        switchBar.isChecked = ruleModel.isEnabled
         /*
         Set the text fields content
          */
         val newRuleNameEditText = findViewById<TextInputEditText>(R.id.new_rule_name)
-        newRuleNameEditText.setText(ruleModel!!.name)
+        newRuleNameEditText.setText(ruleModel.name)
         val newRuleFromPortEditText = findViewById<TextInputEditText>(R.id.new_rule_from_port)
-        newRuleFromPortEditText.setText(ruleModel!!.fromPort.toString())
+        newRuleFromPortEditText.setText(ruleModel.fromPort.toString())
         val newRuleTargetIpAddressEditText = findViewById<TextInputEditText>(R.id.new_rule_target_ip_address)
-        newRuleTargetIpAddressEditText.setText(ruleModel!!.targetIpAddress)
+        newRuleTargetIpAddressEditText.setText(ruleModel.targetIpAddress)
         val newRuleTargetPortEditText = findViewById<TextInputEditText>(R.id.new_rule_target_port)
-        newRuleTargetPortEditText.setText(ruleModel!!.targetPort.toString())
+        newRuleTargetPortEditText.setText(ruleModel.targetPort.toString())
 
         /*
         Set the spinners content
          */
         //from interface spinner
         Log.i(TAG, "FROM SPINNER : $fromInterfaceSpinner")
-        Log.i(TAG, "FROM INTERFACE : " + ruleModel!!.fromInterfaceName)
-        fromInterfaceSpinner!!.setSelection(fromSpinnerAdapter!!.getPosition(ruleModel!!.fromInterfaceName))
+        Log.i(TAG, "FROM INTERFACE : " + ruleModel.fromInterfaceName)
+        fromInterfaceSpinner.setSelection(fromSpinnerAdapter!!.getPosition(ruleModel.fromInterfaceName))
 
         // Protocol spinner
-        protocolSpinner!!.setSelection(protocolAdapter!!.getPosition(getRuleProtocolFromModel(ruleModel!!)))
+        protocolSpinner.setSelection(protocolAdapter!!.getPosition(getRuleProtocolFromModel(ruleModel)))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -131,8 +130,7 @@ class EditRuleActivity : BaseRuleActivity() {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
-        when (id) {
+        when (item.itemId) {
             R.id.action_save_rule -> {
                 Log.i(TAG, "Save Menu Button Clicked")
 
@@ -150,15 +148,15 @@ class EditRuleActivity : BaseRuleActivity() {
 
     private fun saveEditedRule() {
         ruleModel = generateNewRule()
-        if (ruleModel!!.isValid) {
+        if (ruleModel.isValid) {
             // Determine if rule is enabled
-            ruleModel!!.isEnabled = switchBar!!.isChecked
-            Log.i(TAG, "Rule " + ruleModel!!.name + " is valid, time to update.")
+            ruleModel.isEnabled = switchBar.isChecked
+            Log.i(TAG, "Rule " + ruleModel.name + " is valid, time to update.")
             val db = RuleDbHelper(this).readableDatabase
-            Log.i(TAG, "Is enabled is: " + ruleModel!!.isEnabled)
+            Log.i(TAG, "Is enabled is: " + ruleModel.isEnabled)
 
             // New model to store
-            val values = ruleModelToContentValues(ruleModel!!)
+            val values = ruleModelToContentValues(ruleModel)
 
             // Which row to update, based on the ID
             val selection = RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + "=?"

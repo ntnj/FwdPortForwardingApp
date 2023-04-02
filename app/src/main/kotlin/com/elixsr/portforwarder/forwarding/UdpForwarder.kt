@@ -38,7 +38,7 @@ import java.util.concurrent.Callable
 class UdpForwarder(form: InetSocketAddress, to: InetSocketAddress?, ruleName: String?) : Forwarder("UDP", form, to, ruleName), Callable<Void?> {
     @Throws(IOException::class, BindException::class)
     override fun call(): Void? {
-        Log.d(TAG, kotlin.String.format(Forwarder.Companion.START_MESSAGE, protocol, from.port, to!!.port))
+        Log.d(TAG, String.format(START_MESSAGE, protocol, from.port, to!!.port))
         try {
             val readBuffer = ByteBuffer.allocate(BUFFER_SIZE)
             val inChannel = DatagramChannel.open()
@@ -46,14 +46,14 @@ class UdpForwarder(form: InetSocketAddress, to: InetSocketAddress?, ruleName: St
             try {
                 inChannel.socket().bind(from)
             } catch (e: SocketException) {
-                Log.e(TAG, String.format(Forwarder.Companion.BIND_FAILED_MESSAGE, from.port, protocol, ruleName), e)
-                throw BindException(String.format(Forwarder.Companion.BIND_FAILED_MESSAGE, from.port, protocol, ruleName), e)
+                Log.e(TAG, String.format(BIND_FAILED_MESSAGE, from.port, protocol, ruleName), e)
+                throw BindException(String.format(BIND_FAILED_MESSAGE, from.port, protocol, ruleName), e)
             }
             val selector = Selector.open()
-            inChannel.register(selector, SelectionKey.OP_READ, ClientRecord(to!!))
+            inChannel.register(selector, SelectionKey.OP_READ, ClientRecord(to))
             while (true) { // Run forever, receiving and echoing datagrams
                 if (Thread.currentThread().isInterrupted) {
-                    Log.i(TAG, kotlin.String.format(Forwarder.Companion.THREAD_INTERRUPT_CLEANUP_MESSAGE, protocol))
+                    Log.i(TAG, String.format(THREAD_INTERRUPT_CLEANUP_MESSAGE, protocol))
                     inChannel.socket().close()
                     break
                 }
@@ -90,7 +90,7 @@ class UdpForwarder(form: InetSocketAddress, to: InetSocketAddress?, ruleName: St
     }
 
     internal class ClientRecord(var toAddress: SocketAddress) {
-        var writeBuffer = ByteBuffer.allocate(BUFFER_SIZE)
+        var writeBuffer: ByteBuffer = ByteBuffer.allocate(BUFFER_SIZE)
     }
 
     companion object {

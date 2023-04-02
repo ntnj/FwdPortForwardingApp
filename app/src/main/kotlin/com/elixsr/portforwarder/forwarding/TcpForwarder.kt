@@ -36,10 +36,10 @@ import java.util.concurrent.Callable
  *
  * Credit: https://alexapps.net/single-threaded-port-forwarding-utility-/
  */
-class TcpForwarder(form: InetSocketAddress, to: InetSocketAddress?, ruleName: String?) : Forwarder("TCP", form, to, ruleName), Callable<Void?> {
+class TcpForwarder(from: InetSocketAddress, to: InetSocketAddress?, ruleName: String?) : Forwarder("TCP", from, to, ruleName), Callable<Void?> {
     @Throws(IOException::class, com.elixsr.portforwarder.exceptions.BindException::class)
     override fun call(): Void? {
-        Log.d(TAG, kotlin.String.format(Forwarder.Companion.START_MESSAGE, protocol, from.port, to!!.port))
+        Log.d(TAG, String.format(START_MESSAGE, protocol, from.port, to!!.port))
         try {
             val selector = Selector.open()
             val readBuffer = ByteBuffer.allocate(BUFFER_SIZE)
@@ -48,16 +48,16 @@ class TcpForwarder(form: InetSocketAddress, to: InetSocketAddress?, ruleName: St
             try {
                 listening.socket().bind(from, 0)
             } catch (e: BindException) {
-                Log.e(TAG, String.format(Forwarder.Companion.BIND_FAILED_MESSAGE, from.port, protocol, ruleName), e)
-                throw com.elixsr.portforwarder.exceptions.BindException(String.format(Forwarder.Companion.BIND_FAILED_MESSAGE, from.port, protocol, ruleName), e)
+                Log.e(TAG, String.format(BIND_FAILED_MESSAGE, from.port, protocol, ruleName), e)
+                throw com.elixsr.portforwarder.exceptions.BindException(String.format(BIND_FAILED_MESSAGE, from.port, protocol, ruleName), e)
             } catch (e: SocketException) {
-                Log.e(TAG, String.format(Forwarder.Companion.BIND_FAILED_MESSAGE, from.port, protocol, ruleName), e)
-                throw com.elixsr.portforwarder.exceptions.BindException(String.format(Forwarder.Companion.BIND_FAILED_MESSAGE, from.port, protocol, ruleName), e)
+                Log.e(TAG, String.format(BIND_FAILED_MESSAGE, from.port, protocol, ruleName), e)
+                throw com.elixsr.portforwarder.exceptions.BindException(String.format(BIND_FAILED_MESSAGE, from.port, protocol, ruleName), e)
             }
             listening.register(selector, SelectionKey.OP_ACCEPT, listening)
             while (true) {
                 if (Thread.currentThread().isInterrupted) {
-                    Log.i(TAG, kotlin.String.format(Forwarder.Companion.THREAD_INTERRUPT_CLEANUP_MESSAGE, protocol))
+                    Log.i(TAG, String.format(THREAD_INTERRUPT_CLEANUP_MESSAGE, protocol))
                     listening.close()
                     break
                 }
@@ -68,7 +68,7 @@ class TcpForwarder(form: InetSocketAddress, to: InetSocketAddress?, ruleName: St
                         val key = it.next()
                         it.remove()
                         if (key.isValid && key.isAcceptable) {
-                            processAcceptable(key, to!!)
+                            processAcceptable(key, to)
                         }
                         if (key.isValid && key.isConnectable) {
                             processConnectable(key)
@@ -92,7 +92,7 @@ class TcpForwarder(form: InetSocketAddress, to: InetSocketAddress?, ruleName: St
     internal class RoutingPair {
         var from: SocketChannel? = null
         var to: SocketChannel? = null
-        var writeBuffer = ByteBuffer.allocate(BUFFER_SIZE)
+        var writeBuffer: ByteBuffer = ByteBuffer.allocate(BUFFER_SIZE)
     }
 
     companion object {
