@@ -1,244 +1,211 @@
-package com.elixsr.portforwarder.ui.preferences;
+package com.elixsr.portforwarder.ui.preferences
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.text.Html;
-import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.text.Html
+import android.util.Log
+import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
+import com.elixsr.portforwarder.R
+import com.elixsr.portforwarder.adapters.RuleListJsonValidator
+import com.elixsr.portforwarder.adapters.RuleListTargetJsonSerializer
+import com.elixsr.portforwarder.dao.RuleDao
+import com.elixsr.portforwarder.db.RuleDbHelper
+import com.elixsr.portforwarder.exceptions.RuleValidationException
+import com.elixsr.portforwarder.models.RuleModel
+import com.elixsr.portforwarder.ui.BaseActivity
+import com.elixsr.portforwarder.ui.MainActivity
+import com.elixsr.portforwarder.util.InterfaceHelper.generateInterfaceNamesList
+import com.elixsr.portforwarder.validators.RuleModelValidator
+import com.google.android.material.textfield.TextInputEditText
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParseException
+import com.google.gson.JsonSyntaxException
+import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.JsonReader
+import java.io.FileNotFoundException
+import java.io.InputStreamReader
+import java.net.InetSocketAddress
+import java.net.SocketException
+import java.util.LinkedList
 
-import androidx.appcompat.widget.Toolbar;
-
-import com.elixsr.portforwarder.R;
-import com.elixsr.portforwarder.adapters.RuleListJsonValidator;
-import com.elixsr.portforwarder.adapters.RuleListTargetJsonSerializer;
-import com.elixsr.portforwarder.dao.RuleDao;
-import com.elixsr.portforwarder.db.RuleDbHelper;
-import com.elixsr.portforwarder.exceptions.RuleValidationException;
-import com.elixsr.portforwarder.models.RuleModel;
-import com.elixsr.portforwarder.ui.BaseActivity;
-import com.elixsr.portforwarder.ui.MainActivity;
-import com.elixsr.portforwarder.util.InterfaceHelper;
-import com.elixsr.portforwarder.validators.RuleModelValidator;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
-import java.net.InetSocketAddress;
-import java.net.SocketException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-public class ImportRulesActivity extends BaseActivity {
-
-    public static final String IMPORTED_RULE_DATA = "imported_rule_data";
-    private final String TAG = "ImportRulesActivity";
-    protected Spinner fromInterfaceSpinner;
-    protected ArrayAdapter<String> fromSpinnerAdapter;
-    private RuleDao ruleDao;
-    private Gson gson;
-    private List<RuleModel> ruleModels;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_import_rules);
-
-        Toolbar toolbar = getActionBarToolbar();
-        setSupportActionBar(toolbar);
-
-        toolbar.setNavigationIcon(R.drawable.ic_close_24dp);
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
-
-        TextView importRulesText = findViewById(R.id.import_rules_count_text);
-        Button importRulesButton = findViewById(R.id.import_rules_button);
-        ImageView helpButton = findViewById(R.id.help_button);
-
-        ruleModels = new LinkedList<>();
-
-        constructDetailUi();
-
-        ruleDao = new RuleDao(new RuleDbHelper(this));
-        Bundle extras = getIntent().getExtras();
-        Uri data;
-        gson = new GsonBuilder()
-                .registerTypeAdapter(InetSocketAddress.class, new RuleListTargetJsonSerializer())
-                .registerTypeAdapter(RuleModel.class, new RuleListJsonValidator())
-                .create();
-        if(extras != null) {
-            data = Uri.parse(extras.getString(IMPORTED_RULE_DATA));
-            parseRules(data);
+class ImportRulesActivity : BaseActivity() {
+    private val TAG = "ImportRulesActivity"
+    protected lateinit var fromInterfaceSpinner: Spinner
+    protected var fromSpinnerAdapter: ArrayAdapter<String>? = null
+    private var ruleDao: RuleDao? = null
+    private var gson: Gson? = null
+    private lateinit var ruleModels: MutableList<RuleModel>
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_import_rules)
+        val toolbar = actionBarToolbar
+        setSupportActionBar(toolbar)
+        toolbar!!.setNavigationIcon(R.drawable.ic_close_24dp)
+        toolbar.setNavigationOnClickListener { v: View? -> onBackPressed() }
+        val importRulesText = findViewById<TextView>(R.id.import_rules_count_text)
+        val importRulesButton = findViewById<Button>(R.id.import_rules_button)
+        val helpButton = findViewById<ImageView>(R.id.help_button)
+        ruleModels = LinkedList()
+        constructDetailUi()
+        ruleDao = RuleDao(RuleDbHelper(this))
+        val extras = intent.extras
+        val data: Uri
+        gson = GsonBuilder()
+                .registerTypeAdapter(InetSocketAddress::class.java, RuleListTargetJsonSerializer())
+                .registerTypeAdapter(RuleModel::class.java, RuleListJsonValidator())
+                .create()
+        if (extras != null) {
+            data = Uri.parse(extras.getString(IMPORTED_RULE_DATA))
+            parseRules(data)
         }
 
         // We shouldn't continue if we don't have any rules.
-        if(ruleModels.size() == 0) {
-            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(mainActivityIntent);
-            finish();
-            return;
+        if (ruleModels.size == 0) {
+            val mainActivityIntent = Intent(this, MainActivity::class.java)
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(mainActivityIntent)
+            finish()
+            return
         }
 
         // TODO: Expose as localised strings
-        String importText = "You are about to import <b>" + ruleModels.size() + "</b> rule, configure the interface and target address below";
-        if(ruleModels.size() > 1 ) {
-            importText = "You are about to import <b>" + ruleModels.size() + "</b> rules, configure the interface and target address below";
+        var importText = "You are about to import <b>" + ruleModels.size + "</b> rule, configure the interface and target address below"
+        if (ruleModels.size > 1) {
+            importText = "You are about to import <b>" + ruleModels.size + "</b> rules, configure the interface and target address below"
         }
-
-        importRulesText.setText(Html.fromHtml(importText));
-        importRulesButton.setText("IMPORT " + ruleModels.size() + " RULES");
-
-        importRulesButton.setOnClickListener(v -> importRules());
-        helpButton.setOnClickListener(v -> {
-            Intent mainActivityIntent = new Intent(v.getContext(), SupportSiteActivity.class);
-            startActivity(mainActivityIntent);
-        });
+        importRulesText.text = Html.fromHtml(importText)
+        importRulesButton.text = "IMPORT " + ruleModels.size + " RULES"
+        importRulesButton.setOnClickListener { v: View? -> importRules() }
+        helpButton.setOnClickListener { v: View ->
+            val mainActivityIntent = Intent(v.context, SupportSiteActivity::class.java)
+            startActivity(mainActivityIntent)
+        }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 
-    public void parseRules(Uri data) {
-        boolean ruleFailedValidation = false;
-        int successfulRuleAdditions = 0;
-        JsonReader reader;
-        Type collectionType = new TypeToken<Collection<RuleModel>>() {}.getType();
-
+    fun parseRules(data: Uri?) {
+        var ruleFailedValidation = false
+        var successfulRuleAdditions = 0
+        val reader: JsonReader
+        val collectionType = object : TypeToken<Collection<RuleModel?>?>() {}.type
         try {
-            InputStream fileContentStream = getContentResolver().openInputStream(data);
-            reader = new JsonReader(new InputStreamReader(fileContentStream));
-            List<RuleModel> allRuleModels = gson.fromJson(reader, collectionType);
-            for (RuleModel ruleModel : allRuleModels) {
+            val fileContentStream = contentResolver.openInputStream(data!!)
+            reader = JsonReader(InputStreamReader(fileContentStream))
+            val allRuleModels = gson!!.fromJson<List<RuleModel>>(reader, collectionType)
+            for (ruleModel in allRuleModels) {
                 try {
                     if (RuleModelValidator.validateRule(ruleModel)) {
-                        successfulRuleAdditions++;
-                        ruleModels.add(ruleModel);
+                        successfulRuleAdditions++
+                        ruleModels!!.add(ruleModel)
                     }
-                } catch (RuleValidationException e) {
-                    ruleFailedValidation = true;
+                } catch (e: RuleValidationException) {
+                    ruleFailedValidation = true
                 }
             }
-
             if (ruleFailedValidation) {
-                Toast.makeText(getApplicationContext(), "Some rules failed validation. Imported " + successfulRuleAdditions + " rules.", Toast.LENGTH_LONG).show();
+                Toast.makeText(applicationContext, "Some rules failed validation. Imported $successfulRuleAdditions rules.", Toast.LENGTH_LONG).show()
             }
-        } catch (FileNotFoundException e) {
-            Toast.makeText(getApplicationContext(), "Error importing rules - No valid file found.", Toast.LENGTH_LONG).show();
-        } catch (JsonSyntaxException e) {
-            Toast.makeText(getApplicationContext(), "Error importing rules - JSON file is malformed.", Toast.LENGTH_LONG).show();
-        } catch (JsonParseException e) {
-            Toast.makeText(getApplicationContext(), "Error importing rules - Rule list is invalid.", Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (e: FileNotFoundException) {
+            Toast.makeText(applicationContext, "Error importing rules - No valid file found.", Toast.LENGTH_LONG).show()
+        } catch (e: JsonSyntaxException) {
+            Toast.makeText(applicationContext, "Error importing rules - JSON file is malformed.", Toast.LENGTH_LONG).show()
+        } catch (e: JsonParseException) {
+            Toast.makeText(applicationContext, "Error importing rules - Rule list is invalid.", Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-    public void importRules() {
-
-        boolean validationError = false;
-
-        String targetIpAddress = null;
-
-        TextInputEditText targetIpAddressText = findViewById(R.id.new_rule_target_ip_address);
+    fun importRules() {
+        var validationError = false
+        var targetIpAddress: String? = null
+        val targetIpAddressText = findViewById<TextInputEditText>(R.id.new_rule_target_ip_address)
 
         // Validate the input, and show error message if wrong
         try {
-            if (RuleModelValidator.validateRuleTargetIpAddress(targetIpAddressText.getText().toString())) {
-                targetIpAddress = targetIpAddressText.getText().toString();
+            if (RuleModelValidator.validateRuleTargetIpAddress(targetIpAddressText.text.toString())) {
+                targetIpAddress = targetIpAddressText.text.toString()
             }
-        } catch (RuleValidationException e) {
-            targetIpAddressText.setError(e.getMessage());
-            validationError = true;
+        } catch (e: RuleValidationException) {
+            targetIpAddressText.error = e.message
+            validationError = true
         }
-
-        if(validationError) {
-            return;
+        if (validationError) {
+            return
         }
-
-        for (RuleModel ruleModel : ruleModels) {
+        for (ruleModel in ruleModels!!) {
 
             // Create an InetSocketAddress object using data
-            InetSocketAddress target = new InetSocketAddress(targetIpAddress, ruleModel.getTargetPort());
-            ruleModel.setTarget(target);
-
-            Spinner fromInterfaceSpinner = findViewById(R.id.from_interface_spinner);
-            String selectedFromInterface = fromInterfaceSpinner.getSelectedItem().toString();
-            ruleModel.setFromInterfaceName(selectedFromInterface);
-
-            ruleDao.insertRule(ruleModel);
+            val target = InetSocketAddress(targetIpAddress, ruleModel.targetPort)
+            ruleModel.target = target
+            val fromInterfaceSpinner = findViewById<Spinner>(R.id.from_interface_spinner)
+            val selectedFromInterface = fromInterfaceSpinner.selectedItem.toString()
+            ruleModel.fromInterfaceName = selectedFromInterface
+            ruleDao!!.insertRule(ruleModel)
         }
-
-        Toast.makeText(getApplicationContext(), "Imported " + ruleModels.size() + " rules.", Toast.LENGTH_LONG).show();
-
-        Intent mainActivityIntent = new Intent(this, MainActivity.class);
-        mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(mainActivityIntent);
-        finish();
-
-
+        Toast.makeText(applicationContext, "Imported " + ruleModels!!.size + " rules.", Toast.LENGTH_LONG).show()
+        val mainActivityIntent = Intent(this, MainActivity::class.java)
+        mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(mainActivityIntent)
+        finish()
     }
 
-    protected void constructDetailUi() {
+    protected fun constructDetailUi() {
 
         // Generate interfaces
-        List<String> interfaces;
-        try {
-            interfaces = InterfaceHelper.generateInterfaceNamesList();
-
-
-        } catch (SocketException e) {
-            Log.i(TAG, "Error generating Interface list", e);
+        val interfaces: List<String>
+        interfaces = try {
+            generateInterfaceNamesList()
+        } catch (e: SocketException) {
+            Log.i(TAG, "Error generating Interface list", e)
 
             // Show toast and move to main screen
             Toast.makeText(this, "Problem locating network interfaces. Please refer to 'help' to " +
-                            "assist with troubleshooting.",
-                    Toast.LENGTH_LONG).show();
-            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            startActivity(mainActivityIntent);
-            finish();
-            return;
+                    "assist with troubleshooting.",
+                    Toast.LENGTH_LONG).show()
+            val mainActivityIntent = Intent(this, MainActivity::class.java)
+            startActivity(mainActivityIntent)
+            finish()
+            return
         }
 
         // Check to ensure we have some interface to show!
         if (interfaces.isEmpty()) {
             Toast.makeText(this, "Could not locate any network interfaces. Please refer to 'help'" +
-                            " to assist with troubleshooting.",
-                    Toast.LENGTH_LONG).show();
-            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            startActivity(mainActivityIntent);
-            finish();
-            return;
+                    " to assist with troubleshooting.",
+                    Toast.LENGTH_LONG).show()
+            val mainActivityIntent = Intent(this, MainActivity::class.java)
+            startActivity(mainActivityIntent)
+            finish()
+            return
         }
 
 
         // Set up protocol spinner/dropdown
-        fromInterfaceSpinner = findViewById(R.id.from_interface_spinner);
+        fromInterfaceSpinner = findViewById(R.id.from_interface_spinner)
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        fromSpinnerAdapter = new ArrayAdapter<>(this, R.layout.my_spinner, interfaces);
+        fromSpinnerAdapter = ArrayAdapter(this, R.layout.my_spinner, interfaces)
 
         // Specify the layout to use when the list of choices appears
-        fromSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        fromSpinnerAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         // Apply the protocolAdapter to the spinner
-        fromInterfaceSpinner.setAdapter(fromSpinnerAdapter);
+        fromInterfaceSpinner.setAdapter(fromSpinnerAdapter)
+    }
 
+    companion object {
+        const val IMPORTED_RULE_DATA = "imported_rule_data"
     }
 }

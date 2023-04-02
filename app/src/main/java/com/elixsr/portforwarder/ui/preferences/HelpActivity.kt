@@ -15,19 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.ui.preferences
 
-package com.elixsr.portforwarder.ui.preferences;
-
-import com.elixsr.portforwarder.ui.BaseWebActivity;
+import com.elixsr.portforwarder.ui.BaseWebActivity
 
 /**
  * Created by Niall McShane on 08/03/2016.
  */
-public class HelpActivity extends BaseWebActivity {
-
-    private static final String URL = "https://support.elix.sr/#!/products/fwd";
-
-    public HelpActivity() {
-        super(URL);
-    }
-}
+object HelpActivity : BaseWebActivity("https://support.elix.sr/#!/products/fwd")

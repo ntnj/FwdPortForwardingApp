@@ -15,61 +15,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.ui
 
-package com.elixsr.portforwarder.ui;
-
-import android.graphics.Color;
-import android.os.Bundle;
-import android.view.View;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-
-import androidx.appcompat.widget.Toolbar;
-
-import com.elixsr.portforwarder.R;
+import android.graphics.Color
+import android.os.Bundle
+import android.view.View
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import com.elixsr.portforwarder.R
 
 /**
  * Created by Niall McShane on 08/03/2016.
  */
-public abstract class BaseWebActivity extends BaseActivity {
-
-    private final String url;
-
-    public BaseWebActivity(String url) {
-        this.url = url;
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.base_web_activity);
+abstract class BaseWebActivity(private val url: String) : BaseActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.base_web_activity)
 
         // Set up toolbar
-        final Toolbar toolbar = getActionBarToolbar();
-        setSupportActionBar(toolbar);
-
-        toolbar.setNavigationIcon(R.drawable.ic_close_24dp);
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
-
-        final WebView webView = findViewById(R.id.help_webview);
-        webView.setBackgroundColor(Color.TRANSPARENT);
-        webView.setWebViewClient(new MyWebViewClient());
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        val toolbar = actionBarToolbar
+        setSupportActionBar(toolbar)
+        toolbar!!.setNavigationIcon(R.drawable.ic_close_24dp)
+        toolbar!!.setNavigationOnClickListener { v: View? -> onBackPressed() }
+        val webView = findViewById<WebView>(R.id.help_webview)
+        webView.setBackgroundColor(Color.TRANSPARENT)
+        webView.webViewClient = MyWebViewClient()
+        webView.settings.javaScriptEnabled = true
+        webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
 
         // Hardware acceleration for web view
-        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-
-        webView.loadUrl(url);
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        webView.loadUrl(url)
     }
 
     // Override default behaviour of the browser
-    private static class MyWebViewClient extends WebViewClient {
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(url);
-            return true;
+    private class MyWebViewClient : WebViewClient() {
+        override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            view.loadUrl(url)
+            return true
         }
     }
 }

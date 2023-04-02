@@ -15,30 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package com.elixsr.portforwarder.util;
+package com.elixsr.portforwarder.util
 
 /**
- * The {@link NetworkHelper} class provides static objects and methods related to network metadata.
+ * The [NetworkHelper] class provides static objects and methods related to network metadata.
  *
  * @author Niall McShane
  */
-public class NetworkHelper {
-
+object NetworkHelper {
     /**
      * A String denoting TCP.
      */
-    public static final String TCP = "TCP";
+    const val TCP = "TCP"
 
     /**
      * A String denoting UDP.
      */
-    public static final String UDP = "UDP";
+    const val UDP = "UDP"
 
     /**
      * A String denoting BOTH.
      */
-    public static final String BOTH = "BOTH";
+    const val BOTH = "BOTH"
 
     /**
      * Return whether or not an IPv4 Address is valid.
@@ -46,8 +44,8 @@ public class NetworkHelper {
      * @param address The IPv4 Address
      * @return true if valid, false if not valid.
      */
-    @Deprecated
-    public static boolean isValidIpv4Address(String address) {
-        return address != null & address.length() > 0;
+    @Deprecated("")
+    fun isValidIpv4Address(address: String?): Boolean {
+        return (address != null) and (address!!.length > 0)
     }
 }

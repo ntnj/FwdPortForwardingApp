@@ -15,201 +15,129 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.models
 
-package com.elixsr.portforwarder.models;
-
-import android.util.Log;
-
-import com.elixsr.portforwarder.util.RuleHelper;
-import com.google.gson.annotations.Expose;
-
-import java.io.Serializable;
-import java.net.InetSocketAddress;
+import android.util.Log
+import com.elixsr.portforwarder.util.RuleHelper
+import com.elixsr.portforwarder.util.RuleHelper.getRuleProtocolFromModel
+import com.google.gson.annotations.Expose
+import java.io.Serializable
+import java.net.InetSocketAddress
 
 /**
- * The {@link RuleModel} class represents a Forwarding Rule.
+ * The [RuleModel] class represents a Forwarding Rule.
  *
  * @author Niall McShane
  */
-public class RuleModel implements Serializable {
-
-    private static final String TAG = "RuleModel";
-
+class RuleModel : Serializable {
     @Expose(serialize = false, deserialize = false)
-    private long id;
+    var id: Long = 0
 
+    @JvmField
     @Expose
-    private boolean isTcp;
+    var isTcp = false
 
+    @JvmField
     @Expose
-    private boolean isUdp;
+    var isUdp = false
 
+    @JvmField
     @Expose
-    private String name;
+    var name: String? = null
 
     //TODO: create a class? - worth the effort?
-    private String fromInterfaceName;
+    @JvmField
+    var fromInterfaceName: String? = null
 
+    @JvmField
     @Expose
-    private int fromPort;
+    var fromPort = 0
 
+    @JvmField
     @Expose
-    private InetSocketAddress target;
+    var target: InetSocketAddress? = null
 
-    private boolean isEnabled = true;
+    @JvmField
+    var isEnabled = true
 
     // Null constructor - for object building
-    public RuleModel() {
-
+    constructor()
+    constructor(isTcp: Boolean, isUdp: Boolean, name: String?, fromInterfaceName: String?, fromPort: Int, target: InetSocketAddress?) {
+        this.isTcp = isTcp
+        this.isUdp = isUdp
+        this.name = name
+        this.fromInterfaceName = fromInterfaceName
+        this.fromPort = fromPort
+        this.target = target
     }
 
-    public RuleModel(boolean isTcp, boolean isUdp, String name, String fromInterfaceName, int fromPort, InetSocketAddress target) {
-        this.isTcp = isTcp;
-        this.isUdp = isUdp;
-        this.name = name;
-        this.fromInterfaceName = fromInterfaceName;
-        this.fromPort = fromPort;
-        this.target = target;
+    constructor(isTcp: Boolean, isUdp: Boolean, name: String?, fromInterfaceName: String?, fromPort: Int, targetIp: String?, targetPort: Int) : this(isTcp, isUdp, name, fromInterfaceName, fromPort, InetSocketAddress(targetIp, targetPort))
+
+    fun protocolToString(): String? {
+        return getRuleProtocolFromModel(this)
     }
 
-    public RuleModel(boolean isTcp, boolean isUdp, String name, String fromInterfaceName, int fromPort, String targetIp, int targetPort) {
-        this(isTcp, isUdp, name, fromInterfaceName, fromPort, new InetSocketAddress(targetIp, targetPort));
-    }
+    val targetIpAddress: String?
+        /**
+         * Return a string of the target IPv4 address
+         *
+         * @return the IPv4 address as a String
+         */
+        get() = target!!.address.hostAddress
+    val targetPort: Int
+        /**
+         * Return the target port as an integer
+         *
+         * @return the target port integer.
+         */
+        get() = target!!.port
+    val isValid: Boolean
+        /**
+         * Validate all data held within the model.
+         *
+         *
+         * Validation rules:   * Name should not be null & greater than 0 characters
+         *  * Either TCP or UDP should be true  * From Interface should not be null & greater
+         * than 0 characters  * From port should be greater than minimum port and smaller than
+         * max  * Target port should be greater than minimum port and smaller than max  * Target IP address should not be null & greater than 0 characters
+         *
+         * @return true if valid, false if not valid.
+         */
+        get() {
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public boolean isTcp() {
-        return isTcp;
-    }
-
-    public void setIsTcp(boolean isTcp) {
-        this.isTcp = isTcp;
-    }
-
-    public boolean isUdp() {
-        return isUdp;
-    }
-
-    public void setIsUdp(boolean isUdp) {
-        this.isUdp = isUdp;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getFromInterfaceName() {
-        return fromInterfaceName;
-    }
-
-    public void setFromInterfaceName(String fromInterfaceName) {
-        this.fromInterfaceName = fromInterfaceName;
-    }
-
-    public int getFromPort() {
-        return fromPort;
-    }
-
-    public void setFromPort(int fromPort) {
-        this.fromPort = fromPort;
-    }
-
-    public InetSocketAddress getTarget() {
-        return target;
-    }
-
-    public void setTarget(InetSocketAddress target) {
-        this.target = target;
-    }
-
-    public String protocolToString() {
-        return RuleHelper.getRuleProtocolFromModel(this);
-    }
-
-    /**
-     * Return a string of the target IPv4 address
-     *
-     * @return the IPv4 address as a String
-     */
-    public String getTargetIpAddress() {
-        return this.target.getAddress().getHostAddress();
-    }
-
-    /**
-     * Return the target port as an integer
-     *
-     * @return the target port integer.
-     */
-    public int getTargetPort() {
-        return this.target.getPort();
-    }
-
-    /**
-     * Validate all data held within the model.
-     * <p/>
-     * Validation rules: <ul> <li>Name should not be null & greater than 0 characters</li>
-     * <li>Either TCP or UDP should be true</li> <li>From Interface should not be null & greater
-     * than 0 characters</li> <li>From port should be greater than minimum port and smaller than
-     * max</li> <li>Target port should be greater than minimum port and smaller than max </li
-     * <li>Target IP address should not be null & greater than 0 characters</li> </ul>
-     *
-     * @return true if valid, false if not valid.
-     */
-    public boolean isValid() {
-
-        // Ensure the rule has a name
-        if (name == null || name.length() == 0) {
-            return false;
-        }
-
-        // It must either be one or the other, or even both
-        if (!isTcp && !isUdp) {
-            return false;
-        }
-
-        if (fromInterfaceName == null || fromInterfaceName.length() == 0) {
-            return false;
-        }
-
-        if (fromPort < RuleHelper.MIN_PORT_VALUE || fromPort > RuleHelper.MAX_PORT_VALUE) {
-            return false;
-        }
-
-        try {
-            // Ensure that the value is greater than the minimum, and smaller than max
-            if (getTargetPort() <= 0 || getTargetPort() < RuleHelper.TARGET_MIN_PORT || getTargetPort() > RuleHelper.MAX_PORT_VALUE) {
-                return false;
+            // Ensure the rule has a name
+            if (name == null || name!!.length == 0) {
+                return false
             }
-        } catch (NullPointerException e) {
-            Log.e(TAG, "Target object was null.", e);
-            return false;
+
+            // It must either be one or the other, or even both
+            if (!isTcp && !isUdp) {
+                return false
+            }
+            if (fromInterfaceName == null || fromInterfaceName!!.length == 0) {
+                return false
+            }
+            if (fromPort < RuleHelper.MIN_PORT_VALUE || fromPort > RuleHelper.MAX_PORT_VALUE) {
+                return false
+            }
+            try {
+                // Ensure that the value is greater than the minimum, and smaller than max
+                if (targetPort <= 0 || targetPort < RuleHelper.TARGET_MIN_PORT || targetPort > RuleHelper.MAX_PORT_VALUE) {
+                    return false
+                }
+            } catch (e: NullPointerException) {
+                Log.e(TAG, "Target object was null.", e)
+                return false
+            }
+
+
+            // The new rule activity should take care of IP address validation
+            return if (targetIpAddress == null || name!!.length == 0) {
+                false
+            } else true
         }
 
-
-        // The new rule activity should take care of IP address validation
-        if (getTargetIpAddress() == null || name.length() == 0) {
-            return false;
-        }
-
-        return true;
-
-    }
-
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
+    companion object {
+        private const val TAG = "RuleModel"
     }
 }

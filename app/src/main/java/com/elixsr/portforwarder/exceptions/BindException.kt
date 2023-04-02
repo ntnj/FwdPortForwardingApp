@@ -15,17 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package com.elixsr.portforwarder.exceptions;
+package com.elixsr.portforwarder.exceptions
 
 /**
  * Thrown when an attempt to bind a socket fails.
  */
-public class BindException extends Exception {
-    /**
-     * {@inheritDoc}
-     */
-    public BindException(String detailMessage, Throwable throwable) {
-        super(detailMessage, throwable);
-    }
-}
+class BindException
+/**
+ * {@inheritDoc}
+ */
+(detailMessage: String?, throwable: Throwable?) : Exception(detailMessage, throwable)

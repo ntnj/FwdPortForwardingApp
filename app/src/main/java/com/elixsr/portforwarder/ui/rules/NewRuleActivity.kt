@@ -15,98 +15,81 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.ui.rules
 
-package com.elixsr.portforwarder.ui.rules;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
-
-import androidx.appcompat.widget.Toolbar;
-
-import com.elixsr.portforwarder.R;
-import com.elixsr.portforwarder.dao.RuleDao;
-import com.elixsr.portforwarder.db.RuleDbHelper;
-import com.elixsr.portforwarder.models.RuleModel;
-import com.elixsr.portforwarder.ui.MainActivity;
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
+import com.elixsr.portforwarder.R
+import com.elixsr.portforwarder.dao.RuleDao
+import com.elixsr.portforwarder.db.RuleDbHelper
+import com.elixsr.portforwarder.ui.MainActivity
 
 /**
  * Created by Niall McShane on 29/02/2016.
  */
-public class NewRuleActivity extends BaseRuleActivity {
-
-    private static final String TAG = "NewRuleActivity";
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.new_rule_activity);
+class NewRuleActivity : BaseRuleActivity() {
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.new_rule_activity)
 
         // Set up toolbar
-        Toolbar toolbar = getActionBarToolbar();
-        setSupportActionBar(toolbar);
-
-        toolbar.setNavigationIcon(R.drawable.ic_close_24dp);
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
-
-        constructDetailUi();
+        val toolbar = actionBarToolbar
+        setSupportActionBar(toolbar)
+        toolbar!!.setNavigationIcon(R.drawable.ic_close_24dp)
+        toolbar.setNavigationOnClickListener { v: View? -> onBackPressed() }
+        constructDetailUi()
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.new_rule_menu, menu);
-        return true;
+        menuInflater.inflate(R.menu.new_rule_menu, menu)
+        return true
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
+        val id = item.itemId
         if (id == R.id.action_save_rule) {
-            Log.i(TAG, "Save Menu Button Clicked");
+            Log.i(TAG, "Save Menu Button Clicked")
 
             // Set the item to disabled while saving
-            item.setEnabled(false);
-            saveNewRule();
-            item.setEnabled(true);
-            return true;
+            item.isEnabled = false
+            saveNewRule()
+            item.isEnabled = true
+            return true
         }
-
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item)
     }
 
-
-    private void saveNewRule() {
-
-        RuleModel ruleModel = generateNewRule();
-
-        if (ruleModel.isValid()) {
-            Log.i(TAG, "Rule '" + ruleModel.getName() + "' is valid, time to save.");
+    private fun saveNewRule() {
+        val ruleModel = generateNewRule()
+        if (ruleModel!!.isValid) {
+            Log.i(TAG, "Rule '" + ruleModel.name + "' is valid, time to save.")
 
             // Create a DAO and save the object
-            RuleDao ruleDao = new RuleDao(new RuleDbHelper(this));
-            long newRowId = ruleDao.insertRule(ruleModel);
-
-            Log.i(TAG, "Rule #" + newRowId + " '" + ruleModel.getName() + "' has been saved.");
+            val ruleDao = RuleDao(RuleDbHelper(this))
+            val newRowId = ruleDao.insertRule(ruleModel)
+            Log.i(TAG, "Rule #" + newRowId + " '" + ruleModel.name + "' has been saved.")
 
             // Move to main activity
-            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(mainActivityIntent);
-            finish();
+            val mainActivityIntent = Intent(this, MainActivity::class.java)
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(mainActivityIntent)
+            finish()
         } else {
             Toast.makeText(this, "Rule is not valid. Please check your input.",
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_LONG).show()
         }
+    }
 
-
+    companion object {
+        private const val TAG = "NewRuleActivity"
     }
 }

@@ -15,111 +15,104 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.util
 
-package com.elixsr.portforwarder.util;
-
-import android.content.ContentValues;
-import android.database.Cursor;
-
-import com.elixsr.portforwarder.db.RuleContract;
-import com.elixsr.portforwarder.models.RuleModel;
-
-import java.net.InetSocketAddress;
+import android.content.ContentValues
+import android.database.Cursor
+import com.elixsr.portforwarder.db.RuleContract
+import com.elixsr.portforwarder.models.RuleModel
+import java.net.InetSocketAddress
 
 /**
- * The {@link RuleModel} class provides static objects and methods related to rules.
- * <p>
- * The class provides functions to convert {@link RuleModel} object to and from other common object
+ * The [RuleModel] class provides static objects and methods related to rules.
+ *
+ *
+ * The class provides functions to convert [RuleModel] object to and from other common object
  * types.
  */
-public class RuleHelper {
-
-    public static final String RULE_MODEL_ID = "RuleModelId";
+object RuleHelper {
+    const val RULE_MODEL_ID = "RuleModelId"
 
     /**
      * The minimum from port value.
-     * <p>
+     *
+     *
      * This is a result of not having root permissions.
      */
-    public static final int MIN_PORT_VALUE = 1024;
+    const val MIN_PORT_VALUE = 1024
 
     /**
      * The minimum target port value.
      */
-    public static final int TARGET_MIN_PORT = 1;
+    const val TARGET_MIN_PORT = 1
 
     /**
      * The maximum from and target port value.
      */
-    public static final int MAX_PORT_VALUE = 65535;
+    const val MAX_PORT_VALUE = 65535
 
     /**
-     * Convert a {@link RuleModel} object to a {@link ContentValues} object.
+     * Convert a [RuleModel] object to a [ContentValues] object.
      *
-     * @param ruleModel The {@link RuleModel} object to be converted.
-     * @return a {@link ContentValues} object based off the input {@link RuleModel} object.
+     * @param ruleModel The [RuleModel] object to be converted.
+     * @return a [ContentValues] object based off the input [RuleModel] object.
      */
-    public static ContentValues ruleModelToContentValues(RuleModel ruleModel) {
+    @JvmStatic
+    fun ruleModelToContentValues(ruleModel: RuleModel): ContentValues {
 
         // Create a new map of values, where column names are the keys
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_NAME, ruleModel.getName());
-        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_IS_TCP, ruleModel.isTcp());
-        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_IS_UDP, ruleModel.isUdp());
-        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_FROM_INTERFACE_NAME, ruleModel.getFromInterfaceName());
-        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_FROM_PORT, ruleModel.getFromPort());
-        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_TARGET_IP_ADDRESS, ruleModel.getTargetIpAddress());
-        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_TARGET_PORT, ruleModel.getTargetPort());
-        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED, ruleModel.isEnabled());
-
-        return contentValues;
+        val contentValues = ContentValues()
+        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_NAME, ruleModel.name)
+        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_IS_TCP, ruleModel.isTcp)
+        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_IS_UDP, ruleModel.isUdp)
+        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_FROM_INTERFACE_NAME, ruleModel.fromInterfaceName)
+        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_FROM_PORT, ruleModel.fromPort)
+        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_TARGET_IP_ADDRESS, ruleModel.targetIpAddress)
+        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_TARGET_PORT, ruleModel.targetPort)
+        contentValues.put(RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED, ruleModel.isEnabled)
+        return contentValues
     }
 
     /**
-     * Convert a {@link Cursor} object to a {@link RuleModel} object.
+     * Convert a [Cursor] object to a [RuleModel] object.
      *
-     * @param cursor The {@link Cursor} object to be converted.
-     * @return a {@link RuleModel} based off the input {@link Cursor}
+     * @param cursor The [Cursor] object to be converted.
+     * @return a [RuleModel] based off the input [Cursor]
      */
-    public static RuleModel cursorToRuleModel(Cursor cursor) {
-
-        RuleModel ruleModel = new RuleModel();
-        ruleModel.setId(cursor.getLong(0));
-        ruleModel.setName(cursor.getString(1));
+    @JvmStatic
+    fun cursorToRuleModel(cursor: Cursor): RuleModel {
+        val ruleModel = RuleModel()
+        ruleModel.id = cursor.getLong(0)
+        ruleModel.name = cursor.getString(1)
 
         //dirty conversion hack
-        ruleModel.setIsTcp(cursor.getInt(2) != 0);
-        ruleModel.setIsUdp(cursor.getInt(3) != 0);
-        ruleModel.setFromInterfaceName(cursor.getString(4));
-        ruleModel.setFromPort(cursor.getInt(5));
-        ruleModel.setTarget(new InetSocketAddress(cursor.getString(6), cursor.getInt(7)));
-        ruleModel.setEnabled(cursor.getInt(8) != 0);
-
-        return ruleModel;
+        ruleModel.isTcp = cursor.getInt(2) != 0
+        ruleModel.isUdp = cursor.getInt(3) != 0
+        ruleModel.fromInterfaceName = cursor.getString(4)
+        ruleModel.fromPort = cursor.getInt(5)
+        ruleModel.target = InetSocketAddress(cursor.getString(6), cursor.getInt(7))
+        ruleModel.isEnabled = cursor.getInt(8) != 0
+        return ruleModel
     }
 
     /**
-     * Function to find the relevant Protocol based of a {@link RuleModel} object.
+     * Function to find the relevant Protocol based of a [RuleModel] object.
      *
-     * @param ruleModel The source {@link RuleModel} object.
+     * @param ruleModel The source [RuleModel] object.
      * @return A String describing the protocol. Can be; "TCP", "UDP" or "BOTH".
      */
-    public static String getRuleProtocolFromModel(RuleModel ruleModel) {
-
-        String result = "";
-
-        if (ruleModel.isTcp()) {
-            result = NetworkHelper.TCP;
+    @JvmStatic
+    fun getRuleProtocolFromModel(ruleModel: RuleModel): String? {
+        var result = ""
+        if (ruleModel.isTcp) {
+            result = NetworkHelper.TCP
         }
-
-        if (ruleModel.isUdp()) {
-            result = NetworkHelper.UDP;
+        if (ruleModel.isUdp) {
+            result = NetworkHelper.UDP
         }
-
-        if (ruleModel.isTcp() && ruleModel.isUdp()) {
-            result = NetworkHelper.BOTH;
+        if (ruleModel.isTcp && ruleModel.isUdp) {
+            result = NetworkHelper.BOTH
         }
-
-        return result;
+        return result
     }
 }

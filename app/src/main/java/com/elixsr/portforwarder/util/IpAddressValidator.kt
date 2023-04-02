@@ -15,30 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.util
 
-package com.elixsr.portforwarder.util;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.Pattern
 
 /**
  * The IpAddressValidator provides functionality to validate an IPv4 Address.
  *
- * @see <a href="http://www.mkyong.com/regular-expressions/how-to-validate-ip-address-with
- * -regular-expression/">source</a>
+ * @see [source](http://www.mkyong.com/regular-expressions/how-to-validate-ip-address-with
+-regular-expression/)
  */
-public class IpAddressValidator {
+class IpAddressValidator {
+    private val pattern: Pattern
 
-    private final Pattern pattern;
-
-    private static final String IPADDRESS_PATTERN =
-            "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-
-    public IpAddressValidator() {
-        pattern = Pattern.compile(IPADDRESS_PATTERN);
+    init {
+        pattern = Pattern.compile(IPADDRESS_PATTERN)
     }
 
     /**
@@ -47,8 +38,15 @@ public class IpAddressValidator {
      * @param ip ip address for validation
      * @return true valid ip address, false invalid ip address
      */
-    public boolean validate(final String ip) {
-        Matcher matcher = pattern.matcher(ip);
-        return matcher.matches();
+    fun validate(ip: String?): Boolean {
+        val matcher = pattern.matcher(ip)
+        return matcher.matches()
+    }
+
+    companion object {
+        private const val IPADDRESS_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$"
     }
 }

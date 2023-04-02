@@ -15,121 +15,110 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.forwarding
 
-package com.elixsr.portforwarder.forwarding;
-
-import android.util.Log;
-
-import com.elixsr.portforwarder.exceptions.BindException;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.net.SocketException;
-import java.nio.ByteBuffer;
-import java.nio.channels.DatagramChannel;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.util.Iterator;
-import java.util.concurrent.Callable;
+import android.util.Log
+import com.elixsr.portforwarder.exceptions.BindException
+import java.io.IOException
+import java.net.InetSocketAddress
+import java.net.SocketAddress
+import java.net.SocketException
+import java.nio.ByteBuffer
+import java.nio.channels.DatagramChannel
+import java.nio.channels.SelectionKey
+import java.nio.channels.Selector
+import java.util.concurrent.Callable
 
 /**
  * Skeleton taken from: http://cs.ecs.baylor.edu/~donahoo/practical/JavaSockets2/code/UDPEchoServerSelector.java
- * <p>
+ *
+ *
  * Created by Niall McShane on 21/02/2016.
  */
-public class UdpForwarder extends Forwarder implements Callable<Void> {
-
-    private static final String TAG = "UdpForwarder";
-    private static final int BUFFER_SIZE = 100000;
-
-    public UdpForwarder(InetSocketAddress form, InetSocketAddress to, String ruleName) {
-        super("UDP", form, to, ruleName);
-    }
-
-    public Void call() throws IOException, BindException {
-
-        Log.d(TAG, String.format(START_MESSAGE, protocol, from.getPort(), to.getPort()));
-
+class UdpForwarder(form: InetSocketAddress, to: InetSocketAddress?, ruleName: String?) : Forwarder("UDP", form, to, ruleName), Callable<Void?> {
+    @Throws(IOException::class, BindException::class)
+    override fun call(): Void? {
+        Log.d(TAG, kotlin.String.format(Forwarder.Companion.START_MESSAGE, protocol, from.port, to!!.port))
         try {
-            ByteBuffer readBuffer = ByteBuffer.allocate(BUFFER_SIZE);
-
-            DatagramChannel inChannel = DatagramChannel.open();
-            inChannel.configureBlocking(false);
-
+            val readBuffer = ByteBuffer.allocate(BUFFER_SIZE)
+            val inChannel = DatagramChannel.open()
+            inChannel.configureBlocking(false)
             try {
-                inChannel.socket().bind(this.from);
-            } catch (SocketException e) {
-                Log.e(TAG, String.format(BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
-                throw new BindException(String.format(BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
+                inChannel.socket().bind(from)
+            } catch (e: SocketException) {
+                Log.e(TAG, String.format(Forwarder.Companion.BIND_FAILED_MESSAGE, from.port, protocol, ruleName), e)
+                throw BindException(String.format(Forwarder.Companion.BIND_FAILED_MESSAGE, from.port, protocol, ruleName), e)
             }
-
-            Selector selector = Selector.open();
-            inChannel.register(selector, SelectionKey.OP_READ, new ClientRecord(to));
-
+            val selector = Selector.open()
+            inChannel.register(selector, SelectionKey.OP_READ, ClientRecord(to!!))
             while (true) { // Run forever, receiving and echoing datagrams
-
-                if (Thread.currentThread().isInterrupted()) {
-                    Log.i(TAG, String.format(THREAD_INTERRUPT_CLEANUP_MESSAGE, protocol));
-                    inChannel.socket().close();
-                    break;
+                if (Thread.currentThread().isInterrupted) {
+                    Log.i(TAG, kotlin.String.format(Forwarder.Companion.THREAD_INTERRUPT_CLEANUP_MESSAGE, protocol))
+                    inChannel.socket().close()
+                    break
                 }
-
-                int count = selector.select();
+                val count = selector.select()
                 if (count > 0) {
 
 
                     // Get iterator on set of keys with I/O to process
-                    Iterator<SelectionKey> keyIter = selector.selectedKeys().iterator();
+                    val keyIter = selector.selectedKeys().iterator()
                     while (keyIter.hasNext()) {
-                        SelectionKey key = keyIter.next(); // Key is bit mask
+                        val key = keyIter.next() // Key is bit mask
 
                         // Client socket channel has pending data?
-                        if (key.isReadable()) {
+                        if (key.isReadable) {
                             // Log.i(TAG, "Have Something to READ");
-                            handleRead(key, readBuffer);
+                            handleRead(key, readBuffer)
                         }
 
                         // Client socket channel is available for writing and
                         // key is valid (i.e., channel not closed).
-                        if (key.isValid() && key.isWritable()) {
+                        if (key.isValid && key.isWritable) {
                             // Log.i(TAG, "Have Something to WRITE");
-                            handleWrite(key);
+                            handleWrite(key)
                         }
-
-                        keyIter.remove();
+                        keyIter.remove()
                     }
                 }
             }
-        } catch (IOException e) {
-            Log.e(TAG, "Problem opening Selector", e);
-            throw e;
+        } catch (e: IOException) {
+            Log.e(TAG, "Problem opening Selector", e)
+            throw e
         }
-
-        return null;
+        return null
     }
 
-    public static void handleRead(SelectionKey key, ByteBuffer readBuffer) throws IOException {
+    internal class ClientRecord(var toAddress: SocketAddress) {
+        var writeBuffer = ByteBuffer.allocate(BUFFER_SIZE)
+    }
 
-        // Log.i("UdpForwarder", "Handling Read");
-        DatagramChannel channel = (DatagramChannel) key.channel();
-        ClientRecord clientRecord = (ClientRecord) key.attachment();
+    companion object {
+        private const val TAG = "UdpForwarder"
+        private const val BUFFER_SIZE = 100000
 
-        // Ensure the buffer is empty
-        readBuffer.clear();
+        @Throws(IOException::class)
+        fun handleRead(key: SelectionKey, readBuffer: ByteBuffer) {
 
-        // Receive the data
-        channel.receive(readBuffer);
+            // Log.i("UdpForwarder", "Handling Read");
+            val channel = key.channel() as DatagramChannel
+            val clientRecord = key.attachment() as ClientRecord
 
-        // Get read to wrte, then send
-        readBuffer.flip();
-        channel.send(readBuffer, clientRecord.toAddress);
+            // Ensure the buffer is empty
+            readBuffer.clear()
 
-        // If there is anything remaining in the buffer
-        if (readBuffer.remaining() > 0) {
-            clientRecord.writeBuffer.put(readBuffer);
-            key.interestOps(SelectionKey.OP_WRITE);
-        }
+            // Receive the data
+            channel.receive(readBuffer)
+
+            // Get read to wrte, then send
+            readBuffer.flip()
+            channel.send(readBuffer, clientRecord.toAddress)
+
+            // If there is anything remaining in the buffer
+            if (readBuffer.remaining() > 0) {
+                clientRecord.writeBuffer.put(readBuffer)
+                key.interestOps(SelectionKey.OP_WRITE)
+            }
 
 //        ClientRecord clientRecord = (ClientRecord) key.attachment();
 //        clientRecord.buffer.clear();    // Prepare buffer for receiving
@@ -139,35 +128,25 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
 //            // Register write with the selector
 //            key.interestOps(SelectionKey.OP_WRITE);
 //        }
-    }
-
-    public static void handleWrite(SelectionKey key) throws IOException {
-        DatagramChannel channel = (DatagramChannel) key.channel();
-        ClientRecord clientRecord = (ClientRecord) key.attachment();
-        clientRecord.writeBuffer.flip(); // Prepare buffer for sending
-        channel.send(clientRecord.writeBuffer, clientRecord.toAddress);
-
-
-        if (clientRecord.writeBuffer.remaining() > 0) {
-            clientRecord.writeBuffer.compact();
-        } else {
-            key.interestOps(SelectionKey.OP_READ);
-            clientRecord.writeBuffer.clear();
         }
+
+        @Throws(IOException::class)
+        fun handleWrite(key: SelectionKey) {
+            val channel = key.channel() as DatagramChannel
+            val clientRecord = key.attachment() as ClientRecord
+            clientRecord.writeBuffer.flip() // Prepare buffer for sending
+            channel.send(clientRecord.writeBuffer, clientRecord.toAddress)
+            if (clientRecord.writeBuffer.remaining() > 0) {
+                clientRecord.writeBuffer.compact()
+            } else {
+                key.interestOps(SelectionKey.OP_READ)
+                clientRecord.writeBuffer.clear()
+            }
 
 //        if (bytesSent != 0) { // Buffer completely written?
 //            // No longer interested in writes
 //            key.interestOps(SelectionKey.OP_READ);
 //        }
-    }
-
-    static class ClientRecord {
-        public SocketAddress toAddress;
-        public ByteBuffer writeBuffer = ByteBuffer.allocate(BUFFER_SIZE);
-
-        public ClientRecord(SocketAddress toAddress) {
-            this.toAddress = toAddress;
         }
     }
-
 }

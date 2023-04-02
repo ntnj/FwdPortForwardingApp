@@ -15,285 +15,235 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.ui.preferences
 
-package com.elixsr.portforwarder.ui.preferences;
-
-import static android.app.Activity.RESULT_CANCELED;
-
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.util.Log;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.FileProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import com.elixsr.portforwarder.R;
-import com.elixsr.portforwarder.adapters.RuleListJsonValidator;
-import com.elixsr.portforwarder.adapters.RuleListTargetJsonSerializer;
-import com.elixsr.portforwarder.dao.RuleDao;
-import com.elixsr.portforwarder.db.RuleContract;
-import com.elixsr.portforwarder.db.RuleDbHelper;
-import com.elixsr.portforwarder.forwarding.ForwardingManager;
-import com.elixsr.portforwarder.models.RuleModel;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.List;
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.DialogInterface
+import android.content.Intent
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Bundle
+import android.preference.Preference
+import android.preference.Preference.OnPreferenceClickListener
+import android.preference.PreferenceFragment
+import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.FileProvider
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.elixsr.portforwarder.R
+import com.elixsr.portforwarder.adapters.RuleListJsonValidator
+import com.elixsr.portforwarder.adapters.RuleListTargetJsonSerializer
+import com.elixsr.portforwarder.dao.RuleDao
+import com.elixsr.portforwarder.db.RuleContract
+import com.elixsr.portforwarder.db.RuleDbHelper
+import com.elixsr.portforwarder.forwarding.ForwardingManager
+import com.elixsr.portforwarder.models.RuleModel
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
+import java.net.InetSocketAddress
 
 /**
  * Created by Niall McShane on 29/02/2016.
  */
-public class SettingsFragment extends PreferenceFragment {
-
-    private static final String TAG = "SettingsFragment";
-
-    private static final String CLEAR_RULES_COMPLETE_MESSAGE = "All rules have been removed";
-
-    public static final String DARK_MODE_BROADCAST = "com.elixsr.DARK_MODE_TOGGLE";
-
-    private LocalBroadcastManager localBroadcastManager;
-    private ForwardingManager forwardingManager;
-    private Preference clearRulesButton;
-    private Preference versionNamePreference;
-    private Preference importRulesPreference;
-
-    private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferencesListener;
-
-    private static final int RULE_LIST_CODE = 1;
-    private Gson gson;
-    private RuleDao ruleDao;
-    private Toast toast;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences);
-
-        ruleDao = new RuleDao(new RuleDbHelper(getActivity()));
-
-        gson = new GsonBuilder()
-                .registerTypeAdapter(InetSocketAddress.class, new RuleListTargetJsonSerializer())
-                .registerTypeAdapter(RuleModel.class, new RuleListJsonValidator())
+class SettingsFragment : PreferenceFragment() {
+    private var localBroadcastManager: LocalBroadcastManager? = null
+    private var forwardingManager: ForwardingManager? = null
+    private lateinit var clearRulesButton: Preference
+    private lateinit var versionNamePreference: Preference
+    private lateinit var importRulesPreference: Preference
+    private var sharedPreferencesListener: OnSharedPreferenceChangeListener? = null
+    private var gson: Gson? = null
+    private var ruleDao: RuleDao? = null
+    private lateinit var toast: Toast
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        addPreferencesFromResource(R.xml.preferences)
+        ruleDao = RuleDao(RuleDbHelper(activity))
+        gson = GsonBuilder()
+                .registerTypeAdapter(InetSocketAddress::class.java, RuleListTargetJsonSerializer())
+                .registerTypeAdapter(RuleModel::class.java, RuleListJsonValidator())
                 .excludeFieldsWithoutExposeAnnotation()
-                .create();
-
-        forwardingManager = ForwardingManager.getInstance();
-        localBroadcastManager = LocalBroadcastManager.getInstance(getActivity().getBaseContext());
-
-        toast = Toast.makeText(getActivity(), "",
-                Toast.LENGTH_SHORT);
-
-        clearRulesButton = findPreference(getString(R.string.pref_clear_rules));
-
-        clearRulesButton.setOnPreferenceClickListener(preference -> {
+                .create()
+        forwardingManager = ForwardingManager.instance
+        localBroadcastManager = LocalBroadcastManager.getInstance(activity.baseContext)
+        toast = Toast.makeText(activity, "", Toast.LENGTH_SHORT)
+        clearRulesButton = findPreference(getString(R.string.pref_clear_rules))
+        clearRulesButton.setOnPreferenceClickListener(OnPreferenceClickListener { preference: Preference? ->
             // Code for what you want it to do
-
-            new AlertDialog.Builder(getActivity())
+            AlertDialog.Builder(activity)
                     .setTitle(R.string.alert_dialog_delete_all_rules_title)
                     .setMessage(R.string.alert_dialog_delete_all_rules_text)
-                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    .setPositiveButton(android.R.string.yes) { dialog: DialogInterface?, which: Int ->
 
                         // Set up the database
-                        SQLiteDatabase db = new RuleDbHelper(getActivity()).getReadableDatabase();
-
-
-                        db.delete(RuleContract.RuleEntry.TABLE_NAME, null, null);
-
-                        db.close();
-
-                        clearRulesButton.setEnabled(false);
-
-                        Toast.makeText(getActivity(), CLEAR_RULES_COMPLETE_MESSAGE,
-                                Toast.LENGTH_SHORT).show();
-                    })
-                    .setNegativeButton(android.R.string.no, (dialog, which) -> {
-                        // Do nothing
-                    })
-                    .show();
-            return true;
-        });
-
-        versionNamePreference = findPreference(getString(R.string.pref_version));
-
-        versionNamePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-            int versionPrefClicks = 0;
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-
+                        val db = RuleDbHelper(activity).readableDatabase
+                        db.delete(RuleContract.RuleEntry.TABLE_NAME, null, null)
+                        db.close()
+                        clearRulesButton.setEnabled(false)
+                        Toast.makeText(activity, CLEAR_RULES_COMPLETE_MESSAGE,
+                                Toast.LENGTH_SHORT).show()
+                    }
+                    .setNegativeButton(android.R.string.no) { dialog: DialogInterface?, which: Int -> }
+                    .show()
+            true
+        })
+        versionNamePreference = findPreference(getString(R.string.pref_version))
+        versionNamePreference.setOnPreferenceClickListener(object : OnPreferenceClickListener {
+            var versionPrefClicks = 0
+            override fun onPreferenceClick(preference: Preference): Boolean {
                 if (versionPrefClicks >= 2 && versionPrefClicks <= 3) {
-                    toast.setText(4 - versionPrefClicks + " more...");
-                    toast.show();
+                    toast.setText((4 - versionPrefClicks).toString() + " more...")
+                    toast.show()
                 }
                 if (++versionPrefClicks == 5) {
-                    versionPrefClicks = 0;
-                    toast.setText("...");
-                    toast.show();
-                    Intent advancedSettingsActivity = new Intent(getActivity(), AdvancedSettingsActivity.class);
-                    startActivity(advancedSettingsActivity);
-                    return true;
+                    versionPrefClicks = 0
+                    toast.setText("...")
+                    toast.show()
+                    val advancedSettingsActivity = Intent(activity, AdvancedSettingsActivity::class.java)
+                    startActivity(advancedSettingsActivity)
+                    return true
                 }
-                return false;
+                return false
             }
-
-        });
-
-        importRulesPreference = findPreference(getString(R.string.pref_import));
-
-        importRulesPreference.setOnPreferenceClickListener(preference -> {
-            importRules();
-            return false;
-        });
-
-        Preference exportRulesPreference = findPreference(getString(R.string.pref_export));
-
-        exportRulesPreference.setOnPreferenceClickListener(preference -> {
-            exportRules();
-            return false;
-        });
+        })
+        importRulesPreference = findPreference(getString(R.string.pref_import))
+        importRulesPreference.setOnPreferenceClickListener(OnPreferenceClickListener { preference: Preference? ->
+            importRules()
+            false
+        })
+        val exportRulesPreference = findPreference(getString(R.string.pref_export))
+        exportRulesPreference.onPreferenceClickListener = OnPreferenceClickListener { preference: Preference? ->
+            exportRules()
+            false
+        }
 
 
         // Set up click of about elixsr button - show webview
-        Preference aboutElixsrButton = findPreference(getString(R.string.pref_about_link));
-        aboutElixsrButton.setOnPreferenceClickListener(preference -> {
+        val aboutElixsrButton = findPreference(getString(R.string.pref_about_link))
+        aboutElixsrButton.onPreferenceClickListener = OnPreferenceClickListener { preference: Preference? ->
             //code for what you want it to do
-            Intent aboutActivityIntent = new Intent(getActivity(), AboutElixsrActivity.class);
-            startActivity(aboutActivityIntent);
-            return true;
-        });
-
-        Preference sourceCodeButton = findPreference("pref_source_code");
-        sourceCodeButton.setOnPreferenceClickListener(preference -> {
-            Intent sourceCodeIntent = new Intent(getActivity(), SourceCodeActivity.class);
-            startActivity(sourceCodeIntent);
-            return true;
-        });
-
-
+            val aboutActivityIntent = Intent(activity, AboutElixsrActivity::class.java)
+            startActivity(aboutActivityIntent)
+            true
+        }
+        val sourceCodeButton = findPreference("pref_source_code")
+        sourceCodeButton.onPreferenceClickListener = OnPreferenceClickListener { preference: Preference? ->
+            val sourceCodeIntent = Intent(activity, SourceCodeActivity::class.java)
+            startActivity(sourceCodeIntent)
+            true
+        }
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
         // Recreate our activity if we changed to dark theme
-        sharedPreferencesListener = (sharedPreferences, key) -> {
-            if (key.equals("pref_dark_theme")) {
-                Intent intent = new Intent();
-                intent.setAction(DARK_MODE_BROADCAST);
-                localBroadcastManager.sendBroadcast(intent);
-
+        sharedPreferencesListener = OnSharedPreferenceChangeListener { sharedPreferences: SharedPreferences?, key: String ->
+            if (key == "pref_dark_theme") {
+                val intent = Intent()
+                intent.action = DARK_MODE_BROADCAST
+                localBroadcastManager!!.sendBroadcast(intent)
             }
-        };
+        }
 
         // Prevent garbage collection
-        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(sharedPreferencesListener);
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferencesListener)
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (forwardingManager.isEnabled()) {
-            clearRulesButton.setEnabled(false);
-            importRulesPreference.setEnabled(false);
+    override fun onStart() {
+        super.onStart()
+        if (forwardingManager!!.isEnabled) {
+            clearRulesButton!!.isEnabled = false
+            importRulesPreference!!.isEnabled = false
         } else {
-            clearRulesButton.setEnabled(true);
-            importRulesPreference.setEnabled(true);
+            clearRulesButton!!.isEnabled = true
+            importRulesPreference!!.isEnabled = true
         }
-
-        String versionName = "Version ";
-        try {
-            versionName = versionName + getActivity().getBaseContext().getPackageManager()
-                    .getPackageInfo(getActivity().getBaseContext().getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.i(TAG, "Application Version could not be found.", e);
-            versionName = versionName + "not found";
+        var versionName = "Version "
+        versionName = try {
+            versionName + activity.baseContext.packageManager
+                    .getPackageInfo(activity.baseContext.packageName, 0).versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            Log.i(TAG, "Application Version could not be found.", e)
+            versionName + "not found"
         }
-        versionNamePreference.setTitle(versionName);
+        versionNamePreference!!.title = versionName
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+    override fun onDestroy() {
+        super.onDestroy()
 
         // Ensure we unregister our previous listener - as it now points to a null activity
-        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(sharedPreferencesListener);
+        preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(sharedPreferencesListener)
     }
 
-    private void importRules() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("application/json");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-
+    private fun importRules() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "application/json"
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
         try {
-            startActivityForResult(Intent.createChooser(intent, "Select a rule list to import"), RULE_LIST_CODE);
-        } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(getActivity(), "A file manager is required to import rule lists.", Toast.LENGTH_SHORT).show();
+            startActivityForResult(Intent.createChooser(intent, "Select a rule list to import"), RULE_LIST_CODE)
+        } catch (ex: ActivityNotFoundException) {
+            Toast.makeText(activity, "A file manager is required to import rule lists.", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private void exportRules() {
-        if (ruleDao.getAllRuleModels().size() > 0) {
+    private fun exportRules() {
+        if (ruleDao!!.allRuleModels.size > 0) {
             // Lets create out file to store our data
-            File outputDir = getActivity().getCacheDir();
-            String ruleList = ruleListToJsonString();
+            val outputDir = activity.cacheDir
+            val ruleList = ruleListToJsonString()
             try {
-                File outputFile = File.createTempFile("fwd_rule_list", ".json", outputDir);
-                outputFile.createNewFile();
-
-                FileWriter writer = new FileWriter(outputFile);
-
-                writer.append(ruleList);
+                val outputFile = File.createTempFile("fwd_rule_list", ".json", outputDir)
+                outputFile.createNewFile()
+                val writer = FileWriter(outputFile)
+                writer.append(ruleList)
 
                 // Ensure the writer is closed - assuming its blocking
-                writer.close();
+                writer.close()
 
                 // Everything good, lets send an intent
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("application/json");
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Fwd Rule List");
-                intent.putExtra(Intent.EXTRA_TEXT, "Your fwd rules have been attached with the name '" + outputFile.getName() + "'.");
-                intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".util.provider", outputFile));
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                startActivity(Intent.createChooser(intent, getString(R.string.export_rules_action_title)));
-
-                Log.i(TAG, "onDataChange: URI " + Uri.fromFile(outputFile).toString());
-
-            } catch (IOException e) {
-                Log.e(TAG, "onDataChange: error trying to create file to store exported data", e);
-                Toast.makeText(getActivity().getBaseContext(), "Error when trying to export dreams.", Toast.LENGTH_SHORT).show();
+                val intent = Intent(Intent.ACTION_SEND)
+                intent.type = "application/json"
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Fwd Rule List")
+                intent.putExtra(Intent.EXTRA_TEXT, "Your fwd rules have been attached with the name '" + outputFile.name + "'.")
+                intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(activity.applicationContext, activity.applicationContext.packageName + ".util.provider", outputFile))
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                startActivity(Intent.createChooser(intent, getString(R.string.export_rules_action_title)))
+                Log.i(TAG, "onDataChange: URI " + Uri.fromFile(outputFile).toString())
+            } catch (e: IOException) {
+                Log.e(TAG, "onDataChange: error trying to create file to store exported data", e)
+                Toast.makeText(activity.baseContext, "Error when trying to export dreams.", Toast.LENGTH_SHORT).show()
             }
         } else {
-            Toast.makeText(getActivity().getBaseContext(), "No rules to export.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity.baseContext, "No rules to export.", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private String ruleListToJsonString() {
-        List<RuleModel> ruleModels = ruleDao.getAllRuleModels();
-
-        return gson.toJson(ruleModels);
+    private fun ruleListToJsonString(): String {
+        val ruleModels = ruleDao!!.allRuleModels
+        return gson!!.toJson(ruleModels)
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_CANCELED && requestCode == RULE_LIST_CODE && data.getData() != null) {
-            Intent importRulesActivityIntent = new Intent(getActivity(), ImportRulesActivity.class);
-            importRulesActivityIntent.putExtra(ImportRulesActivity.IMPORTED_RULE_DATA, data.getData().toString());
-            startActivity(importRulesActivityIntent);
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        if (resultCode != Activity.RESULT_CANCELED && requestCode == RULE_LIST_CODE && data.data != null) {
+            val importRulesActivityIntent = Intent(activity, ImportRulesActivity::class.java)
+            importRulesActivityIntent.putExtra(ImportRulesActivity.Companion.IMPORTED_RULE_DATA, data.data.toString())
+            startActivity(importRulesActivityIntent)
         }
+    }
 
+    companion object {
+        private const val TAG = "SettingsFragment"
+        private const val CLEAR_RULES_COMPLETE_MESSAGE = "All rules have been removed"
+        const val DARK_MODE_BROADCAST = "com.elixsr.DARK_MODE_TOGGLE"
+        private const val RULE_LIST_CODE = 1
     }
 }

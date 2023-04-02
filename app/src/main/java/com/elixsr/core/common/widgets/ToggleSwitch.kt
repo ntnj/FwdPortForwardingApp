@@ -1,46 +1,36 @@
-package com.elixsr.core.common.widgets;
+package com.elixsr.core.common.widgets
+
+import android.content.Context
+import android.util.AttributeSet
+import androidx.appcompat.widget.SwitchCompat
 
 /**
  * Created by Niall on 27/07/2016.
  */
-import android.content.Context;
-import androidx.appcompat.widget.SwitchCompat;
-import android.util.AttributeSet;
+class ToggleSwitch : SwitchCompat {
+    private var mOnBeforeListener: OnBeforeCheckedChangeListener? = null
 
-public class ToggleSwitch extends SwitchCompat {
-
-    private ToggleSwitch.OnBeforeCheckedChangeListener mOnBeforeListener;
-
-    public static interface OnBeforeCheckedChangeListener {
-        public boolean onBeforeCheckedChanged(ToggleSwitch toggleSwitch, boolean checked);
+    interface OnBeforeCheckedChangeListener {
+        fun onBeforeCheckedChanged(toggleSwitch: ToggleSwitch?, checked: Boolean): Boolean
     }
 
-    public ToggleSwitch(Context context) {
-        super(context);
+    constructor(context: Context?) : super(context!!)
+    constructor(context: Context?, attrs: AttributeSet?) : super(context!!, attrs)
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context!!, attrs, defStyleAttr)
+
+    fun setOnBeforeCheckedChangeListener(listener: OnBeforeCheckedChangeListener?) {
+        mOnBeforeListener = listener
     }
 
-    public ToggleSwitch(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public ToggleSwitch(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    public void setOnBeforeCheckedChangeListener(OnBeforeCheckedChangeListener listener) {
-        mOnBeforeListener = listener;
-    }
-
-    @Override
-    public void setChecked(boolean checked) {
+    override fun setChecked(checked: Boolean) {
         if (mOnBeforeListener != null
-                && mOnBeforeListener.onBeforeCheckedChanged(this, checked)) {
-            return;
+                && mOnBeforeListener!!.onBeforeCheckedChanged(this, checked)) {
+            return
         }
-        super.setChecked(checked);
+        super.setChecked(checked)
     }
 
-    public void setCheckedInternal(boolean checked) {
-        super.setChecked(checked);
+    fun setCheckedInternal(checked: Boolean) {
+        super.setChecked(checked)
     }
 }

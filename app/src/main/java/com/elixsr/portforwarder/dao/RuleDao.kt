@@ -15,113 +15,100 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.dao
 
-package com.elixsr.portforwarder.dao;
-
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
-import com.elixsr.portforwarder.db.RuleContract;
-import com.elixsr.portforwarder.db.RuleDbHelper;
-import com.elixsr.portforwarder.models.RuleModel;
-import com.elixsr.portforwarder.util.RuleHelper;
-
-import java.util.LinkedList;
-import java.util.List;
+import android.database.sqlite.SQLiteDatabase
+import com.elixsr.portforwarder.db.RuleContract
+import com.elixsr.portforwarder.db.RuleDbHelper
+import com.elixsr.portforwarder.models.RuleModel
+import com.elixsr.portforwarder.util.RuleHelper.cursorToRuleModel
+import com.elixsr.portforwarder.util.RuleHelper.ruleModelToContentValues
+import java.util.LinkedList
 
 /**
- * The {@link RuleDao} class provides common functionality for Rule database access.
- * <p>
+ * The [RuleDao] class provides common functionality for Rule database access.
+ *
+ *
  * This class provides common database access functions.
  *
  * @author Niall McShane
- * @see <a href="http://developer.android.com/training/basics/data-storage/databases.html#ReadDbRow"></a>
+ * @see [](http://developer.android.com/training/basics/data-storage/databases.html.ReadDbRow)
  */
-public class RuleDao {
+class RuleDao {
+    private lateinit var db: SQLiteDatabase
+    private val ruleDbHelper: RuleDbHelper
 
-    private SQLiteDatabase db;
-    private final RuleDbHelper ruleDbHelper;
-
-    public RuleDao(RuleDbHelper ruleDbHelper) {
-        this.ruleDbHelper = ruleDbHelper;
+    constructor(ruleDbHelper: RuleDbHelper) {
+        this.ruleDbHelper = ruleDbHelper
     }
 
-    public RuleDao(SQLiteDatabase sqLiteDatabase, RuleDbHelper ruleDbHelper) {
-        this.db = sqLiteDatabase;
-        this.ruleDbHelper = ruleDbHelper;
+    constructor(sqLiteDatabase: SQLiteDatabase, ruleDbHelper: RuleDbHelper) {
+        db = sqLiteDatabase
+        this.ruleDbHelper = ruleDbHelper
     }
 
     /**
      * Inserts a valid rule into the SQLite database.
      *
-     * @param ruleModel The source {@link RuleModel}.
+     * @param ruleModel The source [RuleModel].
      * @return the id of the inserted rule.
      */
-    public long insertRule(RuleModel ruleModel) {
+    fun insertRule(ruleModel: RuleModel?): Long {
         // Gets the data repository in write mode
-        this.db = ruleDbHelper.getWritableDatabase();
-
-        ContentValues constantValues = RuleHelper.ruleModelToContentValues(ruleModel);
-
+        db = ruleDbHelper.writableDatabase
+        val constantValues = ruleModelToContentValues(ruleModel!!)
         return db.insert(
                 RuleContract.RuleEntry.TABLE_NAME,
                 null,
-                constantValues);
+                constantValues)
     }
 
-    /**
-     * Finds and returns a list of all rules.
-     *
-     * @return a list of all {@link RuleModel} objects.
-     */
-    public List<RuleModel> getAllRuleModels() {
+    val allRuleModels: MutableList<RuleModel>
+        /**
+         * Finds and returns a list of all rules.
+         *
+         * @return a list of all [RuleModel] objects.
+         */
+        get() {
+            val ruleModels: MutableList<RuleModel> = LinkedList()
 
-        List<RuleModel> ruleModels = new LinkedList<>();
+            // Gets the data repository in read mode
+            db = ruleDbHelper.readableDatabase
 
-        // Gets the data repository in read mode
-        this.db = ruleDbHelper.getReadableDatabase();
+            // Define a projection that specifies which columns from the database
+            // you will actually use after this query.
+            val projection = RuleDbHelper.generateAllRowsSelection()
 
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
-        String[] projection = RuleDbHelper.generateAllRowsSelection();
-
-        // How you want the results sorted in the resulting Cursor
-        String sortOrder =
-                RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + " DESC";
-
-        Cursor cursor = db.query(
-                RuleContract.RuleEntry.TABLE_NAME,          // The table to query
-                projection,                                 // The columns to return
-                null,                                       // The columns for the WHERE clause
-                null,                                       // The values for the WHERE clause
-                null,                                       // don't group the rows
-                null,                                       // don't filter by row groups
-                sortOrder                                   // The sort order
-        );
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            RuleModel ruleModel = RuleHelper.cursorToRuleModel(cursor);
-            ruleModels.add(ruleModel);
-            cursor.moveToNext();
-        }
-        // make sure to close the cursor
-        cursor.close();
-
-        return ruleModels;
-    }
-
-    public List<RuleModel> getAllEnabledRuleModels() {
-        List<RuleModel> enabledRuleModels = new LinkedList<>();
-        List<RuleModel> ruleModels = getAllRuleModels();
-
-        for (RuleModel ruleModel : ruleModels) {
-            if (ruleModel.isEnabled()) {
-                enabledRuleModels.add(ruleModel);
+            // How you want the results sorted in the resulting Cursor
+            val sortOrder = RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + " DESC"
+            val cursor = db.query(
+                    RuleContract.RuleEntry.TABLE_NAME,  // The table to query
+                    projection,  // The columns to return
+                    null,  // The columns for the WHERE clause
+                    null,  // The values for the WHERE clause
+                    null,  // don't group the rows
+                    null,  // don't filter by row groups
+                    sortOrder // The sort order
+            )
+            cursor.moveToFirst()
+            while (!cursor.isAfterLast) {
+                val ruleModel = cursorToRuleModel(cursor)
+                ruleModels.add(ruleModel)
+                cursor.moveToNext()
             }
+            // make sure to close the cursor
+            cursor.close()
+            return ruleModels
         }
-
-        return enabledRuleModels;
-    }
+    val allEnabledRuleModels: List<RuleModel>
+        get() {
+            val enabledRuleModels: MutableList<RuleModel> = LinkedList()
+            val ruleModels = allRuleModels
+            for (ruleModel in ruleModels) {
+                if (ruleModel.isEnabled) {
+                    enabledRuleModels.add(ruleModel)
+                }
+            }
+            return enabledRuleModels
+        }
 }

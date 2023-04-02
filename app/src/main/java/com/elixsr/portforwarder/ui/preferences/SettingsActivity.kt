@@ -15,44 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.ui.preferences
 
-package com.elixsr.portforwarder.ui.preferences;
-
-import android.os.Bundle;
-
-import androidx.appcompat.widget.Toolbar;
-
-import com.elixsr.portforwarder.R;
-import com.elixsr.portforwarder.ui.BaseActivity;
+import android.os.Bundle
+import android.view.View
+import com.elixsr.portforwarder.R
+import com.elixsr.portforwarder.ui.BaseActivity
 
 /**
  * Created by Niall McShane on 29/02/2016.
  */
-public class SettingsActivity extends BaseActivity {
-
-
-    private final String TAG = "SettingsActivity";
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.settings_activity);
-
-        Toolbar toolbar = getActionBarToolbar();
-        setSupportActionBar(toolbar);
-
-
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
-
-        getFragmentManager().beginTransaction().replace(R.id.content_frame, new SettingsFragment()).commit();
-
-
+class SettingsActivity : BaseActivity() {
+    private val TAG = "SettingsActivity"
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.settings_activity)
+        val toolbar = actionBarToolbar
+        setSupportActionBar(toolbar)
+        toolbar!!.setNavigationIcon(R.drawable.ic_arrow_back_24dp)
+        toolbar.setNavigationOnClickListener { v: View? -> onBackPressed() }
+        fragmentManager.beginTransaction().replace(R.id.content_frame, SettingsFragment()).commit()
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 }

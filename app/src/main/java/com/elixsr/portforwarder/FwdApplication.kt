@@ -15,13 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder
 
-package com.elixsr.portforwarder;
-
-import android.app.Application;
+import android.app.Application
 
 /**
  * Created by Niall McShane on 13/03/2016.
  */
-public class FwdApplication extends Application {
-}
+class FwdApplication : Application()

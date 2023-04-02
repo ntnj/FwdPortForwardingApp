@@ -15,32 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.db
 
-package com.elixsr.portforwarder.db;
-
-import android.provider.BaseColumns;
+import android.provider.BaseColumns
 
 /**
  * Created by Niall McShane on 07/03/2016.
- * <p>
+ *
+ *
  * Sourced from: http://developer.android.com/training/basics/data-storage/databases.html#DefineContract
  */
-public class RuleContract {
-
-    public RuleContract() {
-    }
-
+class RuleContract {
     /* Inner class that defines the table contents */
-    public static abstract class RuleEntry implements BaseColumns {
-        public static final String TABLE_NAME = "rule";
-        public static final String COLUMN_NAME_RULE_ID = "rule_id";
-        public static final String COLUMN_NAME_NAME = "name";
-        public static final String COLUMN_NAME_IS_TCP = "is_tcp";
-        public static final String COLUMN_NAME_IS_UDP = "is_udp";
-        public static final String COLUMN_NAME_FROM_INTERFACE_NAME = "from_interface_name";
-        public static final String COLUMN_NAME_FROM_PORT = "from_port";
-        public static final String COLUMN_NAME_TARGET_IP_ADDRESS = "target_ip_address";
-        public static final String COLUMN_NAME_TARGET_PORT = "target_port";
-        public static final String COLUMN_NAME_IS_ENABLED = "is_enabled";
+    object RuleEntry : BaseColumns {
+        const val TABLE_NAME = "rule"
+        const val COLUMN_NAME_RULE_ID = "rule_id"
+        const val COLUMN_NAME_NAME = "name"
+        const val COLUMN_NAME_IS_TCP = "is_tcp"
+        const val COLUMN_NAME_IS_UDP = "is_udp"
+        const val COLUMN_NAME_FROM_INTERFACE_NAME = "from_interface_name"
+        const val COLUMN_NAME_FROM_PORT = "from_port"
+        const val COLUMN_NAME_TARGET_IP_ADDRESS = "target_ip_address"
+        const val COLUMN_NAME_TARGET_PORT = "target_port"
+        const val COLUMN_NAME_IS_ENABLED = "is_enabled"
     }
 }

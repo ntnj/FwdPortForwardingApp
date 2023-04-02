@@ -15,19 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.ui.preferences
 
-package com.elixsr.portforwarder.ui.preferences;
-
-import com.elixsr.portforwarder.ui.BaseWebActivity;
+import com.elixsr.portforwarder.ui.BaseWebActivity
 
 /**
  * Created by Cathan O'Donnell on 15/04/2018.
  */
-public class SupportSiteActivity extends BaseWebActivity {
-
-    private static final String URL = "https://support.elix.sr/#!/products/fwd/answers/Importing_and_Exporting_Rules";
-
-    public SupportSiteActivity() {
-        super(URL);
-    }
-}
+object SupportSiteActivity : BaseWebActivity("https://support.elix.sr/#!/products/fwd/answers/Importing_and_Exporting_Rules")

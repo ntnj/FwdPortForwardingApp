@@ -1,11 +1,6 @@
-package com.elixsr.portforwarder.exceptions;
+package com.elixsr.portforwarder.exceptions
 
 /**
  * Created by Cathan on 25/07/2017.
  */
-
-public class ValidationException extends Exception {
-    public ValidationException(String message) {
-        super(message);
-    }
-}
+open class ValidationException(message: String?) : Exception(message)

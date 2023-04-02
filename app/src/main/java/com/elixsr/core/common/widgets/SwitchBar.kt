@@ -1,259 +1,208 @@
-package com.elixsr.core.common.widgets;
+package com.elixsr.core.common.widgets
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
-import android.text.style.TextAppearanceSpan;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.content.Context
+import android.os.Parcel
+import android.os.Parcelable
+import android.text.SpannableStringBuilder
+import android.text.TextUtils
+import android.text.style.TextAppearanceSpan
+import android.util.AttributeSet
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.CompoundButton
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
+import com.elixsr.portforwarder.R
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SwitchCompat;
-
-import com.elixsr.portforwarder.R;
-
-import java.util.ArrayList;
-
-public class SwitchBar extends LinearLayout implements CompoundButton.OnCheckedChangeListener,
-        View.OnClickListener {
-
-    public interface OnSwitchChangeListener {
+class SwitchBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr), CompoundButton.OnCheckedChangeListener, View.OnClickListener {
+    fun interface OnSwitchChangeListener {
         /**
          * Called when the checked state of the Switch has changed.
          *
          * @param switchView The Switch view whose state has changed.
          * @param isChecked  The new checked state of switchView.
          */
-        void onSwitchChanged(SwitchCompat switchView, boolean isChecked);
+        fun onSwitchChanged(switchView: SwitchCompat?, isChecked: Boolean)
     }
 
-    private final TextAppearanceSpan mSummarySpan;
+    private val mSummarySpan: TextAppearanceSpan
+    val switch: ToggleSwitch
+    private val mTextView: TextView
+    private var mLabel: String
+    private var mSummary: String? = null
+    private val mSwitchChangeListeners = ArrayList<OnSwitchChangeListener>()
 
-    private final ToggleSwitch mSwitch;
-    private final TextView mTextView;
-    private String mLabel;
-    private String mSummary;
-
-    private final ArrayList<OnSwitchChangeListener> mSwitchChangeListeners =
-            new ArrayList<>();
-
-    private static final int[] MARGIN_ATTRIBUTES = {
-            R.attr.switchBarMarginStart, R.attr.switchBarMarginEnd};
-
-    public SwitchBar(Context context) {
-        this(context, null);
-    }
-
-    public SwitchBar(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public SwitchBar(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-
-
-        LayoutInflater.from(context).inflate(R.layout.switch_bar, this);
-
-        @SuppressWarnings("ResourceType")
-        final TypedArray a = context.obtainStyledAttributes(attrs, MARGIN_ATTRIBUTES);
-//        int switchBarMarginStart = (int) a.getDimension(0, 0);
+    init {
+        LayoutInflater.from(context).inflate(R.layout.switch_bar, this)
+        val a = context.obtainStyledAttributes(attrs, MARGIN_ATTRIBUTES)
+        //        int switchBarMarginStart = (int) a.getDimension(0, 0);
 //        int switchBarMarginEnd = (int) a.getDimension(1, 0);
-        a.recycle();
-
-        mTextView = findViewById(R.id.switch_text);
-        mLabel = getResources().getString(R.string.switch_off_text);
-        mSummarySpan = new TextAppearanceSpan(context, R.style.TextAppearance_Switch);
-        updateText();
-        ViewGroup.MarginLayoutParams lp = (MarginLayoutParams) mTextView.getLayoutParams();
-//        lp.setMarginStart(switchBarMarginStart);
-
-        mSwitch = findViewById(R.id.switch_widget);
+        a.recycle()
+        mTextView = findViewById(R.id.switch_text)
+        mLabel = resources.getString(R.string.switch_off_text)
+        mSummarySpan = TextAppearanceSpan(context, R.style.TextAppearance_Switch)
+        updateText()
+        var lp = mTextView.layoutParams as MarginLayoutParams
+        //        lp.setMarginStart(switchBarMarginStart);
+        switch = findViewById(R.id.switch_widget)
         // Prevent onSaveInstanceState() to be called as we are managing the state of the Switch
         // on our own
-        mSwitch.setSaveEnabled(false);
-        lp = (MarginLayoutParams) mSwitch.getLayoutParams();
-//        lp.setMarginEnd(switchBarMarginEnd);
-
-        addOnSwitchChangeListener((switchView, isChecked) -> setTextViewLabel(isChecked));
-
-        setOnClickListener(this);
+        switch.isSaveEnabled = false
+        lp = switch.layoutParams as MarginLayoutParams
+        //        lp.setMarginEnd(switchBarMarginEnd);
+        addOnSwitchChangeListener { _: SwitchCompat?, isChecked: Boolean -> setTextViewLabel(isChecked) }
+        setOnClickListener(this)
 
         // Default is hide
-        setVisibility(View.GONE);
+        visibility = GONE
     }
 
-
-    public void setTextViewLabel(boolean isChecked) {
-        mLabel = getResources()
-                .getString(isChecked ? R.string.switch_on_text : R.string.switch_off_text);
-        updateText();
+    fun setTextViewLabel(isChecked: Boolean) {
+        mLabel = resources
+                .getString(if (isChecked) R.string.switch_on_text else R.string.switch_off_text)
+        updateText()
     }
 
-    public void setSummary(String summary) {
-        mSummary = summary;
-        updateText();
+    fun setSummary(summary: String?) {
+        mSummary = summary
+        updateText()
     }
 
-    private void updateText() {
+    private fun updateText() {
         if (TextUtils.isEmpty(mSummary)) {
-            mTextView.setText(mLabel);
-            return;
+            mTextView.text = mLabel
+            return
         }
-        final SpannableStringBuilder ssb = new SpannableStringBuilder(mLabel).append('\n');
-        final int start = ssb.length();
-        ssb.append(mSummary);
-        ssb.setSpan(mSummarySpan, start, ssb.length(), 0);
-        mTextView.setText(ssb);
+        val ssb = SpannableStringBuilder(mLabel).append('\n')
+        val start = ssb.length
+        ssb.append(mSummary)
+        ssb.setSpan(mSummarySpan, start, ssb.length, 0)
+        mTextView.text = ssb
     }
 
-    public void setChecked(boolean checked) {
-        setTextViewLabel(checked);
-        mSwitch.setChecked(checked);
+    fun setCheckedInternal(checked: Boolean) {
+        setTextViewLabel(checked)
+        switch.setCheckedInternal(checked)
     }
 
-    public void setCheckedInternal(boolean checked) {
-        setTextViewLabel(checked);
-        mSwitch.setCheckedInternal(checked);
+    var isChecked: Boolean
+        get() = switch.isChecked
+        set(checked) {
+            setTextViewLabel(checked)
+            switch.isChecked = checked
+        }
+
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
+        mTextView.isEnabled = enabled
+        switch.isEnabled = enabled
     }
 
-    public boolean isChecked() {
-        return mSwitch.isChecked();
-    }
-
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        mTextView.setEnabled(enabled);
-        mSwitch.setEnabled(enabled);
-    }
-
-    public final ToggleSwitch getSwitch() {
-        return mSwitch;
-    }
-
-    public void show() {
-        if (!isShowing()) {
-            setVisibility(View.VISIBLE);
-            mSwitch.setOnCheckedChangeListener(this);
+    fun show() {
+        if (!isShowing) {
+            visibility = VISIBLE
+            switch.setOnCheckedChangeListener(this)
         }
     }
 
-    public void hide() {
-        if (isShowing()) {
-            setVisibility(View.GONE);
-            mSwitch.setOnCheckedChangeListener(null);
+    fun hide() {
+        if (isShowing) {
+            visibility = GONE
+            switch.setOnCheckedChangeListener(null)
         }
     }
 
-    public boolean isShowing() {
-        return (getVisibility() == View.VISIBLE);
+    val isShowing: Boolean
+        get() = visibility == VISIBLE
+
+    override fun onClick(v: View) {
+        val isChecked = !switch.isChecked
+        this.isChecked = isChecked
     }
 
-    @Override
-    public void onClick(View v) {
-        final boolean isChecked = !mSwitch.isChecked();
-        setChecked(isChecked);
-    }
-
-    public void propagateChecked(boolean isChecked) {
-        final int count = mSwitchChangeListeners.size();
-        for (int n = 0; n < count; n++) {
-            mSwitchChangeListeners.get(n).onSwitchChanged(mSwitch, isChecked);
+    fun propagateChecked(isChecked: Boolean) {
+        val count = mSwitchChangeListeners.size
+        for (n in 0 until count) {
+            mSwitchChangeListeners[n].onSwitchChanged(switch, isChecked)
         }
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        propagateChecked(isChecked);
+    override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
+        propagateChecked(isChecked)
     }
 
-    public void addOnSwitchChangeListener(OnSwitchChangeListener listener) {
-        if (mSwitchChangeListeners.contains(listener)) {
-            throw new IllegalStateException("Cannot add twice the same OnSwitchChangeListener");
-        }
-        mSwitchChangeListeners.add(listener);
+    fun addOnSwitchChangeListener(listener: OnSwitchChangeListener) {
+        check(!mSwitchChangeListeners.contains(listener)) { "Cannot add twice the same OnSwitchChangeListener" }
+        mSwitchChangeListeners.add(listener)
     }
 
-    public void removeOnSwitchChangeListener(OnSwitchChangeListener listener) {
-        if (!mSwitchChangeListeners.contains(listener)) {
-            throw new IllegalStateException("Cannot remove OnSwitchChangeListener");
-        }
-        mSwitchChangeListeners.remove(listener);
+    fun removeOnSwitchChangeListener(listener: OnSwitchChangeListener) {
+        check(mSwitchChangeListeners.contains(listener)) { "Cannot remove OnSwitchChangeListener" }
+        mSwitchChangeListeners.remove(listener)
     }
 
-    static class SavedState extends BaseSavedState {
-        boolean checked;
-        boolean visible;
+    internal class SavedState : BaseSavedState {
+        var checked = false
+        var visible = false
 
-        SavedState(Parcelable superState) {
-            super(superState);
-        }
+        constructor(superState: Parcelable?) : super(superState)
 
         /**
-         * Constructor called from {@link #CREATOR}
+         * Constructor called from [.CREATOR]
          */
-        private SavedState(Parcel in) {
-            super(in);
-            checked = (Boolean)in.readValue(null);
-            visible = (Boolean)in.readValue(null);
+        private constructor(`in`: Parcel) : super(`in`) {
+            checked = (`in`.readValue(null) as Boolean?)!!
+            visible = (`in`.readValue(null) as Boolean?)!!
         }
 
-        @Override
-        public void writeToParcel(Parcel out, int flags) {
-            super.writeToParcel(out, flags);
-            out.writeValue(checked);
-            out.writeValue(visible);
+        override fun writeToParcel(out: Parcel, flags: Int) {
+            super.writeToParcel(out, flags)
+            out.writeValue(checked)
+            out.writeValue(visible)
         }
 
-        @NonNull
-        @Override
-        public String toString() {
-            return "SwitchBar.SavedState{"
+        override fun toString(): String {
+            return ("SwitchBar.SavedState{"
                     + Integer.toHexString(System.identityHashCode(this))
                     + " checked=" + checked
-                    + " visible=" + visible + "}";
+                    + " visible=" + visible + "}")
         }
 
-        public static final Parcelable.Creator<SavedState> CREATOR
-                = new Parcelable.Creator<SavedState>() {
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
+        companion object {
+            @JvmField
+            val CREATOR: Parcelable.Creator<SavedState?> = object : Parcelable.Creator<SavedState?> {
+                override fun createFromParcel(`in`: Parcel): SavedState? {
+                    return SavedState(`in`)
+                }
 
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
+                override fun newArray(size: Int): Array<SavedState?> {
+                    return arrayOfNulls(size)
+                }
             }
-        };
+        }
     }
 
-    @Override
-    public Parcelable onSaveInstanceState() {
-        Parcelable superState = super.onSaveInstanceState();
-
-        SavedState ss = new SavedState(superState);
-        ss.checked = mSwitch.isChecked();
-        ss.visible = isShowing();
-        return ss;
+    public override fun onSaveInstanceState(): Parcelable? {
+        val superState = super.onSaveInstanceState()
+        val ss = SavedState(superState)
+        ss.checked = switch.isChecked
+        ss.visible = isShowing
+        return ss
     }
 
-    @Override
-    public void onRestoreInstanceState(Parcelable state) {
-        SavedState ss = (SavedState) state;
+    public override fun onRestoreInstanceState(state: Parcelable) {
+        val ss = state as SavedState
+        super.onRestoreInstanceState(ss.superState)
+        switch.setCheckedInternal(ss.checked)
+        setTextViewLabel(ss.checked)
+        visibility = if (ss.visible) VISIBLE else GONE
+        switch.setOnCheckedChangeListener(if (ss.visible) this else null)
+        requestLayout()
+    }
 
-        super.onRestoreInstanceState(ss.getSuperState());
-
-        mSwitch.setCheckedInternal(ss.checked);
-        setTextViewLabel(ss.checked);
-        setVisibility(ss.visible ? View.VISIBLE : View.GONE);
-        mSwitch.setOnCheckedChangeListener(ss.visible ? this : null);
-
-        requestLayout();
+    companion object {
+        private val MARGIN_ATTRIBUTES = intArrayOf(
+                R.attr.switchBarMarginStart, R.attr.switchBarMarginEnd)
     }
 }

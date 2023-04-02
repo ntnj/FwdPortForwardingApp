@@ -15,57 +15,49 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.forwarding
 
-package com.elixsr.portforwarder.forwarding;
-
-import java.io.Serializable;
+import java.io.Serializable
 
 /**
- * The {@link ForwardingManager} class encapsulates all meta data related to the status of
+ * The [ForwardingManager] class encapsulates all meta data related to the status of
  * forwarding throughout the application.
- * <p>
+ *
+ *
  * The class is a singleton, and can be accessed by any object to query the current status of
  * forwarding.
  */
-public class ForwardingManager implements Serializable {
+class ForwardingManager private constructor() : Serializable {
+    var isEnabled = false
+        private set
 
-    private static ForwardingManager instance = null;
-
-
-    private ForwardingManager() {
-
+    fun enableForwarding() {
+        isEnabled = true
     }
 
-    /**
-     * Return an instance of the {@link ForwardingManager} class.
-     *
-     * @return
-     */
-    public static ForwardingManager getInstance() {
-        if (instance == null) {
-            // Thread Safe. Might be costly operation in some case
-            synchronized (ForwardingManager.class) {
-                if (instance == null) {
-                    instance = new ForwardingManager();
+    fun disableForwarding() {
+        isEnabled = false
+    }
+
+    companion object {
+        @JvmStatic
+        var instance: ForwardingManager? = null
+            /**
+             * Return an instance of the [ForwardingManager] class.
+             *
+             * @return
+             */
+            get() {
+                if (field == null) {
+                    // Thread Safe. Might be costly operation in some case
+                    synchronized(ForwardingManager::class.java) {
+                        if (field == null) {
+                            field = ForwardingManager()
+                        }
+                    }
                 }
+                return field
             }
-        }
-        return instance;
+            private set
     }
-
-    private boolean isEnabled = false;
-
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
-    protected void enableForwarding() {
-        this.isEnabled = true;
-    }
-
-    protected void disableForwarding() {
-        this.isEnabled = false;
-    }
-
-
 }

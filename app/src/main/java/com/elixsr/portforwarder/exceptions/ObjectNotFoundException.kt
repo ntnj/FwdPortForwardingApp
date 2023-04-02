@@ -15,17 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package com.elixsr.portforwarder.exceptions;
+package com.elixsr.portforwarder.exceptions
 
 /**
  * Thrown when a required object is not found.
  */
-public class ObjectNotFoundException extends Exception {
-    /**
-     * {@inheritDoc}
-     */
-    public ObjectNotFoundException(String detailMessage) {
-        super(detailMessage);
-    }
-}
+class ObjectNotFoundException
+/**
+ * {@inheritDoc}
+ */
+(detailMessage: String?) : Exception(detailMessage)

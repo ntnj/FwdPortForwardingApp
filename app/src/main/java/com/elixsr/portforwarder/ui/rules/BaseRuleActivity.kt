@@ -15,113 +15,108 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.ui.rules
 
-package com.elixsr.portforwarder.ui.rules;
-
-import android.content.Intent;
-import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.Toast;
-
-import com.elixsr.portforwarder.R;
-import com.elixsr.portforwarder.exceptions.RuleValidationException;
-import com.elixsr.portforwarder.models.RuleModel;
-import com.elixsr.portforwarder.ui.BaseActivity;
-import com.elixsr.portforwarder.ui.MainActivity;
-import com.elixsr.portforwarder.util.InterfaceHelper;
-import com.elixsr.portforwarder.util.NetworkHelper;
-import com.elixsr.portforwarder.validators.RuleModelValidator;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-
-import java.net.InetSocketAddress;
-import java.net.SocketException;
-import java.util.List;
+import android.content.Intent
+import android.util.Log
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.Toast
+import com.elixsr.portforwarder.R
+import com.elixsr.portforwarder.exceptions.RuleValidationException
+import com.elixsr.portforwarder.models.RuleModel
+import com.elixsr.portforwarder.ui.BaseActivity
+import com.elixsr.portforwarder.ui.MainActivity
+import com.elixsr.portforwarder.util.InterfaceHelper.generateInterfaceNamesList
+import com.elixsr.portforwarder.util.NetworkHelper
+import com.elixsr.portforwarder.validators.RuleModelValidator.Companion.validateRuleFromPort
+import com.elixsr.portforwarder.validators.RuleModelValidator.Companion.validateRuleName
+import com.elixsr.portforwarder.validators.RuleModelValidator.Companion.validateRuleTargetIpAddress
+import com.elixsr.portforwarder.validators.RuleModelValidator.Companion.validateRuleTargetPort
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import java.net.InetSocketAddress
+import java.net.SocketException
 
 /**
  * The BaseRuleActivity class  provides logic for subclasses which utilise the shared Rule detail
  * layout.
- * <p>
+ *
+ *
  * This class provides functionality to set up the core GUI components, and provides shared logic
  * for the validation of user input.
- * <p>
- * This class also provides a function to generate a {@link String} {@link List} of Network
+ *
+ *
+ * This class also provides a function to generate a [String] [List] of Network
  * Interfaces available on the device.
  *
  * @author Niall McShane
  */
-public abstract class BaseRuleActivity extends BaseActivity {
-    private static final String TAG = "BaseRuleActivity";
-
-    protected Spinner protocolSpinner;
-    protected Spinner fromInterfaceSpinner;
-    protected ArrayAdapter<String> fromSpinnerAdapter;
-    protected ArrayAdapter<CharSequence> protocolAdapter;
-
+abstract class BaseRuleActivity : BaseActivity() {
+    protected lateinit var protocolSpinner: Spinner
+    protected lateinit var fromInterfaceSpinner: Spinner
+    protected var fromSpinnerAdapter: ArrayAdapter<String?>? = null
+    protected var protocolAdapter: ArrayAdapter<CharSequence>? = null
 
     /**
-     * Generate a user interface for all shared activities that use the {@link com.elixsr
-     * .portforwarder.R.layout.rule_detail_view} layout.
-     * <p>
-     * This will pre-populate the {@link Spinner} Objects.
+     * Generate a user interface for all shared activities that use the [ .portforwarder.R.layout.rule_detail_view][com.elixsr] layout.
+     *
+     *
+     * This will pre-populate the [Spinner] Objects.
      */
-    protected void constructDetailUi() {
+    protected fun constructDetailUi() {
 
         // Set up protocol spinner/dropdown
-        protocolSpinner = findViewById(R.id.protocol_spinner);
+        protocolSpinner = findViewById(R.id.protocol_spinner)
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         protocolAdapter = ArrayAdapter.createFromResource(this,
-                R.array.rule_protocol_array, R.layout.my_spinner);
+                R.array.rule_protocol_array, R.layout.my_spinner)
 
         // Specify the layout to use when the list of choices appears
-        protocolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        protocolAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         // Apply the protocolAdapter to the spinner
-        protocolSpinner.setAdapter(protocolAdapter);
+        protocolSpinner.setAdapter(protocolAdapter)
 
         // Generate interfaces
-        List<String> interfaces = null;
-        try {
-            interfaces = generateInterfaceList();
-
-
-        } catch (SocketException e) {
-            Log.i(TAG, "Error generating Interface list", e);
+        var interfaces: List<String?>? = null
+        interfaces = try {
+            generateInterfaceList()
+        } catch (e: SocketException) {
+            Log.i(TAG, "Error generating Interface list", e)
 
             // Show toast and move to main screen
             Toast.makeText(this, "Problem locating network interfaces. Please refer to 'help' to " +
-                            "assist with troubleshooting.",
-                    Toast.LENGTH_LONG).show();
-            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            startActivity(mainActivityIntent);
-            return;
+                    "assist with troubleshooting.",
+                    Toast.LENGTH_LONG).show()
+            val mainActivityIntent = Intent(this, MainActivity::class.java)
+            startActivity(mainActivityIntent)
+            return
         }
 
         // Check to ensure we have some interface to show!
         if (interfaces == null || interfaces.isEmpty()) {
             Toast.makeText(this, "Could not locate any network interfaces. Please refer to 'help'" +
-                            " to assist with troubleshooting.",
-                    Toast.LENGTH_LONG).show();
-            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            startActivity(mainActivityIntent);
-            return;
+                    " to assist with troubleshooting.",
+                    Toast.LENGTH_LONG).show()
+            val mainActivityIntent = Intent(this, MainActivity::class.java)
+            startActivity(mainActivityIntent)
+            return
         }
 
 
         // Set up protocol spinner/dropdown
-        fromInterfaceSpinner = findViewById(R.id.from_interface_spinner);
+        fromInterfaceSpinner = findViewById(R.id.from_interface_spinner)
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        fromSpinnerAdapter = new ArrayAdapter<>(this, R.layout.my_spinner, interfaces);
+        fromSpinnerAdapter = ArrayAdapter(this, R.layout.my_spinner, interfaces)
 
         // Specify the layout to use when the list of choices appears
-        fromSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        fromSpinnerAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         // Apply the protocolAdapter to the spinner
-        fromInterfaceSpinner.setAdapter(fromSpinnerAdapter);
-
+        fromInterfaceSpinner.setAdapter(fromSpinnerAdapter)
     }
 
     /**
@@ -130,129 +125,125 @@ public abstract class BaseRuleActivity extends BaseActivity {
      * @return a String list containing the name of the network interfaces on the device.
      * @throws SocketException
      */
-    public List<String> generateInterfaceList() throws SocketException {
-
-        return InterfaceHelper.generateInterfaceNamesList();
+    @Throws(SocketException::class)
+    fun generateInterfaceList(): List<String?> {
+        return generateInterfaceNamesList()
     }
 
     /**
-     * Constructs a {@link RuleModel} object based on the data held inside the shared layout.
-     * <p>
+     * Constructs a [RuleModel] object based on the data held inside the shared layout.
+     *
+     *
      * This method will also check to ensure that all inputs are valid, and will show the user an
      * error message if the user has not entered valid data.
      *
-     * @return a {@link RuleModel} object as a result of the users input.
+     * @return a [RuleModel] object as a result of the users input.
      */
-    public RuleModel generateNewRule() {
+    fun generateNewRule(): RuleModel {
 
         // Create the blank rule object
-        RuleModel ruleModel = new RuleModel();
+        val ruleModel = RuleModel()
 
 
         /*
             Protocol
          */
-        Spinner protocolSpinner = findViewById(R.id.protocol_spinner);
-        String selectedProtocol = protocolSpinner.getSelectedItem().toString();
+        val protocolSpinner = findViewById<Spinner>(R.id.protocol_spinner)
+        val selectedProtocol = protocolSpinner.selectedItem.toString()
+        when (selectedProtocol) {
+            NetworkHelper.TCP -> ruleModel.isTcp = true
+            NetworkHelper.UDP -> ruleModel.isUdp = true
+            NetworkHelper.BOTH -> {
+                ruleModel.isTcp = true
+                ruleModel.isUdp = true
+            }
 
-        // Determine the protocol
-        switch (selectedProtocol) {
-            case NetworkHelper.TCP:
-                ruleModel.setIsTcp(true);
-                break;
-            case NetworkHelper.UDP:
-                ruleModel.setIsUdp(true);
-                break;
-            // If BOTH, or default - same thing I assume
-            case NetworkHelper.BOTH:
-            default:
-                ruleModel.setIsTcp(true);
-                ruleModel.setIsUdp(true);
-                break;
+            else -> {
+                ruleModel.isTcp = true
+                ruleModel.isUdp = true
+            }
         }
 
         /*
             Rule Name
          */
-        TextInputEditText ruleNameText = findViewById(R.id.new_rule_name);
-        TextInputLayout ruleNameTextInputLayout = findViewById(R.id.new_rule_name_input_layout);
-
+        val ruleNameText = findViewById<TextInputEditText>(R.id.new_rule_name)
+        val ruleNameTextInputLayout = findViewById<TextInputLayout>(R.id.new_rule_name_input_layout)
         try {
-            if (RuleModelValidator.validateRuleName(ruleNameText.getText().toString())) {
+            if (validateRuleName(ruleNameText.text.toString())) {
                 // If everything is correct, set the name
-                ruleModel.setName(ruleNameText.getText().toString());
-                ruleNameTextInputLayout.setErrorEnabled(false);
+                ruleModel.name = ruleNameText.text.toString()
+                ruleNameTextInputLayout.isErrorEnabled = false
             }
-        } catch (RuleValidationException e) {
-            ruleNameTextInputLayout.setErrorEnabled(true);
+        } catch (e: RuleValidationException) {
+            ruleNameTextInputLayout.isErrorEnabled = true
             // Alternate error style above line
             // ruleNameText.setError(e.getMessage());
-            ruleNameTextInputLayout.setError(getString(R.string.text_input_error_enter_name_text));
-            Log.w(TAG, "No rule name was included");
+            ruleNameTextInputLayout.error = getString(R.string.text_input_error_enter_name_text)
+            Log.w(TAG, "No rule name was included")
         }
 
         /*
             From port
          */
-        TextInputEditText fromPortText = findViewById(R.id.new_rule_from_port);
+        val fromPortText = findViewById<TextInputEditText>(R.id.new_rule_from_port)
 
         // Validate the input, and show error message if wrong
         try {
-            if (RuleModelValidator.validateRuleFromPort(fromPortText.getText().toString())) {
-                ruleModel.setFromPort(Integer.parseInt(fromPortText.getText().toString()));
+            if (validateRuleFromPort(fromPortText.text.toString())) {
+                ruleModel.fromPort = fromPortText.text.toString().toInt()
             }
-        } catch (RuleValidationException e) {
-            fromPortText.setError(e.getMessage());
+        } catch (e: RuleValidationException) {
+            fromPortText.error = e.message
         }
 
         /*
             Target
          */
-        String targetIpAddress = null;
-        int targetPort = 0;
+        var targetIpAddress: String? = null
+        var targetPort = 0
 
         /*
             Target IP Address
          */
-        TextInputEditText targetIpAddressText = findViewById(R.id.new_rule_target_ip_address);
+        val targetIpAddressText = findViewById<TextInputEditText>(R.id.new_rule_target_ip_address)
 
         // Validate the input, and show error message if wrong
         try {
-            if (RuleModelValidator.validateRuleTargetIpAddress(targetIpAddressText.getText().toString())) {
-                targetIpAddress = targetIpAddressText.getText().toString();
+            if (validateRuleTargetIpAddress(targetIpAddressText.text.toString())) {
+                targetIpAddress = targetIpAddressText.text.toString()
             }
-        } catch (RuleValidationException e) {
-            targetIpAddressText.setError(e.getMessage());
+        } catch (e: RuleValidationException) {
+            targetIpAddressText.error = e.message
         }
 
         /*
             Target port
          */
-        TextInputEditText targetPortText = findViewById(R.id.new_rule_target_port);
+        val targetPortText = findViewById<TextInputEditText>(R.id.new_rule_target_port)
 
         // Validate the input, and show error message if wrong
         try {
-            if (RuleModelValidator.validateRuleTargetPort(targetPortText.getText().toString())) {
-                targetPort = Integer.parseInt(targetPortText.getText().toString());
+            if (validateRuleTargetPort(targetPortText.text.toString())) {
+                targetPort = targetPortText.text.toString().toInt()
             }
-        } catch (RuleValidationException e) {
-            targetPortText.setError(e.getMessage());
+        } catch (e: RuleValidationException) {
+            targetPortText.error = e.message
         }
-
-        if (targetIpAddress != null && targetIpAddress.length() > 0 && targetPort >= 0) {
+        if (targetIpAddress != null && targetIpAddress.length > 0 && targetPort >= 0) {
             // Create a InetSocketAddress object using data
-            InetSocketAddress target = new InetSocketAddress(targetIpAddress, targetPort);
-            ruleModel.setTarget(target);
+            val target = InetSocketAddress(targetIpAddress, targetPort)
+            ruleModel.target = target
         } else {
-            Log.w(TAG, "Could not create Target InetSocketAddress Object");
+            Log.w(TAG, "Could not create Target InetSocketAddress Object")
         }
-
-        Spinner fromInterfaceSpinner = findViewById(R.id.from_interface_spinner);
-        String selectedFromInterface = fromInterfaceSpinner.getSelectedItem().toString();
-        ruleModel.setFromInterfaceName(selectedFromInterface);
-
-        return ruleModel;
+        val fromInterfaceSpinner = findViewById<Spinner>(R.id.from_interface_spinner)
+        val selectedFromInterface = fromInterfaceSpinner.selectedItem.toString()
+        ruleModel.fromInterfaceName = selectedFromInterface
+        return ruleModel
     }
 
-
+    companion object {
+        private const val TAG = "BaseRuleActivity"
+    }
 }

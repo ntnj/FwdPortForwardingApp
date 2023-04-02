@@ -15,67 +15,59 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.ui.intro
 
-package com.elixsr.portforwarder.ui.intro;
-
-import android.content.Intent;
-import android.os.Bundle;
-import androidx.core.content.ContextCompat;
-
-import com.elixsr.portforwarder.ui.MainActivity;
-import com.elixsr.portforwarder.R;
-import com.github.paolorotolo.appintro.AppIntro2;
-import com.github.paolorotolo.appintro.AppIntroFragment;
+import android.content.Intent
+import android.os.Bundle
+import androidx.core.content.ContextCompat
+import com.elixsr.portforwarder.R
+import com.elixsr.portforwarder.ui.MainActivity
+import com.github.paolorotolo.appintro.AppIntro2
+import com.github.paolorotolo.appintro.AppIntroFragment
 
 /**
  * Created by Niall McShane on 12/03/2016.
- * <p/>
  *
- * @see <a href="https://github.com/PaoloRotolo/AppIntro">AppIntro - Github</a>
+ *
+ *
+ * @see [AppIntro - Github](https://github.com/PaoloRotolo/AppIntro)
  */
-public class MainIntro extends AppIntro2 {
-
+class MainIntro : AppIntro2() {
     // Please DO NOT override onCreate. Use init.
-    @Override
-    public void init(Bundle savedInstanceState) {
+    override fun init(savedInstanceState: Bundle?) {
 
         // Instead of fragments, you can also use our default slide
         // Just set a title, description, background and image. AppIntro will do the rest.
-        addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_1_title), getString(R.string.app_intro_1_text), R.drawable.appintro1, ContextCompat.getColor(this, R.color.colorPrimary)));
-        addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_2_title), getString(R.string.app_intro_2_text), R.drawable.appintro2, ContextCompat.getColor(this, R.color.colorPrimary)));
-        addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_3_title), getString(R.string.app_intro_3_text), R.drawable.appintro3, ContextCompat.getColor(this, R.color.colorPrimary)));
-        showSkipButton(false);
+        addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_1_title), getString(R.string.app_intro_1_text), R.drawable.appintro1, ContextCompat.getColor(this, R.color.colorPrimary)))
+        addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_2_title), getString(R.string.app_intro_2_text), R.drawable.appintro2, ContextCompat.getColor(this, R.color.colorPrimary)))
+        addSlide(AppIntroFragment.newInstance(getString(R.string.app_intro_3_title), getString(R.string.app_intro_3_text), R.drawable.appintro3, ContextCompat.getColor(this, R.color.colorPrimary)))
+        showSkipButton(false)
     }
 
-    public void showSkipButton(boolean showButton) {
-        this.skipButtonEnabled = showButton;
-        setButtonState(skipButton, showButton);
+    fun showSkipButton(showButton: Boolean) {
+        skipButtonEnabled = showButton
+        setButtonState(skipButton, showButton)
     }
 
-    private void loadMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+    private fun loadMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
-    @Override
-    public void onDonePressed() {
+    override fun onDonePressed() {
         // Do something when users tap on Done button.
-        loadMainActivity();
+        loadMainActivity()
     }
 
-    @Override
-    public void onSlideChanged() {
+    override fun onSlideChanged() {
         // Do something when the slide changes.
     }
 
-    @Override
-    public void onNextPressed() {
+    override fun onNextPressed() {
         // Do something when users tap on Next button.
     }
 
-    @Override
-    public void onBackPressed() {
+    override fun onBackPressed() {
         // Do something when users tap on Next button.
     }
-
 }

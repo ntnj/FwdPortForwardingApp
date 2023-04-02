@@ -15,212 +15,180 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.elixsr.portforwarder.ui.rules
 
-package com.elixsr.portforwarder.ui.rules;
-
-import android.content.ContentValues;
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-
-import com.elixsr.core.common.widgets.SwitchBar;
-import com.elixsr.portforwarder.R;
-import com.elixsr.portforwarder.db.RuleContract;
-import com.elixsr.portforwarder.db.RuleDbHelper;
-import com.elixsr.portforwarder.models.RuleModel;
-import com.elixsr.portforwarder.ui.MainActivity;
-import com.elixsr.portforwarder.util.RuleHelper;
-import com.google.android.material.textfield.TextInputEditText;
+import android.content.DialogInterface
+import android.content.Intent
+import android.database.sqlite.SQLiteDatabase
+import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import com.elixsr.core.common.widgets.SwitchBar
+import com.elixsr.portforwarder.R
+import com.elixsr.portforwarder.db.RuleContract
+import com.elixsr.portforwarder.db.RuleDbHelper
+import com.elixsr.portforwarder.db.RuleDbHelper.Companion.generateAllRowsSelection
+import com.elixsr.portforwarder.models.RuleModel
+import com.elixsr.portforwarder.ui.MainActivity
+import com.elixsr.portforwarder.util.RuleHelper
+import com.elixsr.portforwarder.util.RuleHelper.cursorToRuleModel
+import com.elixsr.portforwarder.util.RuleHelper.getRuleProtocolFromModel
+import com.elixsr.portforwarder.util.RuleHelper.ruleModelToContentValues
+import com.google.android.material.textfield.TextInputEditText
 
 /**
  * Created by Niall McShane on 02/03/2016.
  */
-public class EditRuleActivity extends BaseRuleActivity {
-
-    private static final String TAG = "EditRuleActivity";
-
-    private static final String NO_RULE_ID_FOUND_LOG_MESSAGE = "No ID was supplied to EditRuleActivity";
-    private static final String NO_RULE_ID_FOUND_TOAST_MESSAGE = "Could not locate rule";
-
-    private RuleModel ruleModel;
-
-    private long ruleModelId;
-
-    private SQLiteDatabase db;
-    private SwitchBar switchBar;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+class EditRuleActivity : BaseRuleActivity() {
+    private var ruleModel: RuleModel? = null
+    private var ruleModelId: Long = 0
+    private lateinit var db: SQLiteDatabase
+    private lateinit var switchBar: SwitchBar
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         // If we can't locate the id, then we can't continue
-        if (!getIntent().getExtras().containsKey(RuleHelper.RULE_MODEL_ID)) {
+        if (!intent.extras!!.containsKey(RuleHelper.RULE_MODEL_ID)) {
 
             /// Show toast containing message to the user
             Toast.makeText(this, NO_RULE_ID_FOUND_TOAST_MESSAGE,
-                    Toast.LENGTH_SHORT).show();
-
-            Log.e(TAG, NO_RULE_ID_FOUND_LOG_MESSAGE);
-
-            onBackPressed();
+                    Toast.LENGTH_SHORT).show()
+            Log.e(TAG, NO_RULE_ID_FOUND_LOG_MESSAGE)
+            onBackPressed()
 
             // Return from the method - ensure we don't continue
-            return;
+            return
         }
-        ruleModelId = getIntent().getExtras().getLong(RuleHelper.RULE_MODEL_ID);
-
-        setContentView(R.layout.edit_rule_activity);
+        ruleModelId = intent.extras!!.getLong(RuleHelper.RULE_MODEL_ID)
+        setContentView(R.layout.edit_rule_activity)
 
         // Set up toolbar
-        Toolbar toolbar = getActionBarToolbar();
-        setSupportActionBar(toolbar);
-
-        toolbar.setNavigationIcon(R.drawable.ic_close_24dp);
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        val toolbar = actionBarToolbar
+        setSupportActionBar(toolbar)
+        toolbar!!.setNavigationIcon(R.drawable.ic_close_24dp)
+        toolbar.setNavigationOnClickListener { v: View? -> onBackPressed() }
 
 
         // Use the base class to construct the common UI
-        constructDetailUi();
+        constructDetailUi()
 
         //TODO: move this
-        this.db = new RuleDbHelper(this).getReadableDatabase();
-
-        Cursor cursor = db.query(
+        db = RuleDbHelper(this).readableDatabase
+        val cursor = db.query(
                 RuleContract.RuleEntry.TABLE_NAME,
-                RuleDbHelper.generateAllRowsSelection(),
-                RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + "=?",
-                new String[]{String.valueOf(ruleModelId)},
+                generateAllRowsSelection(),
+                RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + "=?", arrayOf(ruleModelId.toString()),
                 null,
                 null,
                 null
-        );
-
-        cursor.moveToFirst();
-
-        this.ruleModel = RuleHelper.cursorToRuleModel(cursor);
-        Log.i(TAG, Boolean.toString(ruleModel.isEnabled()));
+        )
+        cursor.moveToFirst()
+        ruleModel = cursorToRuleModel(cursor)
+        Log.i(TAG, java.lang.Boolean.toString(ruleModel!!.isEnabled))
         // Close the DB
-        cursor.close();
-        db.close();
+        cursor.close()
+        db.close()
 
         // Set up the switchBar for enabling/disabling
-        switchBar = findViewById(R.id.switch_bar);
-        switchBar.show();
-        switchBar.setChecked(this.ruleModel.isEnabled());
+        switchBar = findViewById(R.id.switch_bar)
+        switchBar.show()
+        switchBar.isChecked = ruleModel!!.isEnabled
         /*
         Set the text fields content
          */
-        TextInputEditText newRuleNameEditText = findViewById(R.id.new_rule_name);
-        newRuleNameEditText.setText(ruleModel.getName());
-
-        TextInputEditText newRuleFromPortEditText = findViewById(R.id.new_rule_from_port);
-        newRuleFromPortEditText.setText(String.valueOf(ruleModel.getFromPort()));
-
-        TextInputEditText newRuleTargetIpAddressEditText = findViewById(R.id.new_rule_target_ip_address);
-        newRuleTargetIpAddressEditText.setText(ruleModel.getTargetIpAddress());
-
-        TextInputEditText newRuleTargetPortEditText = findViewById(R.id.new_rule_target_port);
-        newRuleTargetPortEditText.setText(String.valueOf(ruleModel.getTargetPort()));
+        val newRuleNameEditText = findViewById<TextInputEditText>(R.id.new_rule_name)
+        newRuleNameEditText.setText(ruleModel!!.name)
+        val newRuleFromPortEditText = findViewById<TextInputEditText>(R.id.new_rule_from_port)
+        newRuleFromPortEditText.setText(ruleModel!!.fromPort.toString())
+        val newRuleTargetIpAddressEditText = findViewById<TextInputEditText>(R.id.new_rule_target_ip_address)
+        newRuleTargetIpAddressEditText.setText(ruleModel!!.targetIpAddress)
+        val newRuleTargetPortEditText = findViewById<TextInputEditText>(R.id.new_rule_target_port)
+        newRuleTargetPortEditText.setText(ruleModel!!.targetPort.toString())
 
         /*
         Set the spinners content
          */
         //from interface spinner
-        Log.i(TAG, "FROM SPINNER : " + fromInterfaceSpinner.toString());
-        Log.i(TAG, "FROM INTERFACE : " + this.ruleModel.getFromInterfaceName());
-        fromInterfaceSpinner.setSelection(fromSpinnerAdapter.getPosition(this.ruleModel.getFromInterfaceName()));
+        Log.i(TAG, "FROM SPINNER : $fromInterfaceSpinner")
+        Log.i(TAG, "FROM INTERFACE : " + ruleModel!!.fromInterfaceName)
+        fromInterfaceSpinner!!.setSelection(fromSpinnerAdapter!!.getPosition(ruleModel!!.fromInterfaceName))
 
         // Protocol spinner
-        protocolSpinner.setSelection(protocolAdapter.getPosition(RuleHelper.getRuleProtocolFromModel(this.ruleModel)));
+        protocolSpinner!!.setSelection(protocolAdapter!!.getPosition(getRuleProtocolFromModel(ruleModel!!)))
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit_rule, menu);
-        return true;
+        menuInflater.inflate(R.menu.menu_edit_rule, menu)
+        return true
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.action_save_rule:
-                Log.i(TAG, "Save Menu Button Clicked");
+        val id = item.itemId
+        when (id) {
+            R.id.action_save_rule -> {
+                Log.i(TAG, "Save Menu Button Clicked")
 
 
                 // Set the item to disabled while saving
-                item.setEnabled(false);
-                saveEditedRule();
-                item.setEnabled(true);
-                break;
-            case R.id.action_delete_rule:
-                deleteRule();
-                break;
-        }
+                item.isEnabled = false
+                saveEditedRule()
+                item.isEnabled = true
+            }
 
-        return super.onOptionsItemSelected(item);
+            R.id.action_delete_rule -> deleteRule()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
-    private void saveEditedRule() {
-        this.ruleModel = generateNewRule();
-
-        if (ruleModel.isValid()) {
+    private fun saveEditedRule() {
+        ruleModel = generateNewRule()
+        if (ruleModel!!.isValid) {
             // Determine if rule is enabled
-            this.ruleModel.setEnabled(switchBar.isChecked());
-
-            Log.i(TAG, "Rule " + ruleModel.getName() + " is valid, time to update.");
-            SQLiteDatabase db = new RuleDbHelper(this).getReadableDatabase();
-
-            Log.i(TAG, "Is enabled is: " + this.ruleModel.isEnabled());
+            ruleModel!!.isEnabled = switchBar!!.isChecked
+            Log.i(TAG, "Rule " + ruleModel!!.name + " is valid, time to update.")
+            val db = RuleDbHelper(this).readableDatabase
+            Log.i(TAG, "Is enabled is: " + ruleModel!!.isEnabled)
 
             // New model to store
-            ContentValues values = RuleHelper.ruleModelToContentValues(this.ruleModel);
+            val values = ruleModelToContentValues(ruleModel!!)
 
             // Which row to update, based on the ID
-            String selection = RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + "=?";
-            String[] selectionArgs = {String.valueOf(this.ruleModelId)};
-
-            this.db = new RuleDbHelper(this).getReadableDatabase();
-
+            val selection = RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + "=?"
+            val selectionArgs = arrayOf(ruleModelId.toString())
+            this.db = RuleDbHelper(this).readableDatabase
             db.update(
                     RuleContract.RuleEntry.TABLE_NAME,
                     values,
                     selection,
-                    selectionArgs);
+                    selectionArgs)
 
             // Close db
-            db.close();
+            db.close()
 
             // Move to main activity
-            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(mainActivityIntent);
-            finish();
+            val mainActivityIntent = Intent(this, MainActivity::class.java)
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(mainActivityIntent)
+            finish()
         } else {
             Toast.makeText(this, R.string.toast_error_rule_not_valid_text,
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_LONG).show()
         }
     }
 
-    private void deleteRule() {
-
-        new AlertDialog.Builder(this)
+    private fun deleteRule() {
+        AlertDialog.Builder(this)
                 .setTitle(R.string.alert_dialog_delete_entry_title)
                 .setMessage(R.string.alert_dialog_delete_entry_text)
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                .setPositiveButton(android.R.string.yes) { dialog: DialogInterface?, which: Int ->
                     // Continue with delete
 
                     // TODO: add exception handling
@@ -229,30 +197,30 @@ public class EditRuleActivity extends BaseRuleActivity {
                     // MainActivity.ruleListAdapter.notifyItemRemoved(ruleModelLocation);
 
                     //construct the db
-                    db = new RuleDbHelper(getBaseContext()).getReadableDatabase();
+                    db = RuleDbHelper(baseContext).readableDatabase
 
                     // Define 'where' part of query.
-                    String selection = RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + "=?";
+                    val selection = RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + "=?"
                     // Specify arguments in placeholder order.
-                    String[] selectionArgs = {String.valueOf(ruleModelId)};
+                    val selectionArgs = arrayOf(ruleModelId.toString())
                     // Issue SQL statement.
-                    db.delete(RuleContract.RuleEntry.TABLE_NAME, selection, selectionArgs);
+                    db.delete(RuleContract.RuleEntry.TABLE_NAME, selection, selectionArgs)
 
                     // Close the db
-                    db.close();
+                    db.close()
 
                     // Move to main activity
-                    Intent mainActivityIntent = new Intent(getBaseContext(), MainActivity.class);
-                    finish();
-                    startActivity(mainActivityIntent);
-
-                })
-                .setNegativeButton(android.R.string.no, (dialog, which) -> {
-                    // Do nothing
-                })
-                .show();
-
-
+                    val mainActivityIntent = Intent(baseContext, MainActivity::class.java)
+                    finish()
+                    startActivity(mainActivityIntent)
+                }
+                .setNegativeButton(android.R.string.no) { dialog: DialogInterface?, which: Int -> }
+                .show()
     }
 
+    companion object {
+        private const val TAG = "EditRuleActivity"
+        private const val NO_RULE_ID_FOUND_LOG_MESSAGE = "No ID was supplied to EditRuleActivity"
+        private const val NO_RULE_ID_FOUND_TOAST_MESSAGE = "Could not locate rule"
+    }
 }

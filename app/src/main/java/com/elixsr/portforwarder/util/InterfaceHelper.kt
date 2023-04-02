@@ -1,22 +1,16 @@
-package com.elixsr.portforwarder.util;
+package com.elixsr.portforwarder.util
 
-import android.util.Log;
-
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import android.util.Log
+import java.net.Inet4Address
+import java.net.InetAddress
+import java.net.NetworkInterface
+import java.net.SocketException
 
 /**
  * Created by Cathan on 06/03/2017.
  */
-
-public class InterfaceHelper {
-
-    private static final String TAG = "InterfaceHelper";
+object InterfaceHelper {
+    private const val TAG = "InterfaceHelper"
 
     /**
      * Returns a list of all Network interfaces located on the device.
@@ -24,83 +18,60 @@ public class InterfaceHelper {
      * @return a String list containing the name of the network interfaces on the device.
      * @throws SocketException
      */
-    public static List<String> generateInterfaceNamesList() throws SocketException {
+    @JvmStatic
+    @Throws(SocketException::class)
+    fun generateInterfaceNamesList(): List<String> {
 
         // Create an empty list
-        List<String> interfaces = new ArrayList<>();
-
-        String address;
-        for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
-            NetworkInterface intf = en.nextElement();
+        val interfaces: MutableList<String> = ArrayList()
+        var address: String
+        val en = NetworkInterface.getNetworkInterfaces()
+        while (en.hasMoreElements()) {
+            val intf = en.nextElement()
 
             // While we have more elements
-            for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+            val enumIpAddr = intf.inetAddresses
+            while (enumIpAddr.hasMoreElements()) {
+
 
                 // Get the next address in from the iterator
-                InetAddress inetAddress = enumIpAddr.nextElement();
-
-                address = inetAddress.getHostAddress();
-
-                if (address != null & address.length() > 0 && inetAddress instanceof Inet4Address) {
-
-                    Log.i(TAG, intf.getDisplayName() + " " + address);
-                    interfaces.add(intf.getDisplayName());
+                val inetAddress = enumIpAddr.nextElement()
+                address = inetAddress.hostAddress
+                if ((address != null) and (address.length > 0) && inetAddress is Inet4Address) {
+                    Log.i(TAG, intf.displayName + " " + address)
+                    interfaces.add(intf.displayName)
                 }
             }
         }
-        return interfaces;
+        return interfaces
     }
 
-    public static List<InterfaceModel> generateInterfaceModelList() throws SocketException {
+    @JvmStatic
+    @Throws(SocketException::class)
+    fun generateInterfaceModelList(): List<InterfaceModel> {
 
         // Create an empty list
-        List<InterfaceModel> interfaces = new ArrayList<>();
-
-        String address = null;
-        for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
-            NetworkInterface intf = en.nextElement();
+        val interfaces: MutableList<InterfaceModel> = ArrayList()
+        var address: String? = null
+        val en = NetworkInterface.getNetworkInterfaces()
+        while (en.hasMoreElements()) {
+            val intf = en.nextElement()
 
             // While we have more elements
-            for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+            val enumIpAddr = intf.inetAddresses
+            while (enumIpAddr.hasMoreElements()) {
+
 
                 // Get the next address in from the iterator
-                InetAddress inetAddress = enumIpAddr.nextElement();
-
-                address = inetAddress.getHostAddress();
-
-                if (address != null & address.length() > 0 && inetAddress instanceof Inet4Address) {
-                    interfaces.add(new InterfaceModel(intf.getDisplayName(), inetAddress));
+                val inetAddress = enumIpAddr.nextElement()
+                address = inetAddress.hostAddress
+                if ((address != null) and (address.length > 0) && inetAddress is Inet4Address) {
+                    interfaces.add(InterfaceModel(intf.displayName, inetAddress))
                 }
             }
         }
-        return interfaces;
+        return interfaces
     }
 
-    public static class InterfaceModel {
-        private String name;
-        private InetAddress inetAddress;
-
-        public InterfaceModel(String name, InetAddress inetAddress) {
-            this.name = name;
-            this.inetAddress = inetAddress;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public InetAddress getInetAddress() {
-            return inetAddress;
-        }
-
-        public void setInetAddress(InetAddress inetAddress) {
-            this.inetAddress = inetAddress;
-        }
-    }
-
-
+    class InterfaceModel(@JvmField var name: String, @JvmField var inetAddress: InetAddress)
 }

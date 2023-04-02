@@ -1,11 +1,5 @@
-package com.elixsr.portforwarder.ui.preferences;
+package com.elixsr.portforwarder.ui.preferences
 
-import com.elixsr.portforwarder.ui.BaseWebActivity;
+import com.elixsr.portforwarder.ui.BaseWebActivity
 
-public class SourceCodeActivity extends BaseWebActivity {
-    private static final String URL = "https://github.com/ntnj/FwdPortForwardingApp";
-
-    public SourceCodeActivity() {
-        super(URL);
-    }
-}
+object SourceCodeActivity : BaseWebActivity("https://github.com/ntnj/FwdPortForwardingApp")
