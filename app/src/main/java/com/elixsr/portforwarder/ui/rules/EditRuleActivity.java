@@ -24,10 +24,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputEditText;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
+
+import com.google.android.material.textfield.TextInputEditText;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,9 +42,6 @@ import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.db.RuleDbHelper;
 import com.elixsr.portforwarder.ui.MainActivity;
 import com.elixsr.portforwarder.util.RuleHelper;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 /**
  * Created by Niall McShane on 02/03/2016.
@@ -60,14 +57,11 @@ public class EditRuleActivity extends BaseRuleActivity {
     private static final String LABEL_DELETE_RULE = "Delete Rule";
     private static final String LABEL_UPDATE_RULE = "Rule Updated";
 
-    private FirebaseAnalytics mFirebaseAnalytics;
-
     private RuleModel ruleModel;
 
     private long ruleModelId;
 
     private SQLiteDatabase db;
-    private Tracker tracker;
     private SwitchBar switchBar;
 
     @Override
@@ -91,9 +85,6 @@ public class EditRuleActivity extends BaseRuleActivity {
         ruleModelId = getIntent().getExtras().getLong(RuleHelper.RULE_MODEL_ID);
 
         setContentView(R.layout.edit_rule_activity);
-
-        // Obtain the FirebaseAnalytics instance.
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         // Set up toolbar
         Toolbar toolbar = getActionBarToolbar();
@@ -161,11 +152,6 @@ public class EditRuleActivity extends BaseRuleActivity {
 
         // Protocol spinner
         protocolSpinner.setSelection(protocolAdapter.getPosition(RuleHelper.getRuleProtocolFromModel(this.ruleModel)));
-
-
-        // Set up tracking
-        // Get tracker.
-        tracker = ((FwdApplication) this.getApplication()).getDefaultTracker();
     }
 
     @Override
@@ -230,14 +216,6 @@ public class EditRuleActivity extends BaseRuleActivity {
             // Close db
             db.close();
 
-            // Build and send an Event.
-            tracker.send(new HitBuilders.EventBuilder()
-                    .setCategory(CATEGORY_RULES)
-                    .setAction(ACTION_SAVE)
-                    .setLabel(LABEL_UPDATE_RULE)
-                    .build());
-
-
             // Move to main activity
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
             mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -275,13 +253,6 @@ public class EditRuleActivity extends BaseRuleActivity {
 
                         // Close the db
                         db.close();
-
-                        // Build and send an Event.
-                        tracker.send(new HitBuilders.EventBuilder()
-                                .setCategory(CATEGORY_RULES)
-                                .setAction(ACTION_DELETE)
-                                .setLabel(LABEL_DELETE_RULE)
-                                .build());
 
                         // Move to main activity
                         Intent mainActivityIntent = new Intent(getBaseContext(), MainActivity.class);

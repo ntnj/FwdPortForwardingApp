@@ -20,7 +20,7 @@ package com.elixsr.portforwarder.ui.rules;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,8 +33,6 @@ import com.elixsr.portforwarder.dao.RuleDao;
 import com.elixsr.portforwarder.db.RuleDbHelper;
 import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.ui.MainActivity;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 
 /**
  * Created by Niall McShane on 29/02/2016.
@@ -43,7 +41,6 @@ public class NewRuleActivity extends BaseRuleActivity {
 
     private static final String TAG = "NewRuleActivity";
     private static final String LABEL_SAVE_RULE = "Rule Saved";
-    private Tracker tracker;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,9 +61,6 @@ public class NewRuleActivity extends BaseRuleActivity {
         });
 
         constructDetailUi();
-
-        // Get tracker.
-        tracker = ((FwdApplication) this.getApplication()).getDefaultTracker();
     }
 
     @Override
@@ -109,14 +103,6 @@ public class NewRuleActivity extends BaseRuleActivity {
             long newRowId = ruleDao.insertRule(ruleModel);
 
             Log.i(TAG, "Rule #" + newRowId + " '" + ruleModel.getName() + "' has been saved.");
-
-
-            // Build and send an Event.
-            tracker.send(new HitBuilders.EventBuilder()
-                    .setCategory(CATEGORY_RULES)
-                    .setAction(ACTION_SAVE)
-                    .setLabel(LABEL_SAVE_RULE)
-                    .build());
 
             // Move to main activity
             Intent mainActivityIntent = new Intent(this, MainActivity.class);

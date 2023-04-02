@@ -25,13 +25,13 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.percent.PercentRelativeLayout;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.percentlayout.widget.PercentRelativeLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -52,9 +52,6 @@ import com.elixsr.portforwarder.ui.intro.MainIntro;
 import com.elixsr.portforwarder.ui.preferences.HelpActivity;
 import com.elixsr.portforwarder.ui.preferences.SettingsActivity;
 import com.elixsr.portforwarder.ui.rules.NewRuleActivity;
-import com.google.android.gms.analytics.Tracker;
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 
 public class MainActivity extends BaseActivity {
 
@@ -77,9 +74,6 @@ public class MainActivity extends BaseActivity {
     private Intent forwardingServiceIntent;
     private RuleDao ruleDao;
     private PercentRelativeLayout mRuleListEmptyView;
-    private Tracker tracker;
-
-    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +87,6 @@ public class MainActivity extends BaseActivity {
         getActionBarToolbar().setTitle("");
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_nav_logo);
-
-        // Obtain the FirebaseAnalytics instance.
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         // Determine if this is first start - and whether to show app intro
         onFirstStart();
@@ -163,9 +154,6 @@ public class MainActivity extends BaseActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 forwardingServiceResponseReceiver,
                 mStatusIntentFilter);
-
-        // Get tracker.
-        tracker = ((FwdApplication) this.getApplication()).getDefaultTracker();
 
         Log.i(TAG, "Finished onCreate");
     }

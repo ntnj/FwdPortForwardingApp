@@ -27,8 +27,6 @@ import java.net.InetSocketAddress;
 import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.db.RuleContract;
 
-import static com.facebook.GraphRequest.TAG;
-
 /**
  * The {@link RuleModel} class provides static objects and methods related to rules.
  * <p>

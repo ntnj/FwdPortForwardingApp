@@ -20,7 +20,7 @@ package com.elixsr.portforwarder.ui;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -60,7 +60,6 @@ public abstract class BaseWebActivity extends BaseActivity {
         webView.setBackgroundColor(Color.TRANSPARENT);
         webView.setWebViewClient(new MyWebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setAppCacheEnabled(false);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 
         // Hardware acceleration for web view

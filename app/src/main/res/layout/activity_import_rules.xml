@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.elixsr.portforwarder.ui.preferences.ImportRulesActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.NoActionBar.AppBarOverlay">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_actionbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -25,9 +25,9 @@
             android:paddingRight="10dp"
             android:layout_gravity="end"
             android:src="@drawable/ic_help_outline_white_24dp" />
-        </android.support.v7.widget.Toolbar>
+        </androidx.appcompat.widget.Toolbar>
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -57,7 +57,7 @@
             <!--
              From Setup
              -->
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="3dp"
@@ -68,11 +68,11 @@
                 tools:ignore="RtlSymmetry"
                 tools:text="From" />
 
-            <android.support.percent.PercentRelativeLayout
+            <androidx.percentlayout.widget.PercentRelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <android.support.v7.widget.AppCompatSpinner
+                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/from_interface_spinner"
                     style="@style/tempSpinnerOverride"
                     android:layout_width="match_parent"
@@ -83,12 +83,12 @@
                     android:theme="@style/SpinnerText"
                     app:layout_widthPercent="100%" />
 
-            </android.support.percent.PercentRelativeLayout>
+            </androidx.percentlayout.widget.PercentRelativeLayout>
 
             <!--
                 Target Setup
             -->
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="3dp"
@@ -98,11 +98,11 @@
                 android:theme="@style/TextInputTextHint"
                 tools:ignore="RtlSymmetry" />
 
-            <android.support.percent.PercentRelativeLayout
+            <androidx.percentlayout.widget.PercentRelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/new_rule_target_ip_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -114,7 +114,7 @@
                     app:layout_widthPercent="100%"
                     tools:text="Target IP Address" />
 
-            </android.support.percent.PercentRelativeLayout>
+            </androidx.percentlayout.widget.PercentRelativeLayout>
         </LinearLayout>
     </ScrollView>
     <LinearLayout
@@ -137,4 +137,4 @@
     </LinearLayout>
 
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

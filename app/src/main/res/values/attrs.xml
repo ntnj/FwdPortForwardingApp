@@ -2,4 +2,7 @@
     <attr name="emptyState" format="reference" />
     <attr name="editRuleTextInputColour" format="reference|color" />
 
+    <attr name="switchBarTheme" format="reference" />
+    <attr name="switchBarMarginStart" format="dimension" />
+    <attr name="switchBarMarginEnd" format="dimension" />
 </resources>

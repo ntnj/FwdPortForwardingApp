@@ -19,8 +19,8 @@
 package com.elixsr.portforwarder.ui.rules;
 
 import android.content.Intent;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -36,9 +36,7 @@ import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.ui.BaseActivity;
 import com.elixsr.portforwarder.ui.MainActivity;
 import com.elixsr.portforwarder.util.InterfaceHelper;
-import com.elixsr.portforwarder.util.IpAddressValidator;
 import com.elixsr.portforwarder.util.NetworkHelper;
-import com.elixsr.portforwarder.util.RuleHelper;
 import com.elixsr.portforwarder.validators.RuleModelValidator;
 
 /**

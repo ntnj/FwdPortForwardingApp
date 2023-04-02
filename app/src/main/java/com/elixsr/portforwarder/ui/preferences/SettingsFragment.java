@@ -27,9 +27,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.support.v4.content.FileProvider;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
+import androidx.core.content.FileProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -40,29 +40,15 @@ import com.elixsr.portforwarder.adapters.RuleListTargetJsonSerializer;
 import com.elixsr.portforwarder.dao.RuleDao;
 import com.elixsr.portforwarder.db.RuleContract;
 import com.elixsr.portforwarder.db.RuleDbHelper;
-import com.elixsr.portforwarder.exceptions.RuleValidationException;
 import com.elixsr.portforwarder.forwarding.ForwardingManager;
 import com.elixsr.portforwarder.models.RuleModel;
-import com.elixsr.portforwarder.ui.MainActivity;
-import com.elixsr.portforwarder.validators.RuleModelValidator;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
-import java.util.Collection;
 import java.util.List;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -89,7 +75,6 @@ public class SettingsFragment extends PreferenceFragment {
 
     private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferencesListener;
 
-    private Tracker tracker;
     private static final int RULE_LIST_CODE = 1;
     private Gson gson;
     private RuleDao ruleDao;
@@ -114,9 +99,6 @@ public class SettingsFragment extends PreferenceFragment {
         toast = Toast.makeText(getActivity(), "",
                 Toast.LENGTH_SHORT);
 
-        // Get tracker.
-        tracker = ((FwdApplication) getActivity().getApplication()).getDefaultTracker();
-
         clearRulesButton = (Preference) findPreference(getString(R.string.pref_clear_rules));
 
         clearRulesButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -139,13 +121,6 @@ public class SettingsFragment extends PreferenceFragment {
                                 db.close();
 
                                 clearRulesButton.setEnabled(false);
-
-                                // Build and send an Event.
-                                tracker.send(new HitBuilders.EventBuilder()
-                                        .setCategory(CATEGORY_RULES)
-                                        .setAction(ACTION_DELETE)
-                                        .setLabel(LABEL_DELETE_RULE)
-                                        .build());
 
                                 Toast.makeText(getActivity(), CLEAR_RULES_COMPLETE_MESSAGE,
                                         Toast.LENGTH_SHORT).show();
@@ -238,16 +213,6 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (key.equals("pref_dark_theme")) {
-
-
-                    // Build and send an Event.
-                    tracker.send(new HitBuilders.EventBuilder()
-                            .setCategory(CATEGORY_THEME)
-                            .setAction(ACTION_CHANGE)
-                            .setLabel("Dark Mode: " + sharedPreferences
-                                    .getBoolean("pref_dark_theme", false))
-                            .build());
-
                     Intent intent = new Intent();
                     intent.setAction(DARK_MODE_BROADCAST);
                     localBroadcastManager.sendBroadcast(intent);

@@ -4,4 +4,14 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="new_rule_default_text_size">18sp</dimen>
+
+
+
+    <!-- SwitchBar margin start / end -->
+    <dimen name="switchbar_margin_start">16dp</dimen>
+    <dimen name="switchbar_margin_end">16dp</dimen>
+
+    <!-- SwitchBar sub settings margin start / end -->
+    <dimen name="switchbar_subsettings_margin_start">72dp</dimen>
+    <dimen name="switchbar_subsettings_margin_end">16dp</dimen>
 </resources>

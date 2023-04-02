@@ -25,10 +25,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.net.Inet4Address;
@@ -38,7 +38,6 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -55,8 +54,6 @@ import com.elixsr.portforwarder.dao.RuleDao;
 import com.elixsr.portforwarder.db.RuleDbHelper;
 import com.elixsr.portforwarder.exceptions.ObjectNotFoundException;
 import com.elixsr.portforwarder.models.RuleModel;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 
 /**
  * The {@link ForwardingService} class acts as a controller of all all forwarding.
@@ -101,7 +98,6 @@ public class ForwardingService extends IntentService {
 
     //wake lock
     private PowerManager.WakeLock wakeLock;
-    private Tracker tracker;
 
     /**
      * Default constructor for {@link ForwardingService}.#
@@ -130,8 +126,6 @@ public class ForwardingService extends IntentService {
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 PORT_FORWARD_SERVICE_WAKE_LOCK_TAG);
         wakeLock.acquire();
-
-        tracker = ((FwdApplication) this.getApplication()).getDefaultTracker();
     }
 
     /**
@@ -231,14 +225,6 @@ public class ForwardingService extends IntentService {
             completionService.submit(ruleForwarder);
         }
 
-            // Build and send an Event.
-        tracker.send(new HitBuilders.EventBuilder()
-                .setCategory(CATEGORY_FORWARDING)
-                .setAction(ACTION_START_FORWARDING)
-                .setLabel(ruleModels.size() + " rules")
-                .build());
-
-
         Future<?> completedFuture;
 
         // loop through each callback, and handle an exception
@@ -308,13 +294,6 @@ public class ForwardingService extends IntentService {
         super.onTaskRemoved(rootIntent);
         Log.i(TAG, "onTaskRemoved: called");
 
-        // Build and send an Event.
-        tracker.send(new HitBuilders.EventBuilder()
-                .setCategory(CATEGORY_FORWARDING)
-                .setAction(ACTION_STOP_FORWARDING)
-                .setLabel("Task Removed")
-                .build());
-
         this.onDestroy();
     }
 
@@ -352,13 +331,6 @@ public class ForwardingService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
 
         wakeLock.release();
-
-        // Build and send an Event.
-        tracker.send(new HitBuilders.EventBuilder()
-                .setCategory(CATEGORY_FORWARDING)
-                .setAction(ACTION_STOP_FORWARDING)
-                .setLabel("Ended")
-                .build());
         Log.i(TAG, "Ended the ForwardingService. Cleanup finished.");
     }
 

@@ -18,17 +18,14 @@
 
 package com.elixsr.portforwarder.ui.preferences;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.View;
 
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.ui.BaseActivity;
-import com.elixsr.portforwarder.ui.MainActivity;
 
 /**
  * Created by Niall McShane on 29/02/2016.

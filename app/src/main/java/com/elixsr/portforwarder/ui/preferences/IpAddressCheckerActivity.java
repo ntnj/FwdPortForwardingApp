@@ -1,9 +1,9 @@
 package com.elixsr.portforwarder.ui.preferences;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -14,7 +14,6 @@ import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.ui.BaseActivity;
 import com.elixsr.portforwarder.util.InterfaceHelper;
 
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;

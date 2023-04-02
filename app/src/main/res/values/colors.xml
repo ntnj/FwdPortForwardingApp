@@ -24,4 +24,8 @@
     <color name="listDropdownDividerColorInverse">#FFFFFF</color>
     <color name="colorDisabled">#ACACAC</color>
 
+
+    <color name="emptyStateTitleColor">#C9C9C9</color>
+    <color name="emptyStateMessageColor">#818181</color>
+
 </resources>

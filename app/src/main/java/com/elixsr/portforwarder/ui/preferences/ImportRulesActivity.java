@@ -2,9 +2,9 @@ package com.elixsr.portforwarder.ui.preferences;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.design.widget.TextInputEditText;
+import com.google.android.material.textfield.TextInputEditText;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
