@@ -25,7 +25,7 @@ import com.elixsr.portforwarder.ui.BaseWebActivity;
  */
 public class AboutElixsrActivity extends BaseWebActivity {
 
-    private static final String URL = "http://elix.sr/";
+    private static final String URL = "https://elix.sr/";
 
     public AboutElixsrActivity() {
         super(URL);

@@ -25,7 +25,7 @@ import com.elixsr.portforwarder.ui.BaseWebActivity;
  */
 public class SupportSiteActivity extends BaseWebActivity {
 
-    private static final String URL = "http://support.elix.sr/#!/products/fwd/answers/Importing_and_Exporting_Rules";
+    private static final String URL = "https://support.elix.sr/#!/products/fwd/answers/Importing_and_Exporting_Rules";
 
     public SupportSiteActivity() {
         super(URL);

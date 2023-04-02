@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.webkit.ConsoleMessage;
 
 /**
  * Created by Niall McShane on 07/06/2016.

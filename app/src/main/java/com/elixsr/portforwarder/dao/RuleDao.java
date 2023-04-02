@@ -22,13 +22,13 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.elixsr.portforwarder.db.RuleContract;
 import com.elixsr.portforwarder.db.RuleDbHelper;
 import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.util.RuleHelper;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * The {@link RuleDao} class provides common functionality for Rule database access.
@@ -41,7 +41,7 @@ import com.elixsr.portforwarder.util.RuleHelper;
 public class RuleDao {
 
     private SQLiteDatabase db;
-    private RuleDbHelper ruleDbHelper;
+    private final RuleDbHelper ruleDbHelper;
 
     public RuleDao(RuleDbHelper ruleDbHelper) {
         this.ruleDbHelper = ruleDbHelper;
@@ -64,12 +64,10 @@ public class RuleDao {
 
         ContentValues constantValues = RuleHelper.ruleModelToContentValues(ruleModel);
 
-        long newRowId = db.insert(
+        return db.insert(
                 RuleContract.RuleEntry.TABLE_NAME,
                 null,
                 constantValues);
-
-        return newRowId;
     }
 
     /**
@@ -79,7 +77,7 @@ public class RuleDao {
      */
     public List<RuleModel> getAllRuleModels() {
 
-        List<RuleModel> ruleModels = new LinkedList<RuleModel>();
+        List<RuleModel> ruleModels = new LinkedList<>();
 
         // Gets the data repository in read mode
         this.db = ruleDbHelper.getReadableDatabase();
@@ -115,10 +113,8 @@ public class RuleDao {
     }
 
     public List<RuleModel> getAllEnabledRuleModels() {
-        List<RuleModel> ruleModels = new LinkedList<RuleModel>();
-        List<RuleModel> enabledRuleModels = new LinkedList<RuleModel>();
-
-        ruleModels = getAllRuleModels();
+        List<RuleModel> enabledRuleModels = new LinkedList<>();
+        List<RuleModel> ruleModels = getAllRuleModels();
 
         for (RuleModel ruleModel : ruleModels) {
             if (ruleModel.isEnabled()) {

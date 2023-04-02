@@ -66,6 +66,14 @@
                 android:value=".ui.preferences.SettingsActivity" />
         </activity>
         <activity
+            android:name=".ui.preferences.SourceCodeActivity"
+            android:label="@string/source_code_title"
+            android:parentActivityName=".ui.preferences.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.preferences.SettingsActivity" />
+        </activity>
+        <activity
             android:name=".ui.intro.MainIntro"
             android:label="@string/app_intro" />
 

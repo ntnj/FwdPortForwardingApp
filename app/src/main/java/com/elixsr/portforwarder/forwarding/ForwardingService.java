@@ -18,18 +18,28 @@
 
 package com.elixsr.portforwarder.forwarding;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
+import android.util.Log;
+
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import android.util.Log;
+
+import com.elixsr.portforwarder.R;
+import com.elixsr.portforwarder.dao.RuleDao;
+import com.elixsr.portforwarder.db.RuleDbHelper;
+import com.elixsr.portforwarder.exceptions.ObjectNotFoundException;
+import com.elixsr.portforwarder.models.RuleModel;
+import com.elixsr.portforwarder.ui.MainActivity;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -47,14 +57,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import com.elixsr.portforwarder.FwdApplication;
-import com.elixsr.portforwarder.ui.MainActivity;
-import com.elixsr.portforwarder.R;
-import com.elixsr.portforwarder.dao.RuleDao;
-import com.elixsr.portforwarder.db.RuleDbHelper;
-import com.elixsr.portforwarder.exceptions.ObjectNotFoundException;
-import com.elixsr.portforwarder.models.RuleModel;
-
 /**
  * The {@link ForwardingService} class acts as a controller of all all forwarding.
  * <p>
@@ -68,28 +70,17 @@ public class ForwardingService extends IntentService {
     public static final String BROADCAST_ACTION =
             "com.elixsr.portforwarder.forwarding.ForwardingService.BROADCAST";
 
-    // Defines the key for the status "extra" in an Intent
-    public static final String EXTENDED_DATA_STATUS =
-            "com.elixsr.portforwarder.forwarding.ForwardingService.STATUS";
-
     public static final String PORT_FORWARD_SERVICE_STATE =
             "com.elixsr.portforwarder.forwarding.ForwardingService.PORT_FORWARD_STATE";
 
     public static final String PORT_FORWARD_SERVICE_ERROR_MESSAGE =
             "com.elixsr.portforwarder.forwarding.ForwardingService.PORT_FORWARD_ERROR_MESSAGE";
 
-    private static final String PORT_FORWARD_SERVICE_WAKE_LOCK_TAG = "PortForwardServiceWakeLockTag";
+    private static final String PORT_FORWARD_SERVICE_WAKE_LOCK_TAG = "PortForwardServiceWakeLockTag:";
 
     private static final String TAG = "ForwardingService";
 
-    private static final String CATEGORY_FORWARDING = "Forwarding";
-
     private static final int NOTIFICATION_ID = 1;
-    private static final String ACTION_START_FORWARDING = "Start - Java NIO";
-    private static final String LABEL_FORWARDING_TYPE = "";
-    private static final String ACTION_STOP_FORWARDING = "Stop - Java NIO";
-
-    private String status = "Test";
 
     private boolean runService = false;
 
@@ -137,8 +128,6 @@ public class ForwardingService extends IntentService {
      * <p>
      * If an exception is thrown, the service immediately stops, and the #onDestroy method is
      * called.
-     *
-     * @param intent
      */
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -174,8 +163,6 @@ public class ForwardingService extends IntentService {
         List<Forwarder> ruleModelForwarders = new ArrayList<>();
 
         InetSocketAddress from;
-
-        Forwarder forwarder = null;
 
         // how many futures there are to check
         int remainingFutures = 0;
@@ -221,7 +208,7 @@ public class ForwardingService extends IntentService {
         CompletionService<Void> completionService =
                 new ExecutorCompletionService<>(executorService);
 
-        for (Forwarder ruleForwarder: ruleModelForwarders) {
+        for (Forwarder ruleForwarder : ruleModelForwarders) {
             completionService.submit(ruleForwarder);
         }
 
@@ -237,8 +224,6 @@ public class ForwardingService extends IntentService {
 
                 completedFuture.get();
             } catch (ExecutionException e) {
-                Throwable cause = e.getCause();
-
                 Log.e(TAG, "Error when forwarding port.", e);
                 localIntent =
                         new Intent(BROADCAST_ACTION)
@@ -246,7 +231,6 @@ public class ForwardingService extends IntentService {
                                 .putExtra(PORT_FORWARD_SERVICE_ERROR_MESSAGE, e.getCause().getMessage());
                 // Broadcasts the Intent to receivers in this app.
                 LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
-
                 break;
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -256,7 +240,7 @@ public class ForwardingService extends IntentService {
 
     private InetSocketAddress generateFromIpUsingInterface(String interfaceName, int port) throws SocketException, ObjectNotFoundException {
 
-        String address = null;
+        String address;
         InetSocketAddress inetSocketAddress;
 
         for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
@@ -268,13 +252,9 @@ public class ForwardingService extends IntentService {
                 Log.i(TAG, "Found the relevant Interface. Will attempt to fetch IP Address");
 
                 for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-
                     InetAddress inetAddress = enumIpAddr.nextElement();
-
-                    address = new String(inetAddress.getHostAddress().toString());
-
-                    if (address != null & address.length() > 0 && inetAddress instanceof Inet4Address) {
-
+                    address = inetAddress.getHostAddress();
+                    if (address != null && address.length() > 0 && inetAddress instanceof Inet4Address) {
                         inetSocketAddress = new InetSocketAddress(address, port);
                         return inetSocketAddress;
                     }
@@ -335,24 +315,24 @@ public class ForwardingService extends IntentService {
     }
 
     private void hideForwardingEnabledNotification() {
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        mNotificationManager.cancel(NOTIFICATION_ID);
+        NotificationManagerCompat notifManager = NotificationManagerCompat.from(this);
+        notifManager.cancel(NOTIFICATION_ID);
     }
 
     /**
      * Construct a notification
      */
+    @SuppressLint("MissingPermission")
     private void showForwardingEnabledNotification() {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_fwd_24dp)
-                        .setContentTitle(getString(R.string.notification_forwarding_active_title))
-                        .setContentText(getString(R.string.notification_forwarding_touch_disable_text));
+        NotificationManagerCompat notifManager = NotificationManagerCompat.from(this);
 
-        mBuilder.setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        String channelId = "persistent";
+        NotificationChannel channel = notifManager.getNotificationChannel(channelId);
+        if (channel == null) {
+            channel = new NotificationChannel(channelId, "Background",
+                    NotificationManager.IMPORTANCE_HIGH);
+            notifManager.createNotificationChannel(channel);
+        }
 
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);
@@ -373,14 +353,18 @@ public class ForwardingService extends IntentService {
                         0,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
-        mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this, channelId)
+                        .setSmallIcon(R.drawable.ic_fwd_24dp)
+                        .setContentTitle(getString(R.string.notification_forwarding_active_title))
+                        .setContentText(getString(R.string.notification_forwarding_touch_disable_text))
+                        .setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+                        .setContentIntent(resultPendingIntent);
 
         Notification notification = mBuilder.build();
         notification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT | Notification.DEFAULT_LIGHTS;
 
-        // mId allows you to update the notification later on.
-        mNotificationManager.notify(NOTIFICATION_ID, notification);
+        notifManager.notify(NOTIFICATION_ID, notification);
     }
 }

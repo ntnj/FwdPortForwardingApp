@@ -43,15 +43,13 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
     private static final String TAG = "UdpForwarder";
     private static final int BUFFER_SIZE = 100000;
 
-    private static final int TIMEOUT = 3000; // Wait timeout (milliseconds)
-
     public UdpForwarder(InetSocketAddress form, InetSocketAddress to, String ruleName) {
         super("UDP", form, to, ruleName);
     }
 
     public Void call() throws IOException, BindException {
 
-        Log.d(TAG, String.format(super.START_MESSAGE, protocol, from.getPort(), to.getPort()));
+        Log.d(TAG, String.format(START_MESSAGE, protocol, from.getPort(), to.getPort()));
 
         try {
             ByteBuffer readBuffer = ByteBuffer.allocate(BUFFER_SIZE);
@@ -62,8 +60,8 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
             try {
                 inChannel.socket().bind(this.from);
             } catch (SocketException e) {
-                Log.e(TAG, String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
-                throw new BindException(String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
+                Log.e(TAG, String.format(BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
+                throw new BindException(String.format(BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
             }
 
             Selector selector = Selector.open();
@@ -72,7 +70,7 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
             while (true) { // Run forever, receiving and echoing datagrams
 
                 if (Thread.currentThread().isInterrupted()) {
-                    Log.i(TAG, String.format(super.THREAD_INTERRUPT_CLEANUP_MESSAGE, protocol));
+                    Log.i(TAG, String.format(THREAD_INTERRUPT_CLEANUP_MESSAGE, protocol));
                     inChannel.socket().close();
                     break;
                 }
@@ -147,7 +145,7 @@ public class UdpForwarder extends Forwarder implements Callable<Void> {
         DatagramChannel channel = (DatagramChannel) key.channel();
         ClientRecord clientRecord = (ClientRecord) key.attachment();
         clientRecord.writeBuffer.flip(); // Prepare buffer for sending
-        int bytesSent = channel.send(clientRecord.writeBuffer, clientRecord.toAddress);
+        channel.send(clientRecord.writeBuffer, clientRecord.toAddress);
 
 
         if (clientRecord.writeBuffer.remaining() > 0) {

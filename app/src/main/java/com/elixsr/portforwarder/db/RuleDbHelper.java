@@ -19,7 +19,6 @@
 package com.elixsr.portforwarder.db;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -49,9 +48,6 @@ public class RuleDbHelper extends SQLiteOpenHelper {
                     RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED + INTEGER_TYPE +
                     " )";
 
-    private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + RuleContract.RuleEntry.TABLE_NAME;
-
     private static final String DATABASE_ALTER_RULES_1 = String.format("ALTER TABLE %s ADD COLUMN %s int default 1;",
             RuleContract.RuleEntry.TABLE_NAME, RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED);
 
@@ -73,7 +69,7 @@ public class RuleDbHelper extends SQLiteOpenHelper {
     }
 
     public static String[] generateAllRowsSelection() {
-        String[] projection = {
+        return new String[]{
                 RuleContract.RuleEntry.COLUMN_NAME_RULE_ID,
                 RuleContract.RuleEntry.COLUMN_NAME_NAME,
                 RuleContract.RuleEntry.COLUMN_NAME_IS_TCP,
@@ -84,7 +80,5 @@ public class RuleDbHelper extends SQLiteOpenHelper {
                 RuleContract.RuleEntry.COLUMN_NAME_TARGET_PORT,
                 RuleContract.RuleEntry.COLUMN_NAME_IS_ENABLED
         };
-
-        return projection;
     }
 }

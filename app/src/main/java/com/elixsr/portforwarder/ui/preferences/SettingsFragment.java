@@ -18,7 +18,8 @@
 
 package com.elixsr.portforwarder.ui.preferences;
 
-import android.content.DialogInterface;
+import static android.app.Activity.RESULT_CANCELED;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -27,13 +28,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import androidx.core.content.FileProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.elixsr.portforwarder.FwdApplication;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.adapters.RuleListJsonValidator;
 import com.elixsr.portforwarder.adapters.RuleListTargetJsonSerializer;
@@ -51,8 +52,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-import static android.app.Activity.RESULT_CANCELED;
-
 /**
  * Created by Niall McShane on 29/02/2016.
  */
@@ -62,16 +61,13 @@ public class SettingsFragment extends PreferenceFragment {
 
     private static final String CLEAR_RULES_COMPLETE_MESSAGE = "All rules have been removed";
 
-    private static final String CATEGORY_RULES = "Rules";
-    private static final String ACTION_DELETE = "Clear";
-    private static final String LABEL_DELETE_RULE = "Delete All Rules";
     public static final String DARK_MODE_BROADCAST = "com.elixsr.DARK_MODE_TOGGLE";
-    private static final String CATEGORY_THEME = "Theme";
-    private static final String ACTION_CHANGE = "Change";
 
     private LocalBroadcastManager localBroadcastManager;
     private ForwardingManager forwardingManager;
-    private Preference clearRulesButton, versionNamePreference, exportRulesPreference, importRulesPreference, changeThemeToggle;
+    private Preference clearRulesButton;
+    private Preference versionNamePreference;
+    private Preference importRulesPreference;
 
     private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferencesListener;
 
@@ -99,44 +95,37 @@ public class SettingsFragment extends PreferenceFragment {
         toast = Toast.makeText(getActivity(), "",
                 Toast.LENGTH_SHORT);
 
-        clearRulesButton = (Preference) findPreference(getString(R.string.pref_clear_rules));
+        clearRulesButton = findPreference(getString(R.string.pref_clear_rules));
 
-        clearRulesButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                // Code for what you want it to do
+        clearRulesButton.setOnPreferenceClickListener(preference -> {
+            // Code for what you want it to do
 
-                new AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.alert_dialog_delete_all_rules_title)
-                        .setMessage(R.string.alert_dialog_delete_all_rules_text)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.alert_dialog_delete_all_rules_title)
+                    .setMessage(R.string.alert_dialog_delete_all_rules_text)
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
 
-                                // Set up the database
-                                SQLiteDatabase db = new RuleDbHelper(getActivity()).getReadableDatabase();
+                        // Set up the database
+                        SQLiteDatabase db = new RuleDbHelper(getActivity()).getReadableDatabase();
 
 
-                                db.delete(RuleContract.RuleEntry.TABLE_NAME, null, null);
+                        db.delete(RuleContract.RuleEntry.TABLE_NAME, null, null);
 
-                                db.close();
+                        db.close();
 
-                                clearRulesButton.setEnabled(false);
+                        clearRulesButton.setEnabled(false);
 
-                                Toast.makeText(getActivity(), CLEAR_RULES_COMPLETE_MESSAGE,
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Do nothing
-                            }
-                        })
-                        .show();
-                return true;
-            }
+                        Toast.makeText(getActivity(), CLEAR_RULES_COMPLETE_MESSAGE,
+                                Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton(android.R.string.no, (dialog, which) -> {
+                        // Do nothing
+                    })
+                    .show();
+            return true;
         });
 
-        versionNamePreference = (Preference) findPreference(getString(R.string.pref_version));
+        versionNamePreference = findPreference(getString(R.string.pref_version));
 
         versionNamePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
@@ -162,45 +151,37 @@ public class SettingsFragment extends PreferenceFragment {
 
         });
 
-        importRulesPreference = (Preference) findPreference(getString(R.string.pref_import));
+        importRulesPreference = findPreference(getString(R.string.pref_import));
 
-        importRulesPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                importRules();
-                return false;
-            }
-
+        importRulesPreference.setOnPreferenceClickListener(preference -> {
+            importRules();
+            return false;
         });
 
-        exportRulesPreference = (Preference) findPreference(getString(R.string.pref_export));
+        Preference exportRulesPreference = findPreference(getString(R.string.pref_export));
 
-        exportRulesPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                exportRules();
-                return false;
-            }
-
+        exportRulesPreference.setOnPreferenceClickListener(preference -> {
+            exportRules();
+            return false;
         });
 
 
         // Set up click of about elixsr button - show webview
-        Preference aboutElixsrButton = (Preference) findPreference(getString(R.string.pref_about_link));
-        aboutElixsrButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                //code for what you want it to do
-                Intent aboutActivityIntent = new Intent(getActivity(), AboutElixsrActivity.class);
-                startActivity(aboutActivityIntent);
-                return true;
-            }
+        Preference aboutElixsrButton = findPreference(getString(R.string.pref_about_link));
+        aboutElixsrButton.setOnPreferenceClickListener(preference -> {
+            //code for what you want it to do
+            Intent aboutActivityIntent = new Intent(getActivity(), AboutElixsrActivity.class);
+            startActivity(aboutActivityIntent);
+            return true;
         });
 
+        Preference sourceCodeButton = findPreference("pref_source_code");
+        sourceCodeButton.setOnPreferenceClickListener(preference -> {
+            Intent sourceCodeIntent = new Intent(getActivity(), SourceCodeActivity.class);
+            startActivity(sourceCodeIntent);
+            return true;
+        });
 
-        changeThemeToggle = (Preference) findPreference(getString(R.string.pref_dark_theme));
 
     }
 
@@ -209,15 +190,12 @@ public class SettingsFragment extends PreferenceFragment {
         super.onActivityCreated(savedInstanceState);
 
         // Recreate our activity if we changed to dark theme
-        sharedPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (key.equals("pref_dark_theme")) {
-                    Intent intent = new Intent();
-                    intent.setAction(DARK_MODE_BROADCAST);
-                    localBroadcastManager.sendBroadcast(intent);
+        sharedPreferencesListener = (sharedPreferences, key) -> {
+            if (key.equals("pref_dark_theme")) {
+                Intent intent = new Intent();
+                intent.setAction(DARK_MODE_BROADCAST);
+                localBroadcastManager.sendBroadcast(intent);
 
-                }
             }
         };
 

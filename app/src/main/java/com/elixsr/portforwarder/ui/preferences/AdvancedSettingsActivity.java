@@ -1,8 +1,8 @@
 package com.elixsr.portforwarder.ui.preferences;
 
 import android.os.Bundle;
+
 import androidx.appcompat.widget.Toolbar;
-import android.view.View;
 
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.ui.BaseActivity;
@@ -17,12 +17,7 @@ public class AdvancedSettingsActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         getFragmentManager().beginTransaction().replace(R.id.advanced_settings_container, new AdvancedSettingsFragment()).commit();
     }

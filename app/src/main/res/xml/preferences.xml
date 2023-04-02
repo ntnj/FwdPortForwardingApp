@@ -38,6 +38,9 @@
         <Preference
             android:key="@string/pref_about_link"
             android:title="@string/pref_about_link_text" />
+        <Preference
+            android:key="pref_source_code"
+            android:title="@string/source_code_title" />
         <Preference android:key="@string/pref_version" />
     </PreferenceCategory>
 </PreferenceScreen>

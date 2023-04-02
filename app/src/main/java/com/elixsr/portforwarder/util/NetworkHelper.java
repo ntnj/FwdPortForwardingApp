@@ -48,10 +48,6 @@ public class NetworkHelper {
      */
     @Deprecated
     public static boolean isValidIpv4Address(String address) {
-        if (address != null & address.length() > 0) {
-            return true;
-        }
-
-        return false;
+        return address != null & address.length() > 0;
     }
 }

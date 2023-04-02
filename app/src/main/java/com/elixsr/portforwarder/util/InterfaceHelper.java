@@ -8,9 +8,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * Created by Cathan on 06/03/2017.
@@ -29,9 +27,9 @@ public class InterfaceHelper {
     public static List<String> generateInterfaceNamesList() throws SocketException {
 
         // Create an empty list
-        List<String> interfaces = new ArrayList<String>();
+        List<String> interfaces = new ArrayList<>();
 
-        String address = null;
+        String address;
         for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
             NetworkInterface intf = en.nextElement();
 
@@ -41,7 +39,7 @@ public class InterfaceHelper {
                 // Get the next address in from the iterator
                 InetAddress inetAddress = enumIpAddr.nextElement();
 
-                address = new String(inetAddress.getHostAddress().toString());
+                address = inetAddress.getHostAddress();
 
                 if (address != null & address.length() > 0 && inetAddress instanceof Inet4Address) {
 
@@ -68,7 +66,7 @@ public class InterfaceHelper {
                 // Get the next address in from the iterator
                 InetAddress inetAddress = enumIpAddr.nextElement();
 
-                address = new String(inetAddress.getHostAddress().toString());
+                address = inetAddress.getHostAddress();
 
                 if (address != null & address.length() > 0 && inetAddress instanceof Inet4Address) {
                     interfaces.add(new InterfaceModel(intf.getDisplayName(), inetAddress));

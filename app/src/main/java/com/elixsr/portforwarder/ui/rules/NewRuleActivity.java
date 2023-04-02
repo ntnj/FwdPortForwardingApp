@@ -20,14 +20,13 @@ package com.elixsr.portforwarder.ui.rules;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
-import com.elixsr.portforwarder.FwdApplication;
+import androidx.appcompat.widget.Toolbar;
+
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.dao.RuleDao;
 import com.elixsr.portforwarder.db.RuleDbHelper;
@@ -40,7 +39,6 @@ import com.elixsr.portforwarder.ui.MainActivity;
 public class NewRuleActivity extends BaseRuleActivity {
 
     private static final String TAG = "NewRuleActivity";
-    private static final String LABEL_SAVE_RULE = "Rule Saved";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,12 +51,7 @@ public class NewRuleActivity extends BaseRuleActivity {
         setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.ic_close_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         constructDetailUi();
     }

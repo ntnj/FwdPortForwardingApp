@@ -1,14 +1,14 @@
 package com.elixsr.portforwarder.ui.preferences;
 
 import android.content.Context;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.Toolbar;
 
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.ui.BaseActivity;
@@ -31,12 +31,7 @@ public class IpAddressCheckerActivity extends BaseActivity {
         Toolbar toolbar = getActionBarToolbar();
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
 
     @Override
@@ -50,7 +45,7 @@ public class IpAddressCheckerActivity extends BaseActivity {
             finish();
         }
 
-        LinearLayout containerLayout = (LinearLayout) findViewById(R.id.container);
+        LinearLayout containerLayout = findViewById(R.id.container);
         containerLayout.removeAllViews();
 
         for (InterfaceHelper.InterfaceModel interfaceModel : interfaces) {
@@ -60,9 +55,9 @@ public class IpAddressCheckerActivity extends BaseActivity {
             View view = layoutInflater.inflate(R.layout.ip_address_status, containerLayout, false);
             containerLayout.addView(view);
 
-            TextView interfaceNameView = (TextView) view.findViewById(R.id.interface_name);
-            TextView interfaceIpAddressView = (TextView) view.findViewById(R.id.interface_ip_address);
-            TextView interfaceStatusView = (TextView) view.findViewById(R.id.interface_status);
+            TextView interfaceNameView = view.findViewById(R.id.interface_name);
+            TextView interfaceIpAddressView = view.findViewById(R.id.interface_ip_address);
+            TextView interfaceStatusView = view.findViewById(R.id.interface_status);
 
             interfaceNameView.setText(interfaceModel.getName());
             interfaceIpAddressView.setText(interfaceModel.getInetAddress().getHostAddress());

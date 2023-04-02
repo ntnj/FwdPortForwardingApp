@@ -24,5 +24,4 @@ import android.app.Application;
  * Created by Niall McShane on 13/03/2016.
  */
 public class FwdApplication extends Application {
-    private static final String TAG = "FwdApplication";
 }

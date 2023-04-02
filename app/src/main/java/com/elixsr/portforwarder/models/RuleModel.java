@@ -20,12 +20,11 @@ package com.elixsr.portforwarder.models;
 
 import android.util.Log;
 
+import com.elixsr.portforwarder.util.RuleHelper;
+import com.google.gson.annotations.Expose;
+
 import java.io.Serializable;
 import java.net.InetSocketAddress;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.JsonAdapter;
-
-import com.elixsr.portforwarder.util.RuleHelper;
 
 /**
  * The {@link RuleModel} class represents a Forwarding Rule.
@@ -169,7 +168,7 @@ public class RuleModel implements Serializable {
     public boolean isValid() {
 
         // Ensure the rule has a name
-        if (name == null || name.length() <= 0) {
+        if (name == null || name.length() == 0) {
             return false;
         }
 
@@ -178,7 +177,7 @@ public class RuleModel implements Serializable {
             return false;
         }
 
-        if (fromInterfaceName == null || fromInterfaceName.length() <= 0) {
+        if (fromInterfaceName == null || fromInterfaceName.length() == 0) {
             return false;
         }
 
@@ -198,7 +197,7 @@ public class RuleModel implements Serializable {
 
 
         // The new rule activity should take care of IP address validation
-        if (getTargetIpAddress() == null || name.length() <= 0) {
+        if (getTargetIpAddress() == null || name.length() == 0) {
             return false;
         }
 

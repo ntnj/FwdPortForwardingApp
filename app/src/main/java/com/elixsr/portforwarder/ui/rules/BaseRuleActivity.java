@@ -19,16 +19,10 @@
 package com.elixsr.portforwarder.ui.rules;
 
 import android.content.Intent;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
-
-import java.net.InetSocketAddress;
-import java.net.SocketException;
-import java.util.List;
 
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.exceptions.RuleValidationException;
@@ -38,6 +32,12 @@ import com.elixsr.portforwarder.ui.MainActivity;
 import com.elixsr.portforwarder.util.InterfaceHelper;
 import com.elixsr.portforwarder.util.NetworkHelper;
 import com.elixsr.portforwarder.validators.RuleModelValidator;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.net.InetSocketAddress;
+import java.net.SocketException;
+import java.util.List;
 
 /**
  * The BaseRuleActivity class  provides logic for subclasses which utilise the shared Rule detail
@@ -52,18 +52,12 @@ import com.elixsr.portforwarder.validators.RuleModelValidator;
  * @author Niall McShane
  */
 public abstract class BaseRuleActivity extends BaseActivity {
-
-    protected static final String ACTION_SAVE = "Save";
-    protected static final String CATEGORY_RULES = "Rules";
-
     private static final String TAG = "BaseRuleActivity";
 
     protected Spinner protocolSpinner;
     protected Spinner fromInterfaceSpinner;
     protected ArrayAdapter<String> fromSpinnerAdapter;
     protected ArrayAdapter<CharSequence> protocolAdapter;
-
-    private static final String INVALID_PORT_ERROR_MESSAGE = "Please enter a value greater than or equal to %s and less than or equal to %s";
 
 
     /**
@@ -75,7 +69,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
     protected void constructDetailUi() {
 
         // Set up protocol spinner/dropdown
-        protocolSpinner = (Spinner) findViewById(R.id.protocol_spinner);
+        protocolSpinner = findViewById(R.id.protocol_spinner);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         protocolAdapter = ArrayAdapter.createFromResource(this,
@@ -117,10 +111,10 @@ public abstract class BaseRuleActivity extends BaseActivity {
 
 
         // Set up protocol spinner/dropdown
-        fromInterfaceSpinner = (Spinner) findViewById(R.id.from_interface_spinner);
+        fromInterfaceSpinner = findViewById(R.id.from_interface_spinner);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        fromSpinnerAdapter = new ArrayAdapter<String>(this, R.layout.my_spinner, interfaces);
+        fromSpinnerAdapter = new ArrayAdapter<>(this, R.layout.my_spinner, interfaces);
 
         // Specify the layout to use when the list of choices appears
         fromSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -158,7 +152,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
         /*
             Protocol
          */
-        Spinner protocolSpinner = (Spinner) findViewById(R.id.protocol_spinner);
+        Spinner protocolSpinner = findViewById(R.id.protocol_spinner);
         String selectedProtocol = protocolSpinner.getSelectedItem().toString();
 
         // Determine the protocol
@@ -180,8 +174,8 @@ public abstract class BaseRuleActivity extends BaseActivity {
         /*
             Rule Name
          */
-        TextInputEditText ruleNameText = (TextInputEditText) findViewById(R.id.new_rule_name);
-        TextInputLayout ruleNameTextInputLayout = (TextInputLayout) findViewById(R.id.new_rule_name_input_layout);
+        TextInputEditText ruleNameText = findViewById(R.id.new_rule_name);
+        TextInputLayout ruleNameTextInputLayout = findViewById(R.id.new_rule_name_input_layout);
 
         try {
             if (RuleModelValidator.validateRuleName(ruleNameText.getText().toString())) {
@@ -200,12 +194,12 @@ public abstract class BaseRuleActivity extends BaseActivity {
         /*
             From port
          */
-        TextInputEditText fromPortText = (TextInputEditText) findViewById(R.id.new_rule_from_port);
+        TextInputEditText fromPortText = findViewById(R.id.new_rule_from_port);
 
         // Validate the input, and show error message if wrong
         try {
             if (RuleModelValidator.validateRuleFromPort(fromPortText.getText().toString())) {
-                ruleModel.setFromPort(Integer.valueOf(fromPortText.getText().toString()));
+                ruleModel.setFromPort(Integer.parseInt(fromPortText.getText().toString()));
             }
         } catch (RuleValidationException e) {
             fromPortText.setError(e.getMessage());
@@ -220,7 +214,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
         /*
             Target IP Address
          */
-        TextInputEditText targetIpAddressText = (TextInputEditText) findViewById(R.id.new_rule_target_ip_address);
+        TextInputEditText targetIpAddressText = findViewById(R.id.new_rule_target_ip_address);
 
         // Validate the input, and show error message if wrong
         try {
@@ -234,12 +228,12 @@ public abstract class BaseRuleActivity extends BaseActivity {
         /*
             Target port
          */
-        TextInputEditText targetPortText = (TextInputEditText) findViewById(R.id.new_rule_target_port);
+        TextInputEditText targetPortText = findViewById(R.id.new_rule_target_port);
 
         // Validate the input, and show error message if wrong
         try {
             if (RuleModelValidator.validateRuleTargetPort(targetPortText.getText().toString())) {
-                targetPort = Integer.valueOf(targetPortText.getText().toString());
+                targetPort = Integer.parseInt(targetPortText.getText().toString());
             }
         } catch (RuleValidationException e) {
             targetPortText.setError(e.getMessage());
@@ -253,7 +247,7 @@ public abstract class BaseRuleActivity extends BaseActivity {
             Log.w(TAG, "Could not create Target InetSocketAddress Object");
         }
 
-        Spinner fromInterfaceSpinner = (Spinner) findViewById(R.id.from_interface_spinner);
+        Spinner fromInterfaceSpinner = findViewById(R.id.from_interface_spinner);
         String selectedFromInterface = fromInterfaceSpinner.getSelectedItem().toString();
         ruleModel.setFromInterfaceName(selectedFromInterface);
 

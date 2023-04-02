@@ -19,29 +19,26 @@
 package com.elixsr.portforwarder.ui.rules;
 
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-
-import com.google.android.material.textfield.TextInputEditText;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+
 import com.elixsr.core.common.widgets.SwitchBar;
-import com.elixsr.portforwarder.FwdApplication;
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.db.RuleContract;
-import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.db.RuleDbHelper;
+import com.elixsr.portforwarder.models.RuleModel;
 import com.elixsr.portforwarder.ui.MainActivity;
 import com.elixsr.portforwarder.util.RuleHelper;
+import com.google.android.material.textfield.TextInputEditText;
 
 /**
  * Created by Niall McShane on 02/03/2016.
@@ -52,10 +49,6 @@ public class EditRuleActivity extends BaseRuleActivity {
 
     private static final String NO_RULE_ID_FOUND_LOG_MESSAGE = "No ID was supplied to EditRuleActivity";
     private static final String NO_RULE_ID_FOUND_TOAST_MESSAGE = "Could not locate rule";
-
-    private static final String ACTION_DELETE = "Delete";
-    private static final String LABEL_DELETE_RULE = "Delete Rule";
-    private static final String LABEL_UPDATE_RULE = "Rule Updated";
 
     private RuleModel ruleModel;
 
@@ -91,12 +84,7 @@ public class EditRuleActivity extends BaseRuleActivity {
         setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.ic_close_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
 
         // Use the base class to construct the common UI
@@ -124,22 +112,22 @@ public class EditRuleActivity extends BaseRuleActivity {
         db.close();
 
         // Set up the switchBar for enabling/disabling
-        switchBar = (SwitchBar) findViewById(R.id.switch_bar);
+        switchBar = findViewById(R.id.switch_bar);
         switchBar.show();
         switchBar.setChecked(this.ruleModel.isEnabled());
         /*
         Set the text fields content
          */
-        TextInputEditText newRuleNameEditText = (TextInputEditText) findViewById(R.id.new_rule_name);
+        TextInputEditText newRuleNameEditText = findViewById(R.id.new_rule_name);
         newRuleNameEditText.setText(ruleModel.getName());
 
-        TextInputEditText newRuleFromPortEditText = (TextInputEditText) findViewById(R.id.new_rule_from_port);
+        TextInputEditText newRuleFromPortEditText = findViewById(R.id.new_rule_from_port);
         newRuleFromPortEditText.setText(String.valueOf(ruleModel.getFromPort()));
 
-        TextInputEditText newRuleTargetIpAddressEditText = (TextInputEditText) findViewById(R.id.new_rule_target_ip_address);
+        TextInputEditText newRuleTargetIpAddressEditText = findViewById(R.id.new_rule_target_ip_address);
         newRuleTargetIpAddressEditText.setText(ruleModel.getTargetIpAddress());
 
-        TextInputEditText newRuleTargetPortEditText = (TextInputEditText) findViewById(R.id.new_rule_target_port);
+        TextInputEditText newRuleTargetPortEditText = findViewById(R.id.new_rule_target_port);
         newRuleTargetPortEditText.setText(String.valueOf(ruleModel.getTargetPort()));
 
         /*
@@ -207,7 +195,7 @@ public class EditRuleActivity extends BaseRuleActivity {
 
             this.db = new RuleDbHelper(this).getReadableDatabase();
 
-            int count = db.update(
+            db.update(
                     RuleContract.RuleEntry.TABLE_NAME,
                     values,
                     selection,
@@ -232,39 +220,35 @@ public class EditRuleActivity extends BaseRuleActivity {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.alert_dialog_delete_entry_title)
                 .setMessage(R.string.alert_dialog_delete_entry_text)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Continue with delete
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    // Continue with delete
 
-                        // TODO: add exception handling
-                        // TODO: add db delete
-                        // MainActivity.RULE_MODELS.remove(ruleModelLocation);
-                        // MainActivity.ruleListAdapter.notifyItemRemoved(ruleModelLocation);
+                    // TODO: add exception handling
+                    // TODO: add db delete
+                    // MainActivity.RULE_MODELS.remove(ruleModelLocation);
+                    // MainActivity.ruleListAdapter.notifyItemRemoved(ruleModelLocation);
 
-                        //construct the db
-                        db = new RuleDbHelper(getBaseContext()).getReadableDatabase();
+                    //construct the db
+                    db = new RuleDbHelper(getBaseContext()).getReadableDatabase();
 
-                        // Define 'where' part of query.
-                        String selection = RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + "=?";
-                        // Specify arguments in placeholder order.
-                        String[] selectionArgs = {String.valueOf(ruleModelId)};
-                        // Issue SQL statement.
-                        db.delete(RuleContract.RuleEntry.TABLE_NAME, selection, selectionArgs);
+                    // Define 'where' part of query.
+                    String selection = RuleContract.RuleEntry.COLUMN_NAME_RULE_ID + "=?";
+                    // Specify arguments in placeholder order.
+                    String[] selectionArgs = {String.valueOf(ruleModelId)};
+                    // Issue SQL statement.
+                    db.delete(RuleContract.RuleEntry.TABLE_NAME, selection, selectionArgs);
 
-                        // Close the db
-                        db.close();
+                    // Close the db
+                    db.close();
 
-                        // Move to main activity
-                        Intent mainActivityIntent = new Intent(getBaseContext(), MainActivity.class);
-                        finish();
-                        startActivity(mainActivityIntent);
+                    // Move to main activity
+                    Intent mainActivityIntent = new Intent(getBaseContext(), MainActivity.class);
+                    finish();
+                    startActivity(mainActivityIntent);
 
-                    }
                 })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing
-                    }
+                .setNegativeButton(android.R.string.no, (dialog, which) -> {
+                    // Do nothing
                 })
                 .show();
 

@@ -18,9 +18,6 @@
 
 package com.elixsr.portforwarder.ui.preferences;
 
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.widget.Toolbar;
-
 import com.elixsr.portforwarder.ui.BaseWebActivity;
 
 /**
@@ -28,7 +25,7 @@ import com.elixsr.portforwarder.ui.BaseWebActivity;
  */
 public class HelpActivity extends BaseWebActivity {
 
-    private static final String URL = "http://support.elix.sr/#!/products/fwd";
+    private static final String URL = "https://support.elix.sr/#!/products/fwd";
 
     public HelpActivity() {
         super(URL);

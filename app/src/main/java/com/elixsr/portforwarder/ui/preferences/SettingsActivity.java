@@ -22,8 +22,6 @@ import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.View;
-
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.ui.BaseActivity;
 
@@ -46,12 +44,7 @@ public class SettingsActivity extends BaseActivity {
 
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         getFragmentManager().beginTransaction().replace(R.id.content_frame, new SettingsFragment()).commit();
 

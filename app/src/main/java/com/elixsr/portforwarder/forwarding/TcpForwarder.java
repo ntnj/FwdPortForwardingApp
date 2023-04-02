@@ -18,6 +18,10 @@
 
 package com.elixsr.portforwarder.forwarding;
 
+import android.util.Log;
+
+import com.elixsr.portforwarder.exceptions.BindException;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -28,10 +32,6 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
-
-import android.util.Log;
-
-import com.elixsr.portforwarder.exceptions.BindException;
 
 /**
  * Created by Niall McShane on 21/02/2016.
@@ -49,7 +49,7 @@ public class TcpForwarder extends Forwarder implements Callable<Void> {
 
     public Void call() throws IOException, BindException {
 
-        Log.d(TAG, String.format(super.START_MESSAGE, protocol, from.getPort(), to.getPort()));
+        Log.d(TAG, String.format(START_MESSAGE, protocol, from.getPort(), to.getPort()));
 
         try {
             Selector selector = Selector.open();
@@ -62,11 +62,11 @@ public class TcpForwarder extends Forwarder implements Callable<Void> {
             try {
                 listening.socket().bind(this.from, 0);
             } catch (java.net.BindException e) {
-                Log.e(TAG, String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
-                throw new BindException(String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
+                Log.e(TAG, String.format(BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
+                throw new BindException(String.format(BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
             } catch (java.net.SocketException e) {
-                Log.e(TAG, String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
-                throw new BindException(String.format(super.BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
+                Log.e(TAG, String.format(BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
+                throw new BindException(String.format(BIND_FAILED_MESSAGE, from.getPort(), protocol, ruleName), e);
             }
 
             listening.register(selector, SelectionKey.OP_ACCEPT, listening);
@@ -74,7 +74,7 @@ public class TcpForwarder extends Forwarder implements Callable<Void> {
             while (true) {
 
                 if (Thread.currentThread().isInterrupted()) {
-                    Log.i(TAG, String.format(super.THREAD_INTERRUPT_CLEANUP_MESSAGE, protocol));
+                    Log.i(TAG, String.format(THREAD_INTERRUPT_CLEANUP_MESSAGE, protocol));
                     listening.close();
                     break;
                 }

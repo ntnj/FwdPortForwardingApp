@@ -2,18 +2,17 @@ package com.elixsr.portforwarder.ui.preferences;
 
 import android.content.Intent;
 import android.net.Uri;
-import com.google.android.material.textfield.TextInputEditText;
 import android.os.Bundle;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.Toolbar;
 
 import com.elixsr.portforwarder.R;
 import com.elixsr.portforwarder.adapters.RuleListJsonValidator;
@@ -26,6 +25,7 @@ import com.elixsr.portforwarder.ui.BaseActivity;
 import com.elixsr.portforwarder.ui.MainActivity;
 import com.elixsr.portforwarder.util.InterfaceHelper;
 import com.elixsr.portforwarder.validators.RuleModelValidator;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
@@ -47,16 +47,11 @@ public class ImportRulesActivity extends BaseActivity {
 
     public static final String IMPORTED_RULE_DATA = "imported_rule_data";
     private final String TAG = "ImportRulesActivity";
-    protected Spinner protocolSpinner;
     protected Spinner fromInterfaceSpinner;
     protected ArrayAdapter<String> fromSpinnerAdapter;
-    protected ArrayAdapter<CharSequence> protocolAdapter;
     private RuleDao ruleDao;
     private Gson gson;
     private List<RuleModel> ruleModels;
-    private TextView importRulesText;
-    private Button importRulesButton;
-    private ImageView helpButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,16 +63,11 @@ public class ImportRulesActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.ic_close_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
-        importRulesText = (TextView) findViewById(R.id.import_rules_count_text);
-        importRulesButton = (Button) findViewById(R.id.import_rules_button);
-        helpButton = (ImageView) findViewById(R.id.help_button);
+        TextView importRulesText = findViewById(R.id.import_rules_count_text);
+        Button importRulesButton = findViewById(R.id.import_rules_button);
+        ImageView helpButton = findViewById(R.id.help_button);
 
         ruleModels = new LinkedList<>();
 
@@ -91,7 +81,7 @@ public class ImportRulesActivity extends BaseActivity {
                 .registerTypeAdapter(RuleModel.class, new RuleListJsonValidator())
                 .create();
         if(extras != null) {
-            data = (Uri) Uri.parse(extras.getString(IMPORTED_RULE_DATA));
+            data = Uri.parse(extras.getString(IMPORTED_RULE_DATA));
             parseRules(data);
         }
 
@@ -113,18 +103,10 @@ public class ImportRulesActivity extends BaseActivity {
         importRulesText.setText(Html.fromHtml(importText));
         importRulesButton.setText("IMPORT " + ruleModels.size() + " RULES");
 
-        importRulesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                importRules();
-            }
-        });
-        helpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent mainActivityIntent = new Intent(v.getContext(), SupportSiteActivity.class);
-                startActivity(mainActivityIntent);
-            }
+        importRulesButton.setOnClickListener(v -> importRules());
+        helpButton.setOnClickListener(v -> {
+            Intent mainActivityIntent = new Intent(v.getContext(), SupportSiteActivity.class);
+            startActivity(mainActivityIntent);
         });
     }
 
@@ -174,7 +156,7 @@ public class ImportRulesActivity extends BaseActivity {
 
         String targetIpAddress = null;
 
-        TextInputEditText targetIpAddressText = (TextInputEditText) findViewById(R.id.new_rule_target_ip_address);
+        TextInputEditText targetIpAddressText = findViewById(R.id.new_rule_target_ip_address);
 
         // Validate the input, and show error message if wrong
         try {
@@ -196,7 +178,7 @@ public class ImportRulesActivity extends BaseActivity {
             InetSocketAddress target = new InetSocketAddress(targetIpAddress, ruleModel.getTargetPort());
             ruleModel.setTarget(target);
 
-            Spinner fromInterfaceSpinner = (Spinner) findViewById(R.id.from_interface_spinner);
+            Spinner fromInterfaceSpinner = findViewById(R.id.from_interface_spinner);
             String selectedFromInterface = fromInterfaceSpinner.getSelectedItem().toString();
             ruleModel.setFromInterfaceName(selectedFromInterface);
 
@@ -216,7 +198,7 @@ public class ImportRulesActivity extends BaseActivity {
     protected void constructDetailUi() {
 
         // Generate interfaces
-        List<String> interfaces = null;
+        List<String> interfaces;
         try {
             interfaces = InterfaceHelper.generateInterfaceNamesList();
 
@@ -235,7 +217,7 @@ public class ImportRulesActivity extends BaseActivity {
         }
 
         // Check to ensure we have some interface to show!
-        if (interfaces == null || interfaces.isEmpty()) {
+        if (interfaces.isEmpty()) {
             Toast.makeText(this, "Could not locate any network interfaces. Please refer to 'help'" +
                             " to assist with troubleshooting.",
                     Toast.LENGTH_LONG).show();
@@ -247,10 +229,10 @@ public class ImportRulesActivity extends BaseActivity {
 
 
         // Set up protocol spinner/dropdown
-        fromInterfaceSpinner = (Spinner) findViewById(R.id.from_interface_spinner);
+        fromInterfaceSpinner = findViewById(R.id.from_interface_spinner);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        fromSpinnerAdapter = new ArrayAdapter<String>(this, R.layout.my_spinner, interfaces);
+        fromSpinnerAdapter = new ArrayAdapter<>(this, R.layout.my_spinner, interfaces);
 
         // Specify the layout to use when the list of choices appears
         fromSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

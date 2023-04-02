@@ -4,48 +4,40 @@ import android.util.Log;
 
 import com.elixsr.portforwarder.exceptions.RuleValidationException;
 import com.elixsr.portforwarder.models.RuleModel;
-import com.elixsr.portforwarder.util.RuleHelper;
 import com.elixsr.portforwarder.util.IpAddressValidator;
+import com.elixsr.portforwarder.util.RuleHelper;
 
 /**
  * Created by Cathan on 25/07/2017.
  */
 
-public class RuleModelValidator implements Validator<RuleModel> {
+public class RuleModelValidator {
 
-    private static final String INVALID_PORT_ERROR_MESSAGE = "Please enter a value greater than or equal to %s and less than or equal to %s";
     private static final String TAG = "RuleModelValidator";
 
 
-    @Override
     public boolean validate(RuleModel ruleModel) throws RuleValidationException {
         return validateRule(ruleModel);
     }
 
     public static boolean validateRule(RuleModel ruleModel) throws RuleValidationException {
-        boolean isValidRuleModel = false;
-
-        if (validateRuleName(ruleModel.getName()) &&
+        return validateRuleName(ruleModel.getName()) &&
                 validateRuleFromPort(ruleModel.getFromPort()) &&
                 validateRuleTargetPort(ruleModel.getTargetPort()) &&
                 validateRuleTargetIpAddress(ruleModel.getTargetIpAddress()) &&
-                validateRuleTargetIpAddressSyntax(ruleModel.getTargetIpAddress())) {
-            isValidRuleModel = true;
-        }
-
-        return isValidRuleModel;
+                validateRuleTargetIpAddressSyntax(ruleModel.getTargetIpAddress());
     }
 
     public static boolean validateRuleName(String ruleName) throws RuleValidationException {
-        if (ruleName == null || ruleName.length() <= 0) {
-            throw new RuleValidationException(String.format("You must enter a name"));
+        if (ruleName == null || ruleName.length() == 0) {
+            throw new RuleValidationException("You must enter a name");
         }
 
         return true;
     }
 
     public static boolean validateRuleFromPort(int ruleFromPort) throws RuleValidationException {
-        if (ruleFromPort <= 0 || ruleFromPort < RuleHelper.MIN_PORT_VALUE || ruleFromPort > RuleHelper.MAX_PORT_VALUE) {
+        if (ruleFromPort < RuleHelper.MIN_PORT_VALUE || ruleFromPort > RuleHelper.MAX_PORT_VALUE) {
             throw new RuleValidationException(String.format("From port must be a value greater than or equal to %s and less than or equal to %s ", RuleHelper.MIN_PORT_VALUE, RuleHelper.MAX_PORT_VALUE));
         }
 
@@ -61,7 +53,7 @@ public class RuleModelValidator implements Validator<RuleModel> {
     }
 
     public static boolean validateRuleTargetPort(int ruleTargetPort) throws RuleValidationException {
-        if (ruleTargetPort <= 0 || ruleTargetPort < RuleHelper.TARGET_MIN_PORT || ruleTargetPort > RuleHelper.MAX_PORT_VALUE) {
+        if (ruleTargetPort < RuleHelper.TARGET_MIN_PORT || ruleTargetPort > RuleHelper.MAX_PORT_VALUE) {
             throw new RuleValidationException(String.format("Please enter a value greater than or equal to %s and less than or equal to %s ", RuleHelper.TARGET_MIN_PORT, RuleHelper.MAX_PORT_VALUE));
         }
 
@@ -82,12 +74,12 @@ public class RuleModelValidator implements Validator<RuleModel> {
             return validateRuleTargetIpAddressSyntax(ruleTargetIpAddress);
         }
 
-        throw new RuleValidationException(String.format("You must enter a target address"));
+        throw new RuleValidationException("You must enter a target address");
     }
 
     public static boolean validateRuleTargetIpAddressSyntax(String ruleTargetIpAddress) throws RuleValidationException {
         if (!new IpAddressValidator().validate(ruleTargetIpAddress)) {
-            throw new RuleValidationException(String.format("Target IP address was not valid"));
+            throw new RuleValidationException("Target IP address was not valid");
         }
 
         Log.i(TAG, "validateRuleTargetIpAddressSyntax: TARGET IP VALID");

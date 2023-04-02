@@ -18,8 +18,6 @@
 
 package com.elixsr.portforwarder.forwarding;
 
-import android.content.Intent;
-
 import java.io.Serializable;
 
 /**

@@ -25,46 +25,44 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.percentlayout.widget.PercentRelativeLayout;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
-import java.util.List;
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.percentlayout.widget.PercentRelativeLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.elixsr.portforwarder.FwdApplication;
 import com.elixsr.portforwarder.R;
+import com.elixsr.portforwarder.adapters.RuleListAdapter;
 import com.elixsr.portforwarder.dao.RuleDao;
 import com.elixsr.portforwarder.db.RuleDbHelper;
 import com.elixsr.portforwarder.forwarding.ForwardingManager;
 import com.elixsr.portforwarder.forwarding.ForwardingService;
 import com.elixsr.portforwarder.models.RuleModel;
-import com.elixsr.portforwarder.adapters.RuleListAdapter;
 import com.elixsr.portforwarder.ui.intro.MainIntro;
 import com.elixsr.portforwarder.ui.preferences.HelpActivity;
 import com.elixsr.portforwarder.ui.preferences.SettingsActivity;
 import com.elixsr.portforwarder.ui.rules.NewRuleActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.List;
 
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = "MainActivity";
     private static final String FORWARDING_MANAGER_KEY = "ForwardingManager";
-    private static final String FORWARDING_SERVICE_KEY = "ForwardingService";
 
     private List<RuleModel> ruleModels;
     private static RuleListAdapter ruleListAdapter;
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
 
     private ForwardingManager forwardingManager;
@@ -94,13 +92,8 @@ public class MainActivity extends BaseActivity {
         final Intent newRuleIntent = new Intent(this, NewRuleActivity.class);
 
         // Move to the new rule activity
-        this.fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(newRuleIntent);
-            }
-        });
+        this.fab = findViewById(R.id.fab);
+        fab.setOnClickListener(view -> startActivity(newRuleIntent));
 
         // Hide the fab if forwarding is enabled
         // the user should not be able to add/delete rules
@@ -116,23 +109,23 @@ public class MainActivity extends BaseActivity {
         ruleModels = ruleDao.getAllRuleModels();
 
         // Set up rule list and empty view
-        mRecyclerView = (RecyclerView) findViewById(R.id.rule_recycler_view);
-        mRuleListEmptyView = (PercentRelativeLayout) findViewById(R.id.rule_list_empty_view);
+        mRecyclerView = findViewById(R.id.rule_recycler_view);
+        mRuleListEmptyView = findViewById(R.id.rule_list_empty_view);
 
         // Use this setting to improve performance if you know that changes
         // In content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
         // Use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // Specify an adapter (see also next example)
-        ruleListAdapter = new RuleListAdapter(ruleModels, forwardingManager, getApplicationContext());
+        ruleListAdapter = new RuleListAdapter(ruleModels, forwardingManager);
         mRecyclerView.setAdapter(ruleListAdapter);
 
         // Store the coordinator layout for snackbar
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator_layout);
+        coordinatorLayout = findViewById(R.id.main_coordinator_layout);
 
 
         forwardingServiceIntent = new Intent(this, ForwardingService.class);
@@ -163,7 +156,7 @@ public class MainActivity extends BaseActivity {
         super.onResume();
         this.ruleModels.clear();
         this.ruleModels.addAll(ruleDao.getAllRuleModels());
-        this.ruleListAdapter.notifyDataSetChanged();
+        ruleListAdapter.notifyDataSetChanged();
         invalidateOptionsMenu();
 
         // Decide whether to show the rule list or the empty view
@@ -200,11 +193,7 @@ public class MainActivity extends BaseActivity {
         }
 
         // It should not be able to start if there are no rules
-        if (enabledRuleModels <= 0) {
-            toggleForwarding.setVisible(false);
-        } else {
-            toggleForwarding.setVisible(true);
-        }
+        toggleForwarding.setVisible(enabledRuleModels > 0);
 
         return true;
     }
@@ -268,7 +257,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
         outState.putSerializable(FORWARDING_MANAGER_KEY, this.forwardingManager);
@@ -297,7 +286,7 @@ public class MainActivity extends BaseActivity {
 
             if (intent.getExtras().containsKey(ForwardingService.PORT_FORWARD_SERVICE_STATE)) {
                 Log.i(TAG, "Response from ForwardingService, Forwarding status has changed.");
-                Log.i(TAG, "Forwarding status has changed to " + String.valueOf(intent.getExtras().getBoolean(ForwardingService.PORT_FORWARD_SERVICE_STATE)));
+                Log.i(TAG, "Forwarding status has changed to " + intent.getExtras().getBoolean(ForwardingService.PORT_FORWARD_SERVICE_STATE));
                 invalidateOptionsMenu();
             }
 
@@ -321,32 +310,29 @@ public class MainActivity extends BaseActivity {
 
     private void onFirstStart() {
         // Declare a new thread to do a preference check
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // Initialize SharedPreferences
-                SharedPreferences getPrefs = PreferenceManager
-                        .getDefaultSharedPreferences(getBaseContext());
+        Thread t = new Thread(() -> {
+            // Initialize SharedPreferences
+            SharedPreferences getPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getBaseContext());
 
-                // Create a new boolean and preference and set it to true
-                boolean isFirstStart = getPrefs.getBoolean("firstStart", true);
+            // Create a new boolean and preference and set it to true
+            boolean isFirstStart = getPrefs.getBoolean("firstStart", true);
 
-                // If the activity has never started before...
-                if (isFirstStart) {
+            // If the activity has never started before...
+            if (isFirstStart) {
 
-                    // Launch app intro
-                    Intent i = new Intent(MainActivity.this, MainIntro.class);
-                    startActivity(i);
+                // Launch app intro
+                Intent i = new Intent(MainActivity.this, MainIntro.class);
+                startActivity(i);
 
-                    // Make a new preferences editor
-                    SharedPreferences.Editor e = getPrefs.edit();
+                // Make a new preferences editor
+                SharedPreferences.Editor e = getPrefs.edit();
 
-                    // Edit preference to make it false because we don't want this to run again
-                    e.putBoolean("firstStart", false);
+                // Edit preference to make it false because we don't want this to run again
+                e.putBoolean("firstStart", false);
 
-                    // Apply changes
-                    e.apply();
-                }
+                // Apply changes
+                e.apply();
             }
         });
 

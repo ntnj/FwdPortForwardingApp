@@ -1,7 +1,5 @@
 package com.elixsr.portforwarder.adapters;
 
-import android.util.Log;
-
 import com.elixsr.portforwarder.models.RuleModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
