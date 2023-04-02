@@ -22,4 +22,4 @@ import com.elixsr.portforwarder.ui.BaseWebActivity
 /**
  * Created by Niall McShane on 08/03/2016.
  */
-object HelpActivity : BaseWebActivity("https://support.elix.sr/#!/products/fwd")
+class HelpActivity : BaseWebActivity("https://support.elix.sr/#!/products/fwd")

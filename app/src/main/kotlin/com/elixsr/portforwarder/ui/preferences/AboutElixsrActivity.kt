@@ -20,6 +20,6 @@ package com.elixsr.portforwarder.ui.preferences
 import com.elixsr.portforwarder.ui.BaseWebActivity
 
 /**
- * Created by Cathan O'Donnell on 15/04/2018.
+ * Created by Niall McShane on 08/03/2016.
  */
-object SupportSiteActivity : BaseWebActivity("https://support.elix.sr/#!/products/fwd/answers/Importing_and_Exporting_Rules")
+class AboutElixsrActivity : BaseWebActivity("https://elix.sr/")
