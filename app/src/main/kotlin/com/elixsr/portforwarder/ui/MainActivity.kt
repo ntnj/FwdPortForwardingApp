@@ -42,6 +42,7 @@ import com.elixsr.portforwarder.forwarding.ForwardingService
 import com.elixsr.portforwarder.models.RuleModel
 import com.elixsr.portforwarder.ui.intro.MainIntro
 import com.elixsr.portforwarder.ui.preferences.HelpActivity
+import com.elixsr.portforwarder.ui.preferences.IpAddressCheckerActivity
 import com.elixsr.portforwarder.ui.preferences.SettingsActivity
 import com.elixsr.portforwarder.ui.rules.NewRuleActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -170,6 +171,11 @@ class MainActivity : BaseActivity() {
             R.id.action_settings -> {
                 val prefIntent = Intent(this, SettingsActivity::class.java)
                 startActivity(prefIntent)
+            }
+
+            R.id.action_ip_checker -> {
+                val ipActivity = Intent(this, IpAddressCheckerActivity::class.java)
+                startActivity(ipActivity)
             }
 
             R.id.action_toggle_forwarding -> handleForwardingButton(item)
