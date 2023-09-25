@@ -291,8 +291,8 @@ class ForwardingService : IntentService {
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent)
         val resultPendingIntent = stackBuilder.getPendingIntent(
-                0,
-                PendingIntent.FLAG_UPDATE_CURRENT
+            0,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val mBuilder = NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.ic_fwd_24dp)

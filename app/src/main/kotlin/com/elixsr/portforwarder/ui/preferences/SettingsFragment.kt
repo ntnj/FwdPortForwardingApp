@@ -145,13 +145,14 @@ class SettingsFragment : PreferenceFragment() {
         super.onActivityCreated(savedInstanceState)
 
         // Recreate our activity if we changed to dark theme
-        sharedPreferencesListener = OnSharedPreferenceChangeListener { _: SharedPreferences?, key: String ->
-            if (key == "pref_dark_theme") {
-                val intent = Intent()
-                intent.action = DARK_MODE_BROADCAST
-                localBroadcastManager.sendBroadcast(intent)
+        sharedPreferencesListener =
+            OnSharedPreferenceChangeListener { _: SharedPreferences?, key: String? ->
+                if (key == "pref_dark_theme") {
+                    val intent = Intent()
+                    intent.action = DARK_MODE_BROADCAST
+                    localBroadcastManager.sendBroadcast(intent)
+                }
             }
-        }
 
         // Prevent garbage collection
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferencesListener)

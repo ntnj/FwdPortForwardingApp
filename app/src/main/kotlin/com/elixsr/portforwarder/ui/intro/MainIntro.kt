@@ -44,11 +44,6 @@ class MainIntro : AppIntro2() {
         showSkipButton(false)
     }
 
-    fun showSkipButton(showButton: Boolean) {
-        skipButtonEnabled = showButton
-        setButtonState(skipButton, showButton)
-    }
-
     private fun loadMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
